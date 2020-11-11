@@ -6,6 +6,7 @@ Game::Game() :
 	m_window{ sf::VideoMode{ desktop.width, desktop.height, desktop.bitsPerPixel }, "SFML Game" }
 {
 	init();
+	
 }
 
 
@@ -41,7 +42,14 @@ void Game::run()
 
 void Game::init()
 {
-
+	if (!tileTexture.loadFromFile("IMAGES//Overworld.png"))
+	{
+		// error...
+	}
+	tile.setTexture(tileTexture);
+	tile.setPosition(sf::Vector2f(10.f, 800.0f));
+	tile.setTextureRect(sf::IntRect(0, 0, 16, 16));
+	tile.setScale(sf::Vector2f(3.0f, 3.0f));
 	if (!player_texture.loadFromFile("IMAGES//Player.png")) 
 	{
 		cout << "error" << endl;
@@ -50,7 +58,7 @@ void Game::init()
 	player_animated_sprite = new AnimatedSprite(player_texture);
 	m_player = new Player(*player_animated_sprite);
 	m_player->setPosition(sf::Vector2f(100,100));
-
+	m_tileMap = new Tilemap();
 }
 
 void Game::processEvents()
@@ -67,6 +75,8 @@ void Game::render()
 {
 	m_window.clear(sf::Color::Black);
 	//m_player->render(m_window);
+	m_window.draw(tile);
+	m_tileMap->DrawMap(m_window);
 	m_window.draw(m_player->getAnimatedSpriteFrame());
 	m_window.display();
 }

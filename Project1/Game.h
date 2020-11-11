@@ -2,8 +2,8 @@
 #define GAME_H
 
 #include <SFML/Graphics.hpp>
+#include "Tilemap.h"
 #include "Player.h"
-
 class Game
 {
 public:
@@ -11,7 +11,7 @@ public:
 	~Game();
 
 	void run();
-
+	
 
 private:
 	void init();
@@ -20,8 +20,11 @@ private:
 	void render();
 	void handleInputs();
 	Player* m_player;
+	sf::Sprite tile;
 	AnimatedSprite* player_animated_sprite;
+	Tilemap* m_tileMap;
 	sf::Texture player_texture;
+	sf::Texture tileTexture;
 	sf::VideoMode desktop = sf::VideoMode::getDesktopMode();
 	sf::Event event;
 	gpp::Events input;

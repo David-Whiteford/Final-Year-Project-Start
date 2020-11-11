@@ -31,7 +31,13 @@ PlayerState* PlayerMoveLeftState::handleInput(gpp::Events& input)
 	}
 	return nullptr;
 }
-void PlayerMoveLeftState::update(Player& player) {}
+void PlayerMoveLeftState::update(Player& player) 
+{
+	sf::Vector2f pos = player.getPosition();
+	pos.x -= 0.1f;
+
+	player.setPosition(pos);
+}
 void PlayerMoveLeftState::enter(Player& player)
 {
 	DEBUG_MSG("Entering MoveLeftState");

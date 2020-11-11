@@ -137,6 +137,7 @@
     <ClInclude Include="PlayerMoveRight.h" />
     <ClInclude Include="PLayerMoveUp.h" />
     <ClInclude Include="PlayerState.h" />
+    <ClInclude Include="Tilemap.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="AnimatedSprite.cpp" />
@@ -149,6 +150,7 @@
     <ClCompile Include="PLayerMoveLeft.cpp" />
     <ClCompile Include="PlayerMoveRight.cpp" />
     <ClCompile Include="PLayerMoveUp.cpp" />
+    <ClCompile Include="Tilemap.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

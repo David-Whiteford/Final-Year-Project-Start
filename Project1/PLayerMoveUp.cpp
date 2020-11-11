@@ -30,7 +30,13 @@ PlayerState* PlayerMoveUpState::handleInput(gpp::Events& input)
 	}
 	return nullptr;
 }
-void PlayerMoveUpState::update(Player& player) {}
+void PlayerMoveUpState::update(Player& player)
+{
+	sf::Vector2f pos = player.getPosition();
+	pos.y -= 0.1f;
+
+	player.setPosition(pos);
+}
 void PlayerMoveUpState::enter(Player& player)
 {
 	DEBUG_MSG("Entering MoveUpState");
