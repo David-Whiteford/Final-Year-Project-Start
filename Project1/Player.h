@@ -29,6 +29,7 @@ public:
 	void init();
 	void update();
 	void setUpPlayer();
+	sf::Vector2f getOrigin();
 	void render(sf::RenderWindow& t_window);
 	void handleKeyInput(gpp::Events input);
 	float getSpeed();
@@ -39,5 +40,6 @@ private:
 	sf::Texture texture;
 	sf::Sprite m_player;
 	float m_speed = 0.5f;
+	int m_size = 16;
 };
 #endif

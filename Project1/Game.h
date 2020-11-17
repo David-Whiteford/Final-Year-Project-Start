@@ -29,8 +29,9 @@ private:
 	sf::Event event;
 	gpp::Events input;
 	sf::Vector2f m_textOffset = sf::Vector2f(500.0f, 0.0f);
-
+	sf::Vector2f m_playerOrigin;
 	sf::RenderWindow m_window; // main SFML window
+	sf::View view2;
 
 };
 #endif

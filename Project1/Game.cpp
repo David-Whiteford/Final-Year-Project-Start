@@ -6,7 +6,8 @@ Game::Game() :
 	m_window{ sf::VideoMode{ desktop.width, desktop.height, desktop.bitsPerPixel }, "SFML Game" }
 {
 	init();
-	
+	m_tileMap = new Tilemap();
+	m_tileMap->setMap(m_window);
 }
 
 
@@ -58,6 +59,12 @@ void Game::init()
 	player_animated_sprite = new AnimatedSprite(player_texture);
 	m_player = new Player(*player_animated_sprite);
 	m_player->setPosition(sf::Vector2f(100,100));
+	m_playerOrigin = m_player->getOrigin();
+	// create a view with its center and size
+	view2.setCenter(m_player->getPosition());
+	view2.setSize(sf::Vector2f(50.f, 50.f));
+	view2.zoom(5.0f);
+	
 	m_tileMap = new Tilemap();
 }
 
@@ -67,6 +74,8 @@ void Game::processEvents()
 
 void Game::update(double dt)
 {
+	m_playerOrigin = m_player->getOrigin();
+	view2.setCenter(m_player->getPosition());
 	handleInputs();
 	
 }
@@ -76,8 +85,9 @@ void Game::render()
 	m_window.clear(sf::Color::Black);
 	//m_player->render(m_window);
 	m_window.draw(tile);
-	m_tileMap->DrawMap(m_window);
+	m_tileMap->DrawMap(view2);
 	m_window.draw(m_player->getAnimatedSpriteFrame());
+	m_window.setView(view2);
 	m_window.display();
 }
 

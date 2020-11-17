@@ -130,6 +130,7 @@
     <ClInclude Include="Debug.h" />
     <ClInclude Include="Events.h" />
     <ClInclude Include="Game.h" />
+    <ClInclude Include="GameObject.h" />
     <ClInclude Include="IdleState.h" />
     <ClInclude Include="Player.h" />
     <ClInclude Include="PlayerMoveDown.h" />
@@ -138,6 +139,7 @@
     <ClInclude Include="PLayerMoveUp.h" />
     <ClInclude Include="PlayerState.h" />
     <ClInclude Include="Tilemap.h" />
+    <ClInclude Include="Tiles.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="AnimatedSprite.cpp" />

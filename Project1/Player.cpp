@@ -7,7 +7,7 @@ Player::Player(const AnimatedSprite& sprite):m_animated_sprite(sprite)
 {
 	m_state = new IdlePlayerState();
 	m_state->enter(*this);
-	m_animated_sprite.setScale(3.0f, 3.0f);
+	//m_animated_sprite.setScale(3.0f, 3.0f);
 }
 
 Player::~Player()
@@ -69,15 +69,20 @@ void Player::setUpPlayer()
 	}
 	m_player.setTexture(texture);
 	m_player.setPosition(sf::Vector2f(10.f, 500.f));
-	m_player.setScale(0.5f, 0.5f);
 	m_player.setTextureRect(sf::IntRect(80,0,16,32));
-	m_player.setScale(sf::Vector2f(3.0f, 3.0f));
+	//m_player.setOrigin(m_player.getPosition().x + m_size, m_player.getPosition().y + m_size);
+	
+}
+sf::Vector2f Player::getOrigin()
+{
+	return m_player.getOrigin();
 }
 
 void Player::render(sf::RenderWindow& t_window)
 {
 	t_window.draw(m_player);
 }
+
 
 void Player::handleKeyInput(gpp::Events input)
 {
