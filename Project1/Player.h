@@ -30,7 +30,9 @@ public:
 	void setPlayerState(PlayerState*);
 	float getCircleRadius();
 	void BoundryControl(sf::VideoMode desktop);
-	void collisionCheck(std::vector<Tiles*> &t_tilemapObstacles,sf::String t_type);
+	void collisionCheck(std::vector<Tiles*> &t_tilemapObstacles);
+	void triggerCheck(std::vector<Tiles*>& t_triggerVec);
+
 	void init();
 	void update();
 	void setUpPlayer();
@@ -40,11 +42,20 @@ public:
 	float getSpeed();
 	void setHealthCost(int t_healthCost, bool t_takeDamage);
 	void setDebugRects(std::vector<Tiles*>& t_tilemapObstacles);
+	void clearObstacleVec() { m_debugRects.clear(); }
+	void clearTriggerVec() { m_triggerRects.clear(); }
 	bool getColUp() { return m_collisionUp; }
 	bool getColDown() { return m_collisionDown; }
 	bool getColRight() { return m_collisionRight; }
 	bool getColLeft() { return m_collisionLeft; }
 
+	void setColUp(bool t_colUp) { m_collisionUp = t_colUp; }
+	void setColDown(bool t_colDown) { m_collisionDown = t_colDown; }
+	void setColRight(bool t_colRight) { m_collisionRight = t_colRight; }
+	void setColLeft(bool t_colLeft) { m_collisionLeft = t_colLeft; }
+	void resetCollisions();
+	void setIfInTrigger(bool t_inTrigger) { m_inTrigger = t_inTrigger; }
+	bool getIfInTrigger() { return m_inTrigger; }
 private:
 	Collisions m_collisions;
 	Raycast m_raycastUp, m_raycastDown, m_raycastLeft, m_raycastRigth;
@@ -57,6 +68,8 @@ private:
 	int m_playerHealth = 100;
 	std::vector<sf::Vector2f> m_rays;
 	std::vector<sf::RectangleShape> m_debugRects;
+	std::vector<sf::RectangleShape> m_triggerRects;
 	bool m_collisionRight, m_collisionLeft, m_collisionUp, m_collisionDown;
+	bool m_inTrigger = false;
 };
 #endif

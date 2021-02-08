@@ -16,12 +16,6 @@ void DungeonGen::generateMap(int t_maxFeatures)
 			break;
 		}
 	}
-	
-	placeDecorInRoom();
-	placeDecorInRoom();
-	placeMonsterTrigger();
-	
-	
 }
 
 bool DungeonGen::createFeature()
@@ -338,5 +332,25 @@ void DungeonGen::placeDecorInRoom()
 
 	}
 	DEBUG_MSG("Issue placing tiles tile");
+}
+
+sf::Vector2f DungeonGen::playerStartPos()
+{
+	sf::Vector2f startPos;
+	if (m_rooms.empty() == false)
+	{
+		int y = 0;
+		int x = 0;
+		
+		x = m_rooms[0].x +2 + m_rooms[0].width - 2;
+		y = m_rooms[0].y +2 + m_rooms[0].height - 2;
+		if (getTile(x, y) == FloorTile)
+		{
+			startPos = sf::Vector2f(x, y);
+		}
+		
+	}
+	return startPos;
+
 }
 

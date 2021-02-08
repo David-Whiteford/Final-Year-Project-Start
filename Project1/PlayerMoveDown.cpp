@@ -34,10 +34,14 @@ void PlayerMoveDownState::update(Player& player)
 {
 	if (player.getColDown() == false) {
 		sf::Vector2f pos = player.getPosition();
-		pos.y += 0.03f;
+		pos.y += 0.05f;
 
 		player.setPosition(pos);
 	}
+	player.setColUp(false);
+	player.setColRight(false);
+	player.setColLeft(false);
+
 }
 void PlayerMoveDownState::enter(Player& player)
 {

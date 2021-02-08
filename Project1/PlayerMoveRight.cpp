@@ -37,10 +37,13 @@ void PlayerMoveRigthState::update(Player& player)
 	if (player.getColRight() == false) {
 		m_player.setPosition(sf::Vector2f(1000, 200));
 		sf::Vector2f pos = player.getPosition();
-		pos.x += 0.03f;
+		pos.x += 0.05f;
 
 		player.setPosition(pos);
 	}
+	player.setColUp(false);
+	player.setColLeft(false);
+	player.setColDown(false);
 }
 void PlayerMoveRigthState::enter(Player& player)
 {

@@ -52,6 +52,8 @@ private:
 	double timer = 0.0;
 	std::vector<Tiles*> m_obstaclesVec;
 	std::vector<Tiles*> m_dunObstaclesVec;
+	std::vector<Tiles*> m_triggersVec;
+
 
 };
 #endif

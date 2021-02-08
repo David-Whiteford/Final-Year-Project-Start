@@ -192,6 +192,20 @@ std::vector<Tiles*> Tilemap::getOverWorldObstaclesVec()
 	}
 	return obstacles;
 }
+
+std::vector<Tiles*> Tilemap::getCavesVec()
+{
+	std::vector<Tiles*> caves;
+	for (int i = 0; i < m_tileVec.size(); i++)
+	{
+		if (m_tileVec[i]->getTag() == "Cave")
+		{
+			caves.push_back(m_tileVec[i]);
+		}
+	}
+	return caves;
+}
+
 void Tilemap::Dun(std::vector<int> &t_dunVec, sf::RenderWindow& t_window, int t_mapWidth, int t_mapHeight)
 {
 	int type = 0;

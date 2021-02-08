@@ -9,7 +9,12 @@ Game::Game() :
 	m_tileMap->PushValsToVec();
 	m_tileMap->setMap(m_window);
 	m_obstaclesVec = m_tileMap->getOverWorldObstaclesVec();
+	m_triggersVec = m_tileMap->getCavesVec();
 	m_player->setDebugRects(m_obstaclesVec);
+	m_player->setDebugRects(m_triggersVec);
+
+
+
 }
 
 
@@ -83,35 +88,49 @@ void Game::update(double dt)
 		view2.setCenter(m_player->getPosition());
 		handleInputs();
 		m_player->playerRays();
-		m_player->collisionCheck(m_obstaclesVec, "OverWorld");
+		m_player->collisionCheck(m_obstaclesVec);
+		m_player->triggerCheck(m_triggersVec);
+		if (m_player->getIfInTrigger())
+		{
+			m_player->resetCollisions();
+			m_transitionStart = true;
+			m_dungeonTest = true;
+			m_currentGameState = GameState::Dungeon;
+		}
 		break;
 	case GameState::Dungeon:
 		if (m_dungeonTest == true)
 		{
+			
+			m_player->clearObstacleVec();
+			m_player->clearTriggerVec();
+			m_player->setIfInTrigger(false);
 			m_dungeon->generateMap(100);
+			m_dungeon->placeDecorInRoom();
+			m_dungeon->placeMonsterTrigger();
+			m_player->setPosition(m_dungeon->playerStartPos());
 			m_dungeon->print();
 			m_dungeon->Set2DVec(m_tileMap);
-			//m_tileMap->setDunMap(m_window);
 			m_tileMap->Dun(m_dungeon->getTileMapVec(), m_window, m_mapSize, m_mapSize);
 			m_dunObstaclesVec.clear();
 			m_dunObstaclesVec = m_tileMap->getDunObstaclesVec();
+			m_player->setDebugRects(m_dunObstaclesVec);
 			m_dungeonTest = false;
-
 		}
 		m_playerOrigin = m_player->getOrigin();
 		view2.setCenter(m_player->getPosition());
-		m_player->collisionCheck(m_dunObstaclesVec,"Dungeon");
+		m_player->collisionCheck(m_dunObstaclesVec);
 		handleInputs();
 		break;
 	default:
 		break;
 	}
-	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Space) && m_transitionStart == false)
+	/*if (sf::Keyboard::isKeyPressed(sf::Keyboard::Space) && m_transitionStart == false)
 	{
 		m_transitionStart = true;
 		m_dungeonTest = true;
 		m_currentGameState = GameState::Dungeon;
-	}
+	}*/
 	//if (timer < 0.5 && m_transitionStart == true)
 	//{
 	//	//increment timer
@@ -149,6 +168,7 @@ void Game::render()
 	case GameState::Dungeon:
 		m_tileMap->DrawDungeon(view2);
 		m_window.draw(m_player->getAnimatedSpriteFrame());
+		//m_player->render(m_window);
 		m_window.setView(view2);
 		break;
 	default:

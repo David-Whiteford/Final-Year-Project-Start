@@ -22,6 +22,7 @@ public:
 	void setDunGen(bool t_dunGen);
 	std::vector<Tiles*> getDunObstaclesVec();
 	std::vector<Tiles*> getOverWorldObstaclesVec();
+	std::vector<Tiles*> getCavesVec();
 	void Dun(std::vector<int> &t_dunVec, sf::RenderWindow& t_window ,int t_mapWidth,  int t_mapHeight);
 	void PushValsToVec()
 	{
@@ -34,7 +35,7 @@ public:
 		}
 	}
 private:
-	
+	std::vector<Tiles*> m_cavesVec;
 	std::vector<Tiles*> m_tileVec;
 	std::vector<Tiles*> m_dunTileVec;
 	sf::Texture m_texture;

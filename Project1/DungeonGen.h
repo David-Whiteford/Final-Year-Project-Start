@@ -125,9 +125,11 @@ public:
 	bool placeTile(Tile& t_rect, char t_tile);
 	void placeMonsterTrigger();
 	void placeDecorInRoom();
+	sf::Vector2f playerStartPos();
 
 
 private:
+	sf::Vector2f m_startPosition;
 	std::vector<int> m_tempTileVec;
 	int m_objectCount = 0;
 	int m_width;

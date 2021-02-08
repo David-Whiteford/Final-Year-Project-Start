@@ -46,6 +46,12 @@ void Player::render(sf::RenderWindow& t_window)
 	{
 		t_window.draw(m_debugRects[i]);
 	}
+	for (int i = 0; i < m_triggerRects.size(); i++)
+	{
+		t_window.draw(m_triggerRects[i]);
+	}
+	
+
 	m_collisions.render(t_window);
 }
 sf::Vector2f Player::getPosition()
@@ -57,25 +63,25 @@ float Player::getCircleRadius()
 	return 0.0f;
 }
 
-void Player::collisionCheck(std::vector<Tiles*>& t_tilemapObstacles, sf::String t_type)
+void Player::collisionCheck(std::vector<Tiles*>& t_tilemapObstacles)
 {
 	for (int i = 0; i < t_tilemapObstacles.size(); i++)
 	{
 		float size = t_tilemapObstacles[i]->getSize();
 		if (m_collisions.rayCastToSpriteCol(m_raycastRigth.getEndPoint(), t_tilemapObstacles[i]->getPosition(), size, size)){
-			std::cout << "Collision";
+			//std::cout << "Collision";
 			m_collisionRight = true;
 		}
 		else if (m_collisions.rayCastToSpriteCol(m_raycastLeft.getEndPoint(), t_tilemapObstacles[i]->getPosition(), size, size)){
-			std::cout << "Collision";
+			//std::cout << "Collision";
 			m_collisionLeft = true;
 		}
 		else if (m_collisions.rayCastToSpriteCol(m_raycastUp.getEndPoint(), t_tilemapObstacles[i]->getPosition(), size, size)){
-			std::cout << "Collision";
+			//std::cout << "Collision";
 			m_collisionUp = true;
 		}
 		else if (m_collisions.rayCastToSpriteCol(m_raycastDown.getEndPoint(), t_tilemapObstacles[i]->getPosition(), size, size)){
-			std::cout << "Collision";
+			//std::cout << "Collision";
 			m_collisionDown = true;
 		}
 
@@ -88,6 +94,26 @@ void Player::collisionCheck(std::vector<Tiles*>& t_tilemapObstacles, sf::String 
 		}*/
 	}
 
+}
+
+void Player::triggerCheck(std::vector<Tiles*>& t_triggerVec)
+{
+	for (int i = 0; i < t_triggerVec.size(); i++)
+	{
+		float size = t_triggerVec[i]->getSize();
+		if (m_collisions.rayCastToSpriteCol(m_raycastRigth.getEndPoint(), t_triggerVec[i]->getPosition(), size, size)) {
+			m_inTrigger = true;
+		}
+		else if (m_collisions.rayCastToSpriteCol(m_raycastLeft.getEndPoint(), t_triggerVec[i]->getPosition(), size, size)) {
+			m_inTrigger = true;
+		}
+		else if (m_collisions.rayCastToSpriteCol(m_raycastUp.getEndPoint(), t_triggerVec[i]->getPosition(), size, size)) {
+			m_inTrigger = true;
+		}
+		else if (m_collisions.rayCastToSpriteCol(m_raycastDown.getEndPoint(), t_triggerVec[i]->getPosition(), size, size)) {
+			m_inTrigger = true;
+		}
+	}
 }
 
 void Player::setPosition(sf::Vector2f t_position)
@@ -118,16 +144,35 @@ void Player::setHealthCost(int t_healthCost, bool t_takeDamage)
 
 void Player::setDebugRects(std::vector<Tiles*>& t_tilemapObstacles)
 {
+	
 	for (int i = 0; i < t_tilemapObstacles.size(); i++)
 	{
-		sf::RectangleShape rect;
-		rect.setSize(sf::Vector2f(16, 16));
-		rect.setOutlineColor(sf::Color::White);
-		rect.setOutlineThickness(0.1f);
-		rect.setFillColor(sf::Color::Transparent);
-		rect.setPosition(t_tilemapObstacles[i]->getPosition().x, t_tilemapObstacles[i]->getPosition().y);
-		m_debugRects.push_back(rect);
+		if (t_tilemapObstacles[i]->getTag() == "Obstacle") {
+
+			sf::RectangleShape rect;
+			rect.setSize(sf::Vector2f(16, 16));
+			rect.setOutlineColor(sf::Color::White);
+			rect.setOutlineThickness(0.1f);
+			rect.setFillColor(sf::Color::Transparent);
+			rect.setPosition(t_tilemapObstacles[i]->getPosition().x, t_tilemapObstacles[i]->getPosition().y);
+			m_debugRects.push_back(rect);
+		}
+		else if (t_tilemapObstacles[i]->getTag() == "Cave")
+		{
+			sf::RectangleShape rect;
+			rect.setSize(sf::Vector2f(16, 16));
+			rect.setOutlineColor(sf::Color::Green);
+			rect.setOutlineThickness(0.1f);
+			rect.setFillColor(sf::Color::Transparent);
+			rect.setPosition(t_tilemapObstacles[i]->getPosition().x, t_tilemapObstacles[i]->getPosition().y);
+			m_triggerRects.push_back(rect);
+		}
 	}
+}
+
+void Player::resetCollisions()
+{
+	m_collisionDown , m_collisionLeft , m_collisionRight , m_collisionUp = false;
 }
 
 void Player::update()
