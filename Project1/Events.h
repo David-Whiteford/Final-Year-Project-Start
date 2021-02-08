@@ -19,6 +19,8 @@ namespace gpp {
 			Count
 		};
 
+	
+
 		void setCurrent(Event);
 		Event getCurrent();
 

@@ -127,22 +127,28 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="AnimatedSprite.h" />
+    <ClInclude Include="Collisions.h" />
     <ClInclude Include="Debug.h" />
+    <ClInclude Include="DungeonGen.h" />
     <ClInclude Include="Events.h" />
     <ClInclude Include="Game.h" />
     <ClInclude Include="GameObject.h" />
     <ClInclude Include="IdleState.h" />
+    <ClInclude Include="MyEnums.h" />
     <ClInclude Include="Player.h" />
     <ClInclude Include="PlayerMoveDown.h" />
     <ClInclude Include="PLayerMoveLeft.h" />
     <ClInclude Include="PlayerMoveRight.h" />
     <ClInclude Include="PLayerMoveUp.h" />
     <ClInclude Include="PlayerState.h" />
+    <ClInclude Include="RayCast.h" />
     <ClInclude Include="Tilemap.h" />
     <ClInclude Include="Tiles.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="AnimatedSprite.cpp" />
+    <ClCompile Include="Collisions.cpp" />
+    <ClCompile Include="DungeonGen.cpp" />
     <ClCompile Include="Events.cpp" />
     <ClCompile Include="Game.cpp" />
     <ClCompile Include="IdleState.cpp" />
@@ -152,6 +158,7 @@
     <ClCompile Include="PLayerMoveLeft.cpp" />
     <ClCompile Include="PlayerMoveRight.cpp" />
     <ClCompile Include="PLayerMoveUp.cpp" />
+    <ClCompile Include="RayCast.cpp" />
     <ClCompile Include="Tilemap.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

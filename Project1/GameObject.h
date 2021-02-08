@@ -11,8 +11,8 @@ public:
 
 	virtual ~GameObject() {}
 
-	void setTag(int tag) { m_tag = tag; }
-	int getTag() { return m_tag; }
+	void setTag(sf::String t_tag) { m_tag = t_tag; }
+	sf::String getTag() { return m_tag; }
 
 	sf::Vector2f position;
 	float size;
@@ -21,5 +21,5 @@ public:
 
 
 private:
-	int m_tag;
+	sf::String m_tag;
 };

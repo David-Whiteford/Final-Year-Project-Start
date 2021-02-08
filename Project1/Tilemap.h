@@ -1,7 +1,8 @@
 #ifndef TILEMAP_H
 #define TILEMAP_H
 
-
+#include <string>
+#include <iostream>
 #include <SFML/Graphics.hpp>
 #include "Tiles.h"
 
@@ -11,23 +12,54 @@ public:
 	Tilemap();
 	~Tilemap();
 	void init();
-	void LoadMap(int arr[30][30]);
-	void DrawMap(sf::View t_view);
+	void OverWorldTilesSetUp();
+    void DungeonTilesSetUp();
+	void LoadMap(int arr[30][30],int t_mapWidth, int t_mapHeight);
+	void DrawOverWorld(sf::View t_view);
+	void DrawDungeon(sf::View t_view);
 	void setMap(sf::RenderWindow& t_window);
+	void setDunMap(sf::RenderWindow& t_window);
+	void setDunGen(bool t_dunGen);
+	std::vector<Tiles*> getDunObstaclesVec();
+	std::vector<Tiles*> getOverWorldObstaclesVec();
+	void Dun(std::vector<int> &t_dunVec, sf::RenderWindow& t_window ,int t_mapWidth,  int t_mapHeight);
+	void PushValsToVec()
+	{
+		for (int row = 0; row < m_mapWidth; row++)
+		{
+			for (int col = 0; col < m_mapHeigth; col++)
+			{
+				m_tileVecValues.push_back(lvl1[row][col]);
+			}
+		}
+	}
 private:
+	
 	std::vector<Tiles*> m_tileVec;
+	std::vector<Tiles*> m_dunTileVec;
 	sf::Texture m_texture;
+	sf::Texture m_dunTexture;
 	static const int m_mapWidth = 30;
 	static const int m_mapHeigth = 30;
 	sf::Sprite m_cliffLeftCornerTile, m_cliffRightCornerTile, 
 		m_cliffLeftTile, m_cliffRightTile , m_cliffFront,m_cliffDown;
 	sf::Sprite m_grassTile, m_waterTile, m_dirtTile, m_caveTile;
 	
+	//DungeonTiles
+	sf::Sprite m_floorTile, m_wallTile, m_corridorTile, m_DoorTile , m_stairsTile;
+	//Decor Tiles
+	sf::Sprite m_skullTile , m_chainsTile, m_chestTile;
+	//Trgger Tiles
+	sf::Sprite m_monsterSpawn;
+
 	sf::Vector2f m_tilePosition = sf::Vector2f(0.0f, 0.0f);
 	int m_tileSize = 16;
+	bool m_dungeonGen = false;
+	bool m_overWorldGen = true;
 	int m_tileMapSize = 30;
-	int tilemap[30][30];
-	
+	std::vector<int> m_tileVecValues;
+	int tilemap[m_mapWidth][m_mapHeigth];
+
 	int lvl1[m_mapWidth][m_mapHeigth] = {
 1,2,2,2,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,
 1,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,1,
@@ -38,7 +70,7 @@ private:
 1,2,2,2,1,4,9,1,1,2,2,1,1,8,4,4,4,4,4,9,1,1,1,1,1,8,4,1,2,1,
 1,2,2,2,1,4,9,1,1,2,2,1,1,8,4,4,4,4,4,9,1,1,1,1,1,8,4,1,2,1,
 1,2,2,2,1,4,9,1,1,2,2,1,1,8,4,4,10,4,4,9,1,1,1,1,1,8,4,1,2,1,
-1,2,2,2,2,2,2,2,2,2,2,1,1,8,1,1,2,1,3,9,1,3,3,3,1,8,1,1,2,1,
+1,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,1,3,9,1,3,3,3,1,8,1,1,2,1,
 1,2,2,2,1,1,6,7,7,7,7,7,7,5,1,1,2,1,3,9,1,3,3,3,1,8,1,1,2,1,
 1,2,2,2,1,1,4,4,4,4,4,4,4,4,1,1,2,3,3,6,7,3,3,3,7,5,1,1,2,1,
 1,2,2,2,1,1,4,4,4,4,4,4,4,4,1,1,2,3,3,4,4,3,3,3,4,4,1,1,2,1,

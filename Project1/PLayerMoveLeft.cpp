@@ -33,10 +33,12 @@ PlayerState* PlayerMoveLeftState::handleInput(gpp::Events& input)
 }
 void PlayerMoveLeftState::update(Player& player) 
 {
-	sf::Vector2f pos = player.getPosition();
-	pos.x -= 0.1f;
+	if (player.getColLeft() == false) {
+		sf::Vector2f pos = player.getPosition();
+		pos.x -= 0.03f;
 
-	player.setPosition(pos);
+		player.setPosition(pos);
+	}
 }
 void PlayerMoveLeftState::enter(Player& player)
 {

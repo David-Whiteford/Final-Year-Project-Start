@@ -7,7 +7,7 @@ Player::Player(const AnimatedSprite& sprite):m_animated_sprite(sprite)
 {
 	m_state = new IdlePlayerState();
 	m_state->enter(*this);
-	//m_animated_sprite.setScale(3.0f, 3.0f);
+	m_animated_sprite.setScale(0.5f, 0.5f);
 }
 
 Player::~Player()
@@ -24,6 +24,30 @@ int Player::getHeigth()
 	return 0;
 }
 
+void Player::playerRays()
+{
+	sf::Vector2f playerCentre = sf::Vector2f(getPosition().x + 4, getPosition().y + 8);
+	m_raycastUp.setRayVals(playerCentre, sf::Vector2f(0.0f, -1.0f),5);
+	m_raycastDown.setRayVals(playerCentre, sf::Vector2f(0.0f, 1.0f), 5);
+	m_raycastLeft.setRayVals(playerCentre, sf::Vector2f(-1.0f, 0.0f), 3.5f);
+	m_raycastRigth.setRayVals(playerCentre, sf::Vector2f(1.0f, 0.0f), 3.5f);
+	m_rays.push_back(m_raycastUp.getEndPoint());
+	m_rays.push_back(m_raycastDown.getEndPoint());
+	m_rays.push_back(m_raycastLeft.getEndPoint());
+	m_rays.push_back(m_raycastRigth.getEndPoint());
+}
+void Player::render(sf::RenderWindow& t_window)
+{
+	t_window.draw(m_raycastUp.drawArray());
+	t_window.draw(m_raycastDown.drawArray());
+	t_window.draw(m_raycastLeft.drawArray());
+	t_window.draw(m_raycastRigth.drawArray());
+	for (int i = 0; i < m_debugRects.size(); i++)
+	{
+		t_window.draw(m_debugRects[i]);
+	}
+	m_collisions.render(t_window);
+}
 sf::Vector2f Player::getPosition()
 {
 	return m_animated_sprite.getPosition();
@@ -32,68 +56,101 @@ float Player::getCircleRadius()
 {
 	return 0.0f;
 }
-void Player::BoundryControl(sf::VideoMode desktop)
+
+void Player::collisionCheck(std::vector<Tiles*>& t_tilemapObstacles, sf::String t_type)
 {
-	
+	for (int i = 0; i < t_tilemapObstacles.size(); i++)
+	{
+		float size = t_tilemapObstacles[i]->getSize();
+		if (m_collisions.rayCastToSpriteCol(m_raycastRigth.getEndPoint(), t_tilemapObstacles[i]->getPosition(), size, size)){
+			std::cout << "Collision";
+			m_collisionRight = true;
+		}
+		else if (m_collisions.rayCastToSpriteCol(m_raycastLeft.getEndPoint(), t_tilemapObstacles[i]->getPosition(), size, size)){
+			std::cout << "Collision";
+			m_collisionLeft = true;
+		}
+		else if (m_collisions.rayCastToSpriteCol(m_raycastUp.getEndPoint(), t_tilemapObstacles[i]->getPosition(), size, size)){
+			std::cout << "Collision";
+			m_collisionUp = true;
+		}
+		else if (m_collisions.rayCastToSpriteCol(m_raycastDown.getEndPoint(), t_tilemapObstacles[i]->getPosition(), size, size)){
+			std::cout << "Collision";
+			m_collisionDown = true;
+		}
+
+	/*	for (int j = 0; j < m_rays.size(); j++)
+		{
+			if (m_collisions.rayCastToSpriteCol(m_rays[j], t_tilemapObstacles[i]->getPosition(), size, size))
+			{
+				std::cout << "Collision";
+			}
+		}*/
+	}
+
 }
+
 void Player::setPosition(sf::Vector2f t_position)
 {
 	m_animated_sprite.setPosition(t_position);
-}
-
-void Player::playerMovement(double dt)
-{
-
-
 }
 float Player::getSpeed()
 {
 	return m_speed;
 }
-void Player::init()
+
+void Player::setHealthCost(int t_healthCost, bool t_takeDamage)
 {
-	setUpPlayer();
+	if (t_takeDamage)
+	{
+		m_playerHealth -= t_healthCost;
+	}
+	else if (t_takeDamage == false && m_playerHealth < 100)
+	{
+		m_playerHealth += t_healthCost;
+		if (m_playerHealth >= 100)
+		{
+			m_playerHealth = 100;
+		}
+	}
+	
 }
+
+void Player::setDebugRects(std::vector<Tiles*>& t_tilemapObstacles)
+{
+	for (int i = 0; i < t_tilemapObstacles.size(); i++)
+	{
+		sf::RectangleShape rect;
+		rect.setSize(sf::Vector2f(16, 16));
+		rect.setOutlineColor(sf::Color::White);
+		rect.setOutlineThickness(0.1f);
+		rect.setFillColor(sf::Color::Transparent);
+		rect.setPosition(t_tilemapObstacles[i]->getPosition().x, t_tilemapObstacles[i]->getPosition().y);
+		m_debugRects.push_back(rect);
+	}
+}
+
 void Player::update()
 {
 	m_animated_sprite.update();
 	m_state->update(*this);
-}
-
-void Player::setUpPlayer()
-{
-
-	if (!texture.loadFromFile("IMAGES//Player.png"))
-	{
-		// error...
-	}
-	m_player.setTexture(texture);
-	m_player.setPosition(sf::Vector2f(10.f, 500.f));
-	m_player.setTextureRect(sf::IntRect(80,0,16,32));
-	//m_player.setOrigin(m_player.getPosition().x + m_size, m_player.getPosition().y + m_size);
-	
 }
 sf::Vector2f Player::getOrigin()
 {
 	return m_player.getOrigin();
 }
 
-void Player::render(sf::RenderWindow& t_window)
-{
-	t_window.draw(m_player);
-}
-
-
 void Player::handleKeyInput(gpp::Events input)
 {
 	PlayerState* state = m_state->handleInput(input);
-
+	
 	if (state != NULL) {
 		m_state->exit(*this);
 		delete m_state;
 		m_state = state;
 		m_state->enter(*this);
 		m_state->update(*this);
+		
 	}
 }
 AnimatedSprite& Player::getAnimatedSprite() {

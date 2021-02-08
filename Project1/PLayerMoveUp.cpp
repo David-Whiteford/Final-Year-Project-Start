@@ -32,10 +32,12 @@ PlayerState* PlayerMoveUpState::handleInput(gpp::Events& input)
 }
 void PlayerMoveUpState::update(Player& player)
 {
-	sf::Vector2f pos = player.getPosition();
-	pos.y -= 0.1f;
+	if (player.getColUp() == false) {
+		sf::Vector2f pos = player.getPosition();
+		pos.y -= 0.03f;
 
-	player.setPosition(pos);
+		player.setPosition(pos);
+	}
 }
 void PlayerMoveUpState::enter(Player& player)
 {

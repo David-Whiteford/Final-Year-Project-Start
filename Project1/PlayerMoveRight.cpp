@@ -32,14 +32,15 @@ PlayerState* PlayerMoveRigthState::handleInput(gpp::Events& input)
 
 	return nullptr;
 }
-void PlayerMoveRigthState::update(Player& player) 
+void PlayerMoveRigthState::update(Player& player)
 {
-	m_player = player.getAnimatedSprite();
-	m_player.setPosition(sf::Vector2f(1000 , 200));
-	sf::Vector2f pos = player.getPosition();
-	pos.x += 0.1f;
+	if (player.getColRight() == false) {
+		m_player.setPosition(sf::Vector2f(1000, 200));
+		sf::Vector2f pos = player.getPosition();
+		pos.x += 0.03f;
 
-	player.setPosition(pos);
+		player.setPosition(pos);
+	}
 }
 void PlayerMoveRigthState::enter(Player& player)
 {

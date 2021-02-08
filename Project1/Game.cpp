@@ -6,8 +6,10 @@ Game::Game() :
 	m_window{ sf::VideoMode{ desktop.width, desktop.height, desktop.bitsPerPixel }, "SFML Game" }
 {
 	init();
-	m_tileMap = new Tilemap();
+	m_tileMap->PushValsToVec();
 	m_tileMap->setMap(m_window);
+	m_obstaclesVec = m_tileMap->getOverWorldObstaclesVec();
+	m_player->setDebugRects(m_obstaclesVec);
 }
 
 
@@ -43,29 +45,22 @@ void Game::run()
 
 void Game::init()
 {
-	if (!tileTexture.loadFromFile("IMAGES//Overworld.png"))
-	{
-		// error...
-	}
-	tile.setTexture(tileTexture);
-	tile.setPosition(sf::Vector2f(10.f, 800.0f));
-	tile.setTextureRect(sf::IntRect(0, 0, 16, 16));
-	tile.setScale(sf::Vector2f(3.0f, 3.0f));
+	
 	if (!player_texture.loadFromFile("IMAGES//Player.png")) 
 	{
 		cout << "error" << endl;
 	}
-	
 	player_animated_sprite = new AnimatedSprite(player_texture);
 	m_player = new Player(*player_animated_sprite);
-	m_player->setPosition(sf::Vector2f(100,100));
+	m_player->setPosition(sf::Vector2f(20,20));
 	m_playerOrigin = m_player->getOrigin();
 	// create a view with its center and size
 	view2.setCenter(m_player->getPosition());
 	view2.setSize(sf::Vector2f(50.f, 50.f));
-	view2.zoom(5.0f);
-	
+	view2.zoom(3.0f);
 	m_tileMap = new Tilemap();
+	m_dungeon = new DungeonGen(m_mapSize, m_mapSize);
+	
 }
 
 void Game::processEvents()
@@ -74,20 +69,91 @@ void Game::processEvents()
 
 void Game::update(double dt)
 {
-	m_playerOrigin = m_player->getOrigin();
-	view2.setCenter(m_player->getPosition());
-	handleInputs();
 	
+	//calls the update depending on the screen / gamestate or closes
+	switch (m_currentGameState)
+	{
+	case GameState::None:
+		break;
+	case GameState::Exit:
+		m_window.close();
+		break;
+	case GameState::OverWorld:
+		m_playerOrigin = m_player->getOrigin();
+		view2.setCenter(m_player->getPosition());
+		handleInputs();
+		m_player->playerRays();
+		m_player->collisionCheck(m_obstaclesVec, "OverWorld");
+		break;
+	case GameState::Dungeon:
+		if (m_dungeonTest == true)
+		{
+			m_dungeon->generateMap(100);
+			m_dungeon->print();
+			m_dungeon->Set2DVec(m_tileMap);
+			//m_tileMap->setDunMap(m_window);
+			m_tileMap->Dun(m_dungeon->getTileMapVec(), m_window, m_mapSize, m_mapSize);
+			m_dunObstaclesVec.clear();
+			m_dunObstaclesVec = m_tileMap->getDunObstaclesVec();
+			m_dungeonTest = false;
+
+		}
+		m_playerOrigin = m_player->getOrigin();
+		view2.setCenter(m_player->getPosition());
+		m_player->collisionCheck(m_dunObstaclesVec,"Dungeon");
+		handleInputs();
+		break;
+	default:
+		break;
+	}
+	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Space) && m_transitionStart == false)
+	{
+		m_transitionStart = true;
+		m_dungeonTest = true;
+		m_currentGameState = GameState::Dungeon;
+	}
+	//if (timer < 0.5 && m_transitionStart == true)
+	//{
+	//	//increment timer
+	//	timer += 0.01;
+	//}
+	//else
+	//{
+	//	//set move to true and reset timer to 0
+	//	m_transitionStart = false;
+	//	timer = 0.0;
+	//}
+	
+
+
 }
 
 void Game::render()
 {
 	m_window.clear(sf::Color::Black);
-	//m_player->render(m_window);
-	m_window.draw(tile);
-	m_tileMap->DrawMap(view2);
-	m_window.draw(m_player->getAnimatedSpriteFrame());
-	m_window.setView(view2);
+	//calls the update depending on the screen / gamestate or closes
+	switch (m_currentGameState)
+	{
+	case GameState::None:
+		break;
+	case GameState::Exit:
+		m_window.close();
+		break;
+	case GameState::OverWorld:
+		m_tileMap->DrawOverWorld(view2);
+		//m_tileMap->DrawDungeon(view2);
+		m_window.draw(m_player->getAnimatedSpriteFrame());
+		m_window.setView(view2);
+		m_player->render(m_window);
+		break;
+	case GameState::Dungeon:
+		m_tileMap->DrawDungeon(view2);
+		m_window.draw(m_player->getAnimatedSpriteFrame());
+		m_window.setView(view2);
+		break;
+	default:
+		break;
+	}
 	m_window.display();
 }
 
@@ -122,31 +188,39 @@ void Game::handleInputs()
 	//	break;
 	//}
 
+	
 	if (sf::Keyboard::isKeyPressed(sf::Keyboard::D)) 
 	{
-		DEBUG_MSG("gpp::Events::Event::Move_RIGHT_EVENT");
+		//DEBUG_MSG("gpp::Events::Event::Move_RIGHT_EVENT");
 		input.setCurrent(gpp::Events::Event::PLAYERMOVERIGTH);
 	}
 	else if (sf::Keyboard::isKeyPressed(sf::Keyboard::A))
 	{
-		DEBUG_MSG("gpp::Events::Event::Move_LEFT_EVENT");
+		//DEBUG_MSG("gpp::Events::Event::Move_LEFT_EVENT");
 		input.setCurrent(gpp::Events::Event::PLAYERMOVELEFT);
 	}
 	else if (sf::Keyboard::isKeyPressed(sf::Keyboard::W))
 	{
-		DEBUG_MSG("gpp::Events::Event::Move_UP_EVENT");
+		//DEBUG_MSG("gpp::Events::Event::Move_UP_EVENT");
 		input.setCurrent(gpp::Events::Event::PLAYERMOVEUP);
 	}
 	else if (sf::Keyboard::isKeyPressed(sf::Keyboard::S))
 	{
-		DEBUG_MSG("gpp::Events::Event::Move_DOWN_EVENT");
+		//DEBUG_MSG("gpp::Events::Event::Move_DOWN_EVENT");
 		input.setCurrent(gpp::Events::Event::PLAYERMOVEDOWN);
 	}
 	else
 	{
-		DEBUG_MSG("gpp::Events::Event::IDLE");
+		//DEBUG_MSG("gpp::Events::Event::IDLE");
 		input.setCurrent(gpp::Events::Event::IDLE);
 	}
+	bool colDown = m_player->getColDown();
+	bool colUp = m_player->getColUp();
+	bool colRight = m_player->getColRight();
+	bool colLeft = m_player->getColLeft();
+
+	CollisionsCheck collisionDown{ colRight,colLeft,colUp,colDown };
+	
 	// Handle input to Player
 	m_player->handleKeyInput(input);
 	m_player->update();
