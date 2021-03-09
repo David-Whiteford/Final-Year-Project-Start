@@ -47,7 +47,9 @@ public:
 		Skull = '8',
 		Bones = '9',
 		Chains = 'B', 
-		MonsterTrigger = 'C'
+		MonsterTrigger = 'C',
+		Plant = 'P',
+		SpawnPoint = 'S'
 		
 	};
 
@@ -125,7 +127,7 @@ public:
 	bool placeTile(Tile& t_rect, char t_tile);
 	void placeMonsterTrigger();
 	void placeDecorInRoom();
-	sf::Vector2f playerStartPos();
+	void playerStartPos();
 
 
 private:

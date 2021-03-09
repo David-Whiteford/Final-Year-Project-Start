@@ -38,6 +38,7 @@ private:
 	std::vector<Tiles*> m_cavesVec;
 	std::vector<Tiles*> m_tileVec;
 	std::vector<Tiles*> m_dunTileVec;
+	std::vector<sf::Vector2f> m_enemySpawn;
 	sf::Texture m_texture;
 	sf::Texture m_dunTexture;
 	static const int m_mapWidth = 30;
@@ -49,9 +50,9 @@ private:
 	//DungeonTiles
 	sf::Sprite m_floorTile, m_wallTile, m_corridorTile, m_DoorTile , m_stairsTile;
 	//Decor Tiles
-	sf::Sprite m_skullTile , m_chainsTile, m_chestTile;
+	sf::Sprite m_chainsTile, m_chestTile,m_plantTile;
 	//Trgger Tiles
-	sf::Sprite m_monsterSpawn;
+	sf::Sprite m_skullTile, m_spawnPoint;
 
 	sf::Vector2f m_tilePosition = sf::Vector2f(0.0f, 0.0f);
 	int m_tileSize = 16;

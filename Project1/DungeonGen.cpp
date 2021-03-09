@@ -277,80 +277,70 @@ bool DungeonGen::placeTile(Tile& t_Tile, char t_tile)
 	}
 	return true;
 }
-
-void DungeonGen::placeMonsterTrigger()
-{
-	if (m_rooms.empty() == false)
-	{
-		int y = 0;
-		int x = 0;
-		for (int i = 0; i < m_rooms.size(); i++)
-		{
-			x = m_rooms[i].x + m_rooms[i].width / 2;
-			y = m_rooms[i].y + m_rooms[i].height / 2;
-			if (getTile(x, y) == FloorTile)
-			{
-				setTile(x, y, MonsterTrigger);
-				m_rooms.erase(m_rooms.begin() + i);
-				//return true;
-			}
-		}
-	}
-	//return false;
-}
-
 void DungeonGen::placeDecorInRoom()
 {
-	int randoDecor = randomInt(0 , 2);
 	
+	std::cout << "Room Size " << m_rooms.size() << std::endl;
 	if (m_rooms.empty() == false)
 	{
-		/*int randRoom = randomInt(m_rooms.size());*/
-
 		for (int i = 0; i < m_rooms.size(); i++)
 		{
-			int x = randomInt(m_rooms[i].x, m_rooms[i].x + m_rooms[i].width - 1);
-			int y = randomInt(m_rooms[i].y, m_rooms[i].y + m_rooms[i].height - 1);
-			if (getTile(x, y) == FloorTile && getTile(x + 1, y) != Door1
-				&& getTile(x - 1, y) != Door1 && getTile(x, y + 1) != Door1
-				&& getTile(x, y - 1) != Door1)
+			int decorType = 0;
+			int maxDecorInRoom = randomInt(3, 6);;
+			for (int j = 0; j < maxDecorInRoom; j++)
 			{
-				if (randoDecor == 0) {
-					setTile(x, y, Chest);
+				int x = randomInt(m_rooms[i].x, m_rooms[i].x + m_rooms[i].width - 1);
+				int y = randomInt(m_rooms[i].y, m_rooms[i].y + m_rooms[i].height - 1);
+				
+				if (decorType > 3 && decorType < maxDecorInRoom)
+				{
+					decorType = randomInt(1, 3);
 				}
-				else if (randoDecor == 1) {
-					setTile(x, y, Skull);
+				if (getTile(x, y) == FloorTile && getTile(x + 1, y) != Door1
+					&& getTile(x - 1, y) != Door1 && getTile(x, y + 1) != Door1
+					&& getTile(x, y - 1) != Door1)
+				{
+					if (decorType == 0) {
+						setTile(x, y, Chest);
+					}
+					else if (decorType == 1) {
+						setTile(x, y, Skull);
+					}
+					else if (decorType == 2) {
+						setTile(x, y, Chest);
+					}
+					else if (decorType ==3) {
+						setTile(x, y, Plant);
+					}
+					decorType++;
+					
 				}
-				else if (randoDecor == 2) {
-					setTile(x, y, Chest);
-				}
-
-				m_rooms.erase(m_rooms.begin() + i);
-				DEBUG_MSG("Managed to place Chest tile");
+				
 			}
+			m_rooms.erase(m_rooms.begin() + i);
 		}
 
 	}
 	DEBUG_MSG("Issue placing tiles tile");
 }
 
-sf::Vector2f DungeonGen::playerStartPos()
+void DungeonGen::playerStartPos()
 {
-	sf::Vector2f startPos;
 	if (m_rooms.empty() == false)
 	{
-		int y = 0;
-		int x = 0;
-		
-		x = m_rooms[0].x +2 + m_rooms[0].width - 2;
-		y = m_rooms[0].y +2 + m_rooms[0].height - 2;
-		if (getTile(x, y) == FloorTile)
+		for (int i = 0; i < m_rooms.size(); i++)
 		{
-			startPos = sf::Vector2f(x, y);
-		}
-		
-	}
-	return startPos;
+			int x = randomInt(m_rooms[i].x, m_rooms[i].x + m_rooms[i].width - 1);
+			int y = randomInt(m_rooms[i].y, m_rooms[i].y + m_rooms[i].height - 1);
 
+			if (getTile(x, y) == FloorTile && getTile(x + 1, y) != Door1
+				&& getTile(x - 1, y) != Door1 && getTile(x, y + 1) != Door1
+				&& getTile(x, y - 1) != Door1)
+			{
+				setTile(x, y, SpawnPoint);
+			}
+		}
+	}
+	DEBUG_MSG("Issue placing tiles tile");
 }
 

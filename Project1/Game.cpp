@@ -12,9 +12,6 @@ Game::Game() :
 	m_triggersVec = m_tileMap->getCavesVec();
 	m_player->setDebugRects(m_obstaclesVec);
 	m_player->setDebugRects(m_triggersVec);
-
-
-
 }
 
 
@@ -101,14 +98,12 @@ void Game::update(double dt)
 	case GameState::Dungeon:
 		if (m_dungeonTest == true)
 		{
-			
 			m_player->clearObstacleVec();
 			m_player->clearTriggerVec();
 			m_player->setIfInTrigger(false);
 			m_dungeon->generateMap(100);
+			m_dungeon->playerStartPos();
 			m_dungeon->placeDecorInRoom();
-			m_dungeon->placeMonsterTrigger();
-			m_player->setPosition(m_dungeon->playerStartPos());
 			m_dungeon->print();
 			m_dungeon->Set2DVec(m_tileMap);
 			m_tileMap->Dun(m_dungeon->getTileMapVec(), m_window, m_mapSize, m_mapSize);
@@ -160,7 +155,6 @@ void Game::render()
 		break;
 	case GameState::OverWorld:
 		m_tileMap->DrawOverWorld(view2);
-		//m_tileMap->DrawDungeon(view2);
 		m_window.draw(m_player->getAnimatedSpriteFrame());
 		m_window.setView(view2);
 		m_player->render(m_window);
