@@ -74,8 +74,16 @@ bool DungeonGen::createFeat(int t_x, int t_y, Direction t_direction)
 	{
 		if (makeRoom(t_x, t_y, t_direction,false))
 		{
-			setTile(t_x, t_y, Door1);
-			return true;
+			if (t_direction == North || t_direction == South)
+			{
+				setTile(t_x, t_y, Door2);
+				return true;
+			}
+			else {
+				setTile(t_x, t_y, Door1);
+				return true;
+			}
+
 		}
 	}
 	else
@@ -84,7 +92,15 @@ bool DungeonGen::createFeat(int t_x, int t_y, Direction t_direction)
 		{
 			if (getTile(t_x + x, t_y + y) == FloorTile)
 			{
-				setTile(t_x,t_y,Door1);
+				if (t_direction == North || t_direction == South)
+				{
+					setTile(t_x, t_y, Door2);
+					return true;
+				}
+				else {
+					setTile(t_x, t_y, Door1);
+					return true;
+				}
 			}
 			else
 			{
@@ -291,11 +307,7 @@ void DungeonGen::placeDecorInRoom()
 			{
 				int x = randomInt(m_rooms[i].x, m_rooms[i].x + m_rooms[i].width - 1);
 				int y = randomInt(m_rooms[i].y, m_rooms[i].y + m_rooms[i].height - 1);
-				
-				if (decorType > 3 && decorType < maxDecorInRoom)
-				{
-					decorType = randomInt(1, 3);
-				}
+
 				if (getTile(x, y) == FloorTile && getTile(x + 1, y) != Door1
 					&& getTile(x - 1, y) != Door1 && getTile(x, y + 1) != Door1
 					&& getTile(x, y - 1) != Door1)
@@ -307,9 +319,12 @@ void DungeonGen::placeDecorInRoom()
 						setTile(x, y, Skull);
 					}
 					else if (decorType == 2) {
-						setTile(x, y, Chest);
+						setTile(x, y, Potion);
 					}
-					else if (decorType ==3) {
+					else if (decorType == 3) {
+						setTile(x, y, Plant);
+					}
+					else if (decorType == 4) {
 						setTile(x, y, Plant);
 					}
 					decorType++;
@@ -330,10 +345,10 @@ void DungeonGen::playerStartPos()
 	{
 		for (int i = 0; i < m_rooms.size(); i++)
 		{
-			int x = randomInt(m_rooms[i].x, m_rooms[i].x + m_rooms[i].width - 1);
-			int y = randomInt(m_rooms[i].y, m_rooms[i].y + m_rooms[i].height - 1);
+			int x = randomInt(m_rooms[i].x + m_rooms[i].width / 2, m_rooms[i].x + m_rooms[i].width /2);
+			int y = randomInt(m_rooms[i].y + m_rooms[i].height /2 , m_rooms[i].y + m_rooms[i].height / 2);
 
-			if (getTile(x, y) == FloorTile && getTile(x + 1, y) != Door1
+			if (getTile(x , y) == FloorTile && getTile(x + 1, y) != Door1
 				&& getTile(x - 1, y) != Door1 && getTile(x, y + 1) != Door1
 				&& getTile(x, y - 1) != Door1)
 			{
@@ -341,6 +356,25 @@ void DungeonGen::playerStartPos()
 			}
 		}
 	}
-	DEBUG_MSG("Issue placing tiles tile");
+	DEBUG_MSG("Issue placing starting position tile");
+}
+void DungeonGen::playerChainDecorOnWalls()
+{
+	if (m_rooms.empty() == false)
+	{
+		for (int i = 0; i < m_rooms.size(); i++)
+		{
+			int x = randomInt(m_rooms[i].x +1, m_rooms[i].x + m_rooms[i].width -1);
+			int y = randomInt(m_rooms[i].y, m_rooms[i].y);
+
+			if (getTile(x, y) == Wall && 
+				getTile(x , y) != Door1 && 
+				getTile(x, y ) != Door2)
+			{
+				setTile(x, y, Chains);
+			}
+		}
+	}
+	DEBUG_MSG("Issue placing chain Decor tile");
 }
 

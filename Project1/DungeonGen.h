@@ -36,20 +36,19 @@ public:
 	enum DungeonTiles
 	{
 		UnusedTile = 'A',
-		FloorTile = '1',
-		CorridorTile = '2',
 		Wall = '0',
+		FloorTile = '1',
+		CorridorTile = '1',
+		Plant = '2',
 		Door1 = '3',
 		Door2 = '4',
-		UpStairs = '5',
-		DownStairs = '6',
+		Potion = '5',
+		Chains = '6',
 		Chest = '7',
 		Skull = '8',
-		Bones = '9',
-		Chains = 'B', 
-		MonsterTrigger = 'C',
-		Plant = 'P',
-		SpawnPoint = 'S'
+		SpawnPoint = '9'
+		
+
 		
 	};
 
@@ -127,7 +126,8 @@ public:
 	bool placeTile(Tile& t_rect, char t_tile);
 	void placeMonsterTrigger();
 	void placeDecorInRoom();
-	void playerStartPos();
+	void playerStartPos(); 
+	void playerChainDecorOnWalls();
 
 
 private:

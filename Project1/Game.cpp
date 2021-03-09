@@ -103,6 +103,7 @@ void Game::update(double dt)
 			m_player->setIfInTrigger(false);
 			m_dungeon->generateMap(100);
 			m_dungeon->playerStartPos();
+			m_dungeon->playerChainDecorOnWalls();
 			m_dungeon->placeDecorInRoom();
 			m_dungeon->print();
 			m_dungeon->Set2DVec(m_tileMap);
@@ -120,12 +121,12 @@ void Game::update(double dt)
 	default:
 		break;
 	}
-	/*if (sf::Keyboard::isKeyPressed(sf::Keyboard::Space) && m_transitionStart == false)
+	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Space) && m_transitionStart == false)
 	{
 		m_transitionStart = true;
 		m_dungeonTest = true;
 		m_currentGameState = GameState::Dungeon;
-	}*/
+	}
 	//if (timer < 0.5 && m_transitionStart == true)
 	//{
 	//	//increment timer

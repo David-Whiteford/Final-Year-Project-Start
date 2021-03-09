@@ -31,20 +31,24 @@ void Tilemap::DungeonTilesSetUp()
 	m_wallTile.setTexture(m_dunTexture);
 	m_wallTile.setTextureRect(sf::IntRect(94, 112, 16, 16));
 	m_chainsTile.setTexture(m_texture);
-	m_chainsTile.setTextureRect(sf::IntRect(416, 20, 16, 16));
+	m_chainsTile.setTextureRect(sf::IntRect(64, 16, 16, 16));
 	m_chestTile.setTexture(m_texture);
 	m_chestTile.setTextureRect(sf::IntRect(416, 320, 16, 16));
 	m_DoorTile.setTexture(m_texture);
 	m_DoorTile.setTextureRect(sf::IntRect(32, 0, 16, 16));
+	m_Door2Tile.setTexture(m_texture);
+	m_Door2Tile.setTextureRect(sf::IntRect(48, 0, 16, 16));
 	m_plantTile.setTexture(m_texture);
 	m_plantTile.setTextureRect(sf::IntRect(64, 0, 16, 16));
-
+	m_potionTile.setTexture(m_texture);
+	m_potionTile.setTextureRect(sf::IntRect(64, 32, 16, 16));
+	
 
 	//trigger
 	m_skullTile.setTexture(m_texture);
 	m_skullTile.setTextureRect(sf::IntRect(448, 32, 16, 16));
 	m_spawnPoint.setTexture(m_texture);
-	m_spawnPoint.setTextureRect(sf::IntRect(560, 80, 16, 16));
+	m_spawnPoint.setTextureRect(sf::IntRect(80, 0, 16, 16));
 
 }
 void Tilemap::OverWorldTilesSetUp()
@@ -211,7 +215,7 @@ std::vector<Tiles*> Tilemap::getCavesVec()
 
 void Tilemap::Dun(std::vector<int> &t_dunVec, sf::RenderWindow& t_window, int t_mapWidth, int t_mapHeight)
 {
-	int type = 0;
+	char type = 0;
 	int x = 0;
 	int y = 0;	
 	for(int i = 0; i < t_dunVec.size();i++)
@@ -230,6 +234,8 @@ void Tilemap::Dun(std::vector<int> &t_dunVec, sf::RenderWindow& t_window, int t_
 			case 2:
 				m_dunTileVec.push_back(new Tiles(t_window, m_tileSize,
 					sf::Vector2f(x * m_tileSize, y * m_tileSize), m_floorTile, "Floor"));
+				m_dunTileVec.push_back(new Tiles(t_window, m_tileSize,
+					sf::Vector2f(x * m_tileSize, y * m_tileSize), m_plantTile, "Obstacle"));
 				break;
 			case 3:
 				m_dunTileVec.push_back(new Tiles(t_window, m_tileSize,
@@ -239,15 +245,19 @@ void Tilemap::Dun(std::vector<int> &t_dunVec, sf::RenderWindow& t_window, int t_
 				break;
 			case 4:
 				m_dunTileVec.push_back(new Tiles(t_window, m_tileSize,
-					sf::Vector2f(x * m_tileSize, y * m_tileSize), m_dirtTile, "Dirt"));
+					sf::Vector2f(x * m_tileSize, y * m_tileSize), m_floorTile, "Floor"));
+				m_dunTileVec.push_back(new Tiles(t_window, m_tileSize,
+					sf::Vector2f(x * m_tileSize, y * m_tileSize), m_Door2Tile, "Door2"));
 				break;
 			case 5:
 				m_dunTileVec.push_back(new Tiles(t_window, m_tileSize,
-					sf::Vector2f(x * m_tileSize, y * m_tileSize), m_dirtTile, "Dirt"));
+					sf::Vector2f(x * m_tileSize, y * m_tileSize), m_potionTile, "Obstacle"));
 				break;
 			case 6:
 				m_dunTileVec.push_back(new Tiles(t_window, m_tileSize,
-					sf::Vector2f(x * m_tileSize, y * m_tileSize), m_dirtTile, "Dirt"));
+					sf::Vector2f(x * m_tileSize, y * m_tileSize), m_wallTile, "Obstacle"));
+				m_dunTileVec.push_back(new Tiles(t_window, m_tileSize,
+					sf::Vector2f(x * m_tileSize, y * m_tileSize), m_chainsTile, "Chain"));
 				break;
 			case 7:
 				m_dunTileVec.push_back(new Tiles(t_window, m_tileSize,
@@ -274,13 +284,14 @@ void Tilemap::Dun(std::vector<int> &t_dunVec, sf::RenderWindow& t_window, int t_
 				m_dunTileVec.push_back(new Tiles(t_window, m_tileSize,
 					sf::Vector2f(x * m_tileSize, y * m_tileSize), m_chainsTile, "Chains"));
 				break;
-			case 12:
+			case 9:
 				m_dunTileVec.push_back(new Tiles(t_window, m_tileSize,
 					sf::Vector2f(x * m_tileSize, y * m_tileSize), m_floorTile, "Floor"));
 				m_dunTileVec.push_back(new Tiles(t_window, m_tileSize,
 					sf::Vector2f(x * m_tileSize, y * m_tileSize), m_spawnPoint, "Spawn"));
+				m_exits.push_back(sf::Vector2f(x * m_tileSize, y * m_tileSize));
 				break;
-			case 11:
+			case 'P':
 				m_dunTileVec.push_back(new Tiles(t_window, m_tileSize,
 					sf::Vector2f(x * m_tileSize, y * m_tileSize), m_floorTile, "Floor"));
 				m_dunTileVec.push_back(new Tiles(t_window, m_tileSize,
