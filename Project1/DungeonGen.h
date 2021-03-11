@@ -44,6 +44,9 @@ public:
 		Door2 = '4',
 		Potion = '5',
 		Chains = '6',
+		Torch = 'T',
+		Picture = 'P',
+		Money = 'M',
 		Chest = '7',
 		Skull = '8',
 		SpawnPoint = '9'
@@ -126,8 +129,13 @@ public:
 	bool placeTile(Tile& t_rect, char t_tile);
 	void placeMonsterTrigger();
 	void placeDecorInRoom();
+	void placeDecorInHalls();
 	void playerStartPos(); 
-	void playerChainDecorOnWalls();
+	void placeDecorOnWalls();
+	bool CheckXAndYPos(int x, int y);
+	sf::Vector2i GenXAndYAtTopWall(int t_i, std::vector<Tile>& t_tileVec);
+	sf::Vector2i GenXAndYAtBottomWall(int t_i, std::vector<Tile>& t_tileVec);
+	
 
 
 private:
@@ -138,6 +146,7 @@ private:
 	int m_height;
 	int m_roomMaxDecor = 10;
 	std::vector<char> m_tiles;
+	std::vector<Tile> m_halls;
 	std::vector<Tile> m_rooms;
 	std::vector<Tile> m_exit;
 	std::vector<int> m_tileNums;
