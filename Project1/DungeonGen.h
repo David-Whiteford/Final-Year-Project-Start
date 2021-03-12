@@ -38,6 +38,7 @@ public:
 		UnusedTile = 'A',
 		Wall = '0',
 		FloorTile = '1',
+		StoneFloorTile = 'S',
 		CorridorTile = '1',
 		Plant = '2',
 		Door1 = '3',
@@ -50,10 +51,8 @@ public:
 		Chest = '7',
 		Skull = '8',
 		SpawnPoint = '9'
-		
-
-		
 	};
+	
 
 	enum Direction
 	{
@@ -80,7 +79,7 @@ public:
 
 		for (int i = 0; i < m_tiles.size(); i++)
 		{
-			m_tempTileVec.push_back(m_tiles[i] - '0');
+			m_tempTileVec.push_back(m_tiles[i] );
 		}
 		for (int row = 0; row < m_height; row++) 
 		{
@@ -96,7 +95,7 @@ public:
 		}
 		t_tilemap->LoadMap(m_tileArr,1,1);
 	}
-	std::vector<int> &getTileMapVec()
+	std::vector<char> &getTileMapVec()
 	{
 		return m_tempTileVec;
 	}
@@ -130,6 +129,7 @@ public:
 	void placeMonsterTrigger();
 	void placeDecorInRoom();
 	void placeDecorInHalls();
+	void FloorDecorTiles();
 	void playerStartPos(); 
 	void placeDecorOnWalls();
 	bool CheckXAndYPos(int x, int y);
@@ -140,7 +140,7 @@ public:
 
 private:
 	sf::Vector2f m_startPosition;
-	std::vector<int> m_tempTileVec;
+	std::vector<char> m_tempTileVec;
 	int m_objectCount = 0;
 	int m_width;
 	int m_height;

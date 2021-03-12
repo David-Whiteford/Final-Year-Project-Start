@@ -23,7 +23,7 @@ public:
 	std::vector<Tiles*> getDunObstaclesVec();
 	std::vector<Tiles*> getOverWorldObstaclesVec();
 	std::vector<Tiles*> getCavesVec();
-	void Dun(std::vector<int> &t_dunVec, sf::RenderWindow& t_window ,int t_mapWidth,  int t_mapHeight);
+	void Dun(std::vector<char> &t_dunVec, sf::RenderWindow& t_window ,int t_mapWidth,  int t_mapHeight);
 	void PushValsToVec()
 	{
 		for (int row = 0; row < m_mapWidth; row++)
@@ -49,9 +49,9 @@ private:
 	sf::Sprite m_grassTile, m_waterTile, m_dirtTile, m_caveTile;
 	
 	//DungeonTiles
-	sf::Sprite m_floorTile, m_wallTile, m_corridorTile, m_DoorTile, m_Door2Tile, m_stairsTile;
+	sf::Sprite m_floorTile, m_stoneFloorTile, m_wallTile, m_corridorTile, m_DoorTile, m_Door2Tile, m_stairsTile;
 	//Decor Tiles
-	sf::Sprite m_chainsTile, m_chestTile,m_plantTile, m_potionTile;
+	sf::Sprite m_chainsTile, m_chestTile,m_plantTile, m_potionTile,m_torchTile,m_moneyTile;
 	//Trgger Tiles
 	sf::Sprite m_skullTile, m_spawnPoint;
 

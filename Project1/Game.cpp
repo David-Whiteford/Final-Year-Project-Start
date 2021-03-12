@@ -102,6 +102,7 @@ void Game::update(double dt)
 			m_player->clearTriggerVec();
 			m_player->setIfInTrigger(false);
 			m_dungeon->generateMap(100);
+			m_dungeon->FloorDecorTiles();
 			m_dungeon->playerStartPos();
 			m_dungeon->placeDecorOnWalls();
 			m_dungeon->placeDecorInRoom();
