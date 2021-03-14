@@ -32,6 +32,7 @@ public:
 	{
 		int x, y;
 		int width, height;
+		int maxDecor = 0;
 	};
 	enum DungeonTiles
 	{
@@ -50,7 +51,10 @@ public:
 		Money = 'M',
 		Chest = '7',
 		Skull = '8',
-		SpawnPoint = '9'
+		SpawnPoint = '9',
+		SpikeTrap = 'ST',
+		TrapDoorTrap = 'TD',
+		WallSpikeTrap = 'WS'
 	};
 	
 
@@ -121,6 +125,7 @@ public:
 	{
 		m_tiles[t_x + t_y * m_width] = t_tile;
 	}
+	void createRoomFeatures(Tilemap*& t_tilemap);
 	bool createFeature();
 	bool createFeat(int t_x ,int t_y, Direction t_direction);
 	bool makeRoom(int t_x, int t_y, Direction t_direction,bool t_firstRoom);
@@ -135,7 +140,8 @@ public:
 	bool CheckXAndYPos(int x, int y);
 	sf::Vector2i GenXAndYAtTopWall(int t_i, std::vector<Tile>& t_tileVec);
 	sf::Vector2i GenXAndYAtBottomWall(int t_i, std::vector<Tile>& t_tileVec);
-	
+	void createTrapsInRooms();
+
 
 
 private:

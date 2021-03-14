@@ -51,7 +51,7 @@ private:
 	//DungeonTiles
 	sf::Sprite m_floorTile, m_stoneFloorTile, m_wallTile, m_corridorTile, m_DoorTile, m_Door2Tile, m_stairsTile;
 	//Decor Tiles
-	sf::Sprite m_chainsTile, m_chestTile,m_plantTile, m_potionTile,m_torchTile,m_moneyTile;
+	sf::Sprite m_chainsTile, m_chestTile,m_plantTile, m_potionTile,m_torchTile,m_moneyTile,m_pictureTile;
 	//Trgger Tiles
 	sf::Sprite m_skullTile, m_spawnPoint;
 

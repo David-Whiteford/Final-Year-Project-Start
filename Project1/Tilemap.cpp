@@ -51,7 +51,10 @@ void Tilemap::DungeonTilesSetUp()
 	m_moneyTile.setTextureRect(sf::IntRect(80, 32, 16, 16));
 
 	m_torchTile.setTexture(m_texture);
-	m_torchTile.setTextureRect(sf::IntRect(119, 95, 16, 16));
+	m_torchTile.setTextureRect(sf::IntRect(80, 48, 16, 16));
+
+	m_pictureTile.setTexture(m_texture);
+	m_pictureTile.setTextureRect(sf::IntRect(64, 64, 16, 16));
 	 
 		
 		
@@ -313,6 +316,9 @@ void Tilemap::Dun(std::vector<char> &t_dunVec, sf::RenderWindow& t_window, int t
 			case 'T':
 				m_dunTileVec.push_back(new Tiles(t_window, m_tileSize,
 					sf::Vector2f(x * m_tileSize, y * m_tileSize), m_torchTile, "Decor"));
+			case 'P':
+				m_dunTileVec.push_back(new Tiles(t_window, m_tileSize,
+					sf::Vector2f(x * m_tileSize, y * m_tileSize), m_pictureTile, "Decor"));
 				break;
 			default:
 				break;

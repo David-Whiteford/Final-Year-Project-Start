@@ -101,14 +101,7 @@ void Game::update(double dt)
 			m_player->clearObstacleVec();
 			m_player->clearTriggerVec();
 			m_player->setIfInTrigger(false);
-			m_dungeon->generateMap(100);
-			m_dungeon->FloorDecorTiles();
-			m_dungeon->playerStartPos();
-			m_dungeon->placeDecorOnWalls();
-			m_dungeon->placeDecorInRoom();
-			m_dungeon->placeDecorInHalls();
-			m_dungeon->print();
-			m_dungeon->Set2DVec(m_tileMap);
+			m_dungeon->createRoomFeatures(m_tileMap);
 			m_tileMap->Dun(m_dungeon->getTileMapVec(), m_window, m_mapSize, m_mapSize);
 			m_dunObstaclesVec.clear();
 			m_dunObstaclesVec = m_tileMap->getDunObstaclesVec();
