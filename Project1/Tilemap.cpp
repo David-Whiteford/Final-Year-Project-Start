@@ -53,6 +53,12 @@ void Tilemap::DungeonTilesSetUp()
 	m_torchTile.setTexture(m_texture);
 	m_torchTile.setTextureRect(sf::IntRect(80, 48, 16, 16));
 
+	m_prisonTileOne.setTexture(m_texture);
+	m_prisonTileOne.setTextureRect(sf::IntRect(96, 0, 16, 16));
+
+	m_prisonTileTwo.setTexture(m_texture);
+	m_prisonTileTwo.setTextureRect(sf::IntRect(96, 16, 16, 16));
+
 	m_pictureTile.setTexture(m_texture);
 	m_pictureTile.setTextureRect(sf::IntRect(64, 64, 16, 16));
 	 
@@ -316,9 +322,18 @@ void Tilemap::Dun(std::vector<char> &t_dunVec, sf::RenderWindow& t_window, int t
 			case 'T':
 				m_dunTileVec.push_back(new Tiles(t_window, m_tileSize,
 					sf::Vector2f(x * m_tileSize, y * m_tileSize), m_torchTile, "Decor"));
+				break;
 			case 'P':
 				m_dunTileVec.push_back(new Tiles(t_window, m_tileSize,
 					sf::Vector2f(x * m_tileSize, y * m_tileSize), m_pictureTile, "Decor"));
+				break;
+			case 'V':
+				m_dunTileVec.push_back(new Tiles(t_window, m_tileSize,
+					sf::Vector2f(x * m_tileSize, y * m_tileSize), m_prisonTileOne, "Decor"));
+				break;
+			case 'B':
+				m_dunTileVec.push_back(new Tiles(t_window, m_tileSize,
+					sf::Vector2f(x * m_tileSize, y * m_tileSize), m_prisonTileTwo, "Decor"));
 				break;
 			default:
 				break;

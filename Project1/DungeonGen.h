@@ -32,7 +32,7 @@ public:
 	{
 		int x, y;
 		int width, height;
-		int maxDecor = 0;
+		int decorInRoom = 0;
 	};
 	enum DungeonTiles
 	{
@@ -44,6 +44,8 @@ public:
 		Plant = '2',
 		Door1 = '3',
 		Door2 = '4',
+		PrisonTileOne = 'V',
+		PrisonTileTwo = 'B',
 		Potion = '5',
 		Chains = '6',
 		Torch = 'T',
@@ -133,9 +135,11 @@ public:
 	bool placeTile(Tile& t_rect, char t_tile);
 	void placeMonsterTrigger();
 	void placeDecorInRoom();
+	void createUniqueRooms();
 	void placeDecorInHalls();
 	void FloorDecorTiles();
 	void playerStartPos(); 
+	void Test() { placeDecorInRoom(); };
 	void placeDecorOnWalls();
 	bool CheckXAndYPos(int x, int y);
 	sf::Vector2i GenXAndYAtTopWall(int t_i, std::vector<Tile>& t_tileVec);
