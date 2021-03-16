@@ -51,9 +51,10 @@ private:
 	//DungeonTiles
 	sf::Sprite m_floorTile, m_stoneFloorTile, m_wallTile, m_corridorTile, m_DoorTile, m_Door2Tile, m_stairsTile;
 	//Decor Tiles
-	sf::Sprite m_chainsTile, m_chestTile,m_plantTile, m_potionTile,m_torchTile,m_moneyTile,m_pictureTile,m_prisonTileOne, m_prisonTileTwo;
+	sf::Sprite m_chainsTile, m_chestTile,m_plantTile, m_potionTile,m_torchTile,m_moneyTile,m_pictureTile
+		,m_prisonTileOne, m_prisonTileTwo, m_chairTileF , m_coffinTileOne, m_coffinTileTwo;
 	//Trgger Tiles
-	sf::Sprite m_skullTile, m_spawnPoint;
+	sf::Sprite m_skullTile, m_spawnPoint, m_spikeTrap;
 
 	sf::Vector2f m_tilePosition = sf::Vector2f(0.0f, 0.0f);
 	int m_tileSize = 16;

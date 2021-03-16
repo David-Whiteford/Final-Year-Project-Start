@@ -364,14 +364,18 @@ void DungeonGen::placeDecorInRoom()
 					int y = pos.y;
 
 					if (getTile(x, y) == FloorTile || getTile(x, y) == StoneFloorTile)
-
 					{
 						if (getTile(x + 1, y) != Door1 && getTile(x - 1, y) != Door1
 							&& getTile(x, y + 1) != Door2 && getTile(x, y - 1) != Door2)
 						{
 							placedDecor = true;
 							setTile(x, y, Potion);
+							y += 1;
 							m_rooms[i].decorInRoom++;
+							if (getTile(x, y) == FloorTile || getTile(x, y) == StoneFloorTile)
+							{
+								setTile(x, y, ChairF);
+							}
 						}
 					}
 				}
@@ -407,7 +411,12 @@ void DungeonGen::placeDecorInRoom()
 						{
 							placedDecor = true;
 							setTile(x, y, Money);
+							y += 1;
 							m_rooms[i].decorInRoom++;
+							if (getTile(x, y) == FloorTile || getTile(x, y) == StoneFloorTile)
+							{
+								setTile(x, y, ChairF);
+							}
 						}
 					}
 				}
@@ -427,34 +436,100 @@ void DungeonGen::placeDecorInRoom()
 	}
 	DEBUG_MSG("Issue placing tiles tile");
 }
-
-void DungeonGen::createUniqueRooms()
+void DungeonGen::createJailRoom()
 {
 	if (m_rooms.empty() == false)
 	{
 		for (int i = 0; i < m_rooms.size(); i++)
 		{
-			int x = randomInt(m_rooms[i].x + 1, m_rooms[i].x + m_rooms[i].width - 1);
+			int x = m_rooms[i].x;
 			int y = m_rooms[i].y - 1;
-
-			
-			if (getTile(x, y) == Wall)
+			int maxDecor = 2;
+			for (int decorInRoom = 0; decorInRoom < maxDecor; decorInRoom++)
 			{
-				if (getTile(x, y + 1) == FloorTile
-					|| getTile(x, y + 1) == StoneFloorTile)
+				if (getTile(x, y) == Wall)
 				{
-					setTile(x, y, PrisonTileOne);
-					setTile(x, y + 1, PrisonTileTwo);
-					x += 2;
+					if (getTile(x, y + 1) == FloorTile
+						|| getTile(x, y + 1) == StoneFloorTile)
+					{
+						setTile(x, y, PrisonTileOne);
+						setTile(x, y + 1, PrisonTileTwo);
+						x += 2; 
+						m_rooms[i].decorInRoom++;
+					}
 				}
 			}
 
-			if (m_rooms[i].decorInRoom > 0)
+			if (m_rooms[i].decorInRoom >= 1)
+			{
+				m_rooms.erase(m_rooms.begin() + i);
+			}
+			std::cout << "Room Size2: " << m_rooms.size() << std::endl;
+		}
+	}
+}
+
+void DungeonGen::createCoffinRoom()
+{
+	if (m_rooms.empty() == false)
+	{
+		for (int i = 0; i < m_rooms.size(); i++)
+		{
+			int maxDecorInRoom = 2;
+			for (int decorType = 0; decorType < maxDecorInRoom; )
+			{
+				sf::Vector2i pos = GenXAndYAtTopWall(i, m_rooms);
+				int x = pos.x;
+				int y = pos.y;
+				if (getTile(x, y) == FloorTile || getTile(x, y) == StoneFloorTile)
+				{
+					if (getTile(x + 1, y) == Door1 || getTile(x - 1, y) == Door1)	
+					{
+						y++;
+					}
+					else if (getTile(x, y + 1) == Door2 || getTile(x, y - 1) == Door2)
+					{
+						x++;
+					}
+					setTile(x, y, CoffinTileOne);
+					setTile(x, y++, CoffinTileTwo);
+					m_rooms[i].decorInRoom++;
+
+				}
+				decorType++;
+			}
+			if (m_rooms[i].decorInRoom >= 1)
 			{
 				m_rooms.erase(m_rooms.begin() + i);
 			}
 		}
 	}
+
+}
+
+void DungeonGen::createFeastRoom()
+{
+	if (m_rooms.empty() == false)
+	{
+		for (int i = 0; i < m_rooms.size(); i++)
+		{
+			int x = randomInt(m_rooms[i].x + m_rooms[i].width / 2, m_rooms[i].x + m_rooms[i].width / 2);
+			int y = randomInt(m_rooms[i].y + m_rooms[i].height / 2, m_rooms[i].y + m_rooms[i].height / 2);
+
+			if (getTile(x, y) == StoneFloorTile 
+				|| getTile(x, y) == FloorTile)
+			{
+				setTile(x, y, SpawnPoint);
+			}
+
+
+			if (m_rooms[i].decorInRoom >= 1)
+			{
+				m_rooms.erase(m_rooms.begin() + i);
+			}
+		}
+	}
+	DEBUG_MSG("Issue placing starting position tile");
 }
 
 void DungeonGen::playerStartPos()
@@ -477,6 +552,7 @@ void DungeonGen::playerStartPos()
 	}
 	DEBUG_MSG("Issue placing starting position tile");
 }
+
 void DungeonGen::placeDecorOnWalls()
 {
 	if (m_rooms.empty() == false)
@@ -537,16 +613,20 @@ void DungeonGen::createTrapsInRooms()
 {
 	if (m_rooms.empty() == false)
 	{
-		// get a random room and randomly place spike trap
-		int r = randomInt(m_rooms.size());
-		int x = randomInt(m_rooms[r].x + 1, m_rooms[r].x + m_rooms[r].width - 2);
-		int y = randomInt(m_rooms[r].y + 1, m_rooms[r].y + m_rooms[r].height - 2);
-
-		if (getTile(x, y) == FloorTile || getTile(x, y) == StoneFloorTile)
+		for (int i = 0; i < m_rooms.size(); i++)
 		{
-			setTile(x, y, SpikeTrap);
-		}
+			int maxTraps = 2;
+			for (int trap = 0; trap < maxTraps; trap++)
+			{
+				int x = randomInt(m_rooms[i].x, m_rooms[i].x + m_rooms[i].width);
+				int y = randomInt(m_rooms[i].y, m_rooms[i].y + m_rooms[i].height);
 
+				if (getTile(x, y) == FloorTile || getTile(x, y) == StoneFloorTile)
+				{
+					setTile(x, y, SpikeTrap);
+				}
+			}
+		}
 	}
 }
 void DungeonGen::FloorDecorTiles()
@@ -555,8 +635,8 @@ void DungeonGen::FloorDecorTiles()
 	{
 		for (int i = 0; i < m_rooms.size(); i++)
 		{
-			int xStart = m_rooms[i].x +1;
-			int xEnd = m_rooms[i].x + m_rooms[i].width-1;
+			int xStart = m_rooms[i].x ;
+			int xEnd = m_rooms[i].x + m_rooms[i].width;
 
 			int yStart = m_rooms[i].y +1;
 			int yBottom = m_rooms[i].y + m_rooms[i].height -2;
@@ -572,7 +652,7 @@ void DungeonGen::FloorDecorTiles()
 					}
 				}
 			}
-			xEnd = m_rooms[i].x + m_rooms[i].width -2;
+			xEnd = m_rooms[i].x + m_rooms[i].width -1;
 			for (int y = yStart; y < yBottom; y++)
 			{
 				if (y != yBottom)

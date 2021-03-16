@@ -49,7 +49,9 @@ void Tilemap::DungeonTilesSetUp()
 
 	m_moneyTile.setTexture(m_texture);
 	m_moneyTile.setTextureRect(sf::IntRect(80, 32, 16, 16));
-
+	m_chairTileF.setTexture(m_dunTexture);
+	m_chairTileF.setTextureRect(sf::IntRect(256, 63, 16, 16));
+	
 	m_torchTile.setTexture(m_texture);
 	m_torchTile.setTextureRect(sf::IntRect(80, 48, 16, 16));
 
@@ -62,7 +64,11 @@ void Tilemap::DungeonTilesSetUp()
 	m_pictureTile.setTexture(m_texture);
 	m_pictureTile.setTextureRect(sf::IntRect(64, 64, 16, 16));
 	 
-		
+	m_coffinTileOne.setTexture(m_texture);
+	m_coffinTileOne.setTextureRect(sf::IntRect(112, 0, 16, 16));
+
+	m_coffinTileTwo.setTexture(m_texture);
+	m_coffinTileTwo.setTextureRect(sf::IntRect(112, 16, 16, 16));
 		
 
 	//trigger
@@ -70,7 +76,8 @@ void Tilemap::DungeonTilesSetUp()
 	m_skullTile.setTextureRect(sf::IntRect(48, 64, 16, 16));
 	m_spawnPoint.setTexture(m_texture);
 	m_spawnPoint.setTextureRect(sf::IntRect(80, 0, 16, 16));
-
+	m_spikeTrap.setTexture(m_texture);
+	m_spikeTrap.setTextureRect(sf::IntRect(81, 64, 16, 16));
 }
 void Tilemap::OverWorldTilesSetUp()
 {
@@ -334,6 +341,19 @@ void Tilemap::Dun(std::vector<char> &t_dunVec, sf::RenderWindow& t_window, int t
 			case 'B':
 				m_dunTileVec.push_back(new Tiles(t_window, m_tileSize,
 					sf::Vector2f(x * m_tileSize, y * m_tileSize), m_prisonTileTwo, "Decor"));
+				break;
+			case 'O':
+				m_dunTileVec.push_back(new Tiles(t_window, m_tileSize,
+					sf::Vector2f(x * m_tileSize, y * m_tileSize), m_chairTileF, "Decor"));
+			case 'L':
+				m_dunTileVec.push_back(new Tiles(t_window, m_tileSize,
+					sf::Vector2f(x * m_tileSize, y * m_tileSize), m_spikeTrap, "Decor"));
+			case 'J':
+				m_dunTileVec.push_back(new Tiles(t_window, m_tileSize,
+					sf::Vector2f(x * m_tileSize, y * m_tileSize), m_coffinTileOne, "Decor"));
+			case 'K':
+				m_dunTileVec.push_back(new Tiles(t_window, m_tileSize,
+					sf::Vector2f(x * m_tileSize, y * m_tileSize), m_coffinTileTwo, "Decor"));
 				break;
 			default:
 				break;

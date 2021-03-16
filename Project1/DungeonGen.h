@@ -46,6 +46,8 @@ public:
 		Door2 = '4',
 		PrisonTileOne = 'V',
 		PrisonTileTwo = 'B',
+		CoffinTileOne = 'J',
+		CoffinTileTwo = 'K',
 		Potion = '5',
 		Chains = '6',
 		Torch = 'T',
@@ -54,7 +56,12 @@ public:
 		Chest = '7',
 		Skull = '8',
 		SpawnPoint = '9',
-		SpikeTrap = 'ST',
+		ChairL = 'CL',
+		ChairR = 'CR',
+		ChairF = 'O',
+		Table = 'TB',
+		Chair = 'TB',
+		SpikeTrap = 'L',
 		TrapDoorTrap = 'TD',
 		WallSpikeTrap = 'WS'
 	};
@@ -133,12 +140,18 @@ public:
 	bool makeRoom(int t_x, int t_y, Direction t_direction,bool t_firstRoom);
 	bool makeCorridor(int t_x, int t_y, Direction t_direction);
 	bool placeTile(Tile& t_rect, char t_tile);
-	void placeMonsterTrigger();
 	void placeDecorInRoom();
-	void createUniqueRooms();
+	void createUniqueRooms() 
+	{
+		createJailRoom();
+		createCoffinRoom();
+	}
 	void placeDecorInHalls();
 	void FloorDecorTiles();
-	void playerStartPos(); 
+	void playerStartPos();
+	void createJailRoom();
+	void createCoffinRoom();
+	void createFeastRoom();
 	void Test() { placeDecorInRoom(); };
 	void placeDecorOnWalls();
 	bool CheckXAndYPos(int x, int y);
