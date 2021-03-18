@@ -15,6 +15,8 @@ public:
 	void OverWorldTilesSetUp();
     void DungeonTilesSetUp();
 	void LoadMap(int arr[30][30],int t_mapWidth, int t_mapHeight);
+	
+	void SetDunDeor(int arr[30][30]);
 	void DrawOverWorld(sf::View t_view);
 	void DrawDungeon(sf::View t_view);
 	void setMap(sf::RenderWindow& t_window);
@@ -24,6 +26,7 @@ public:
 	std::vector<Tiles*> getOverWorldObstaclesVec();
 	std::vector<Tiles*> getCavesVec();
 	void Dun(std::vector<char> &t_dunVec, sf::RenderWindow& t_window ,int t_mapWidth,  int t_mapHeight);
+	void DunDecor(std::vector<char>& t_dunVec, sf::RenderWindow& t_window, int t_mapWidth, int t_mapHeight);
 	void PushValsToVec()
 	{
 		for (int row = 0; row < m_mapWidth; row++)
@@ -35,9 +38,11 @@ public:
 		}
 	}
 private:
+	
 	std::vector<Tiles*> m_cavesVec;
 	std::vector<Tiles*> m_tileVec;
 	std::vector<Tiles*> m_dunTileVec;
+	std::vector<Tiles*> m_dunDecorTileVec;
 	std::vector<sf::Vector2f> m_enemySpawn;
 	std::vector<sf::Vector2f> m_exits;
 	sf::Texture m_texture;
@@ -52,7 +57,7 @@ private:
 	sf::Sprite m_floorTile, m_stoneFloorTile, m_wallTile, m_corridorTile, m_DoorTile, m_Door2Tile, m_stairsTile;
 	//Decor Tiles
 	sf::Sprite m_chainsTile, m_chestTile,m_plantTile, m_potionTile,m_torchTile,m_moneyTile,m_pictureTile
-		,m_prisonTileOne, m_prisonTileTwo, m_chairTileF , m_coffinTileOne, m_coffinTileTwo;
+		,m_prisonTileOne, m_prisonTileTwo, m_chairTileF , m_coffinTileOne, m_coffinTileTwo, m_tableSprite;
 	//Trgger Tiles
 	sf::Sprite m_skullTile, m_spawnPoint, m_spikeTrap;
 

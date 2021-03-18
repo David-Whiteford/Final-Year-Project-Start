@@ -24,6 +24,7 @@ void DungeonGen::createRoomFeatures(Tilemap*& t_tilemap)
 	createTrapsInRooms();
 	FloorDecorTiles();
 	playerStartPos();
+	createFeastRoom();
 	placeDecorOnWalls();
 	placeDecorInRoom();
 	createUniqueRooms();
@@ -509,26 +510,56 @@ void DungeonGen::createCoffinRoom()
 
 void DungeonGen::createFeastRoom()
 {
+	std::cout << "Room Size Left: " << m_rooms.size() << std::endl;
+	int roomIndex = 0;
+	int offsetFromCentre = 1;
+	int maxRoomSizeRequired = 7;
+	bool roomFound = false;
 	if (m_rooms.empty() == false)
 	{
 		for (int i = 0; i < m_rooms.size(); i++)
 		{
-			int x = randomInt(m_rooms[i].x + m_rooms[i].width / 2, m_rooms[i].x + m_rooms[i].width / 2);
-			int y = randomInt(m_rooms[i].y + m_rooms[i].height / 2, m_rooms[i].y + m_rooms[i].height / 2);
-
-			if (getTile(x, y) == StoneFloorTile 
+			//find a room remaining of a certain size
+			if (m_rooms[i].width >= maxRoomSizeRequired && m_rooms[i].height >= maxRoomSizeRequired)
+			{
+				roomIndex = i;
+				std::cout << "Room Index: " << roomIndex << std::endl;
+				roomFound = true;
+			}
+		}
+		if (roomFound)
+		{
+			//get the middle of the room if one found 
+			int x = m_rooms[roomIndex].x + m_rooms[roomIndex].width  / 2;
+			int y = m_rooms[roomIndex].y + m_rooms[roomIndex].height / 2;
+			x -= offsetFromCentre;
+			y -= offsetFromCentre;
+			//check the tile at the x and y val and set if its a floor 
+			if (getTile(x, y) == StoneFloorTile
 				|| getTile(x, y) == FloorTile)
 			{
-				setTile(x, y, SpawnPoint);
+				m_rooms[roomIndex].decorInRoom++;
+				setTile(x, y, Table);
+				std::cout << "Table Placed " << std::endl;
+
 			}
-
-
-			if (m_rooms[i].decorInRoom >= 1)
+			x = m_rooms[roomIndex].x;
+			y = m_rooms[roomIndex].y;
+			// add another decoration
+			if (getTile(x, y) == StoneFloorTile
+				|| getTile(x, y) == FloorTile)
 			{
-				m_rooms.erase(m_rooms.begin() + i);
+				m_rooms[roomIndex].decorInRoom++;
+				setTile(x, y, Plant);
 			}
 		}
 	}
+	//delete the room once its decorated 
+	if (m_rooms[roomIndex].decorInRoom >= 1)
+	{
+		m_rooms.erase(m_rooms.begin() + roomIndex);
+	}
+	
 	DEBUG_MSG("Issue placing starting position tile");
 }
 
@@ -538,13 +569,10 @@ void DungeonGen::playerStartPos()
 	{
 		for (int i = 0; i < m_rooms.size(); i++)
 		{
-			int x = randomInt(m_rooms[i].x + m_rooms[i].width / 2, m_rooms[i].x + m_rooms[i].width /2);
-			int y = randomInt(m_rooms[i].y + m_rooms[i].height /2 , m_rooms[i].y + m_rooms[i].height / 2);
+			int x = randomInt(m_rooms[i].x, m_rooms[i].x + m_rooms[i].width -1);
+			int y = m_rooms[i].y - 1;
 
-			if (getTile(x , y) == StoneFloorTile || getTile(x, y) == FloorTile
-				&& getTile(x + 1, y) != Door1
-				&& getTile(x - 1, y) != Door1 && getTile(x, y + 1) != Door1
-				&& getTile(x, y - 1) != Door1)
+			if (getTile(x , y) == Wall)
 			{
 				setTile(x, y, SpawnPoint);
 			}

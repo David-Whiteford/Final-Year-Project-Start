@@ -59,7 +59,7 @@ public:
 		ChairL = 'CL',
 		ChairR = 'CR',
 		ChairF = 'O',
-		Table = 'TB',
+		Table = 'U',
 		Chair = 'TB',
 		SpikeTrap = 'L',
 		TrapDoorTrap = 'TD',
@@ -80,6 +80,7 @@ public:
 		m_width(t_width),
 		m_height(t_height),
 		m_tiles(t_width * t_height,UnusedTile),
+		m_decorTiles(t_width* t_height, UnusedTile),
 		m_rooms(),
 		m_exit()
 	{
@@ -107,6 +108,7 @@ public:
 			}
 		}
 		t_tilemap->LoadMap(m_tileArr,1,1);
+		
 	}
 	std::vector<char> &getTileMapVec()
 	{
@@ -133,6 +135,11 @@ public:
 	void setTile(int t_x, int t_y, char t_tile)
 	{
 		m_tiles[t_x + t_y * m_width] = t_tile;
+		m_decorTiles[t_x + t_y * m_width] = t_tile;
+	}
+	void setDecorTiles(int t_x, int t_y, char t_tile)
+	{
+		m_decorTiles[t_x + t_y * m_width] = t_tile;
 	}
 	void createRoomFeatures(Tilemap*& t_tilemap);
 	bool createFeature();
@@ -169,10 +176,12 @@ private:
 	int m_height;
 	int m_roomMaxDecor = 10;
 	std::vector<char> m_tiles;
+	std::vector<char> m_decorTiles;
 	std::vector<Tile> m_halls;
 	std::vector<Tile> m_rooms;
 	std::vector<Tile> m_exit;
 	std::vector<int> m_tileNums;
+	int m_tileDecorArr[30][30];
 	int m_tileArr[30][30];
 	int m_index = 0;
 	Tilemap m_tilemap;
