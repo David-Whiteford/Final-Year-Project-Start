@@ -44,10 +44,9 @@ public:
 		Plant = '2',
 		Door1 = '3',
 		Door2 = '4',
-		PrisonTileOne = 'V',
-		PrisonTileTwo = 'B',
-		CoffinTileOne = 'J',
-		CoffinTileTwo = 'K',
+		PrisonTile = 'V',
+		BookShelve = 'B',
+		CoffinTile = 'J',
 		Potion = '5',
 		Chains = '6',
 		Torch = 'T',
@@ -114,6 +113,10 @@ public:
 	{
 		return m_tempTileVec;
 	}
+	std::vector<char>& getDecorTileVec()
+	{
+		return m_decorTiles;
+	}
 	void print()
 	{
 		for (int row = 0; row < m_height; row++)
@@ -131,6 +134,12 @@ public:
 		if (t_x < 0 || t_y < 0 || t_x >= m_width || t_y >= m_height)
 			return UnusedTile;
 		return m_tiles[t_x + t_y * m_width];
+	}
+	char getDecorTile(int t_x, int t_y)
+	{
+		if (t_x < 0 || t_y < 0 || t_x >= m_width || t_y >= m_height)
+			return UnusedTile;
+		return m_decorTiles[t_x + t_y * m_width];
 	}
 	void setTile(int t_x, int t_y, char t_tile)
 	{
@@ -151,14 +160,18 @@ public:
 	void createUniqueRooms() 
 	{
 		createJailRoom();
+		deleteRoom();
 		createCoffinRoom();
+		deleteRoom();
 	}
 	void placeDecorInHalls();
 	void FloorDecorTiles();
+	void deleteRoom();
 	void playerStartPos();
 	void createJailRoom();
 	void createCoffinRoom();
 	void createFeastRoom();
+	void createLibraryRoom();
 	void Test() { placeDecorInRoom(); };
 	void placeDecorOnWalls();
 	bool CheckXAndYPos(int x, int y);

@@ -103,11 +103,15 @@ void Game::update(double dt)
 			m_player->setIfInTrigger(false);
 			m_dungeon->createRoomFeatures(m_tileMap);
 			m_tileMap->Dun(m_dungeon->getTileMapVec(), m_window, m_mapSize, m_mapSize);
+			m_tileMap->DunDecor(m_dungeon->getDecorTileVec(), m_window, m_mapSize, m_mapSize);
+			m_dungeon->getTileMapVec().clear();
+			m_dungeon->getDecorTileVec().clear();
 			m_dunObstaclesVec.clear();
 			m_dunObstaclesVec = m_tileMap->getDunObstaclesVec();
 			m_player->setDebugRects(m_dunObstaclesVec);
 			m_dungeonTest = false;
 		}
+		
 		m_playerOrigin = m_player->getOrigin();
 		view2.setCenter(m_player->getPosition());
 		m_player->collisionCheck(m_dunObstaclesVec);

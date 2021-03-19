@@ -21,17 +21,21 @@ void DungeonGen::generateMap(int t_maxFeatures)
 void DungeonGen::createRoomFeatures(Tilemap*& t_tilemap)
 {
 	generateMap(100);
-	createTrapsInRooms();
 	FloorDecorTiles();
+	createTrapsInRooms();
 	playerStartPos();
 	createFeastRoom();
+	deleteRoom();
+	//createLibraryRoom();
+	//deleteRoom();
+	createUniqueRooms();
+	deleteRoom();
 	placeDecorOnWalls();
 	placeDecorInRoom();
-	createUniqueRooms();
+	deleteRoom();
 	placeDecorInHalls();
 	print();
 	Set2DVec(t_tilemap);
-	
 }
 
 bool DungeonGen::createFeature()
@@ -311,6 +315,90 @@ bool DungeonGen::placeTile(Tile& t_Tile, char t_tile)
 	}
 	return true;
 }
+
+////---------------------------------------------------------------------------
+////Place new floor tiles on the ground and store in background tiles vector
+////---------------------------------------------------------------------------
+void DungeonGen::FloorDecorTiles()
+{
+	if (m_rooms.empty() == false)
+	{
+		for (int i = 0; i < m_rooms.size(); i++)
+		{
+			int xStart = m_rooms[i].x;
+			int xEnd = m_rooms[i].x + m_rooms[i].width;
+
+			int yStart = m_rooms[i].y + 1;
+			int yBottom = m_rooms[i].y + m_rooms[i].height - 2;
+
+			for (int x = xStart; x < xEnd; x++)
+			{
+				if (x != xEnd)
+				{
+					if (getTile(x, yStart) == FloorTile || getTile(x, yBottom) == FloorTile)
+					{
+						setTile(x, yStart, StoneFloorTile);
+						setTile(x, yBottom, StoneFloorTile);
+					}
+				}
+			}
+			xEnd = m_rooms[i].x + m_rooms[i].width - 1;
+			for (int y = yStart; y < yBottom; y++)
+			{
+				if (y != yBottom)
+				{
+					if (getTile(xStart, y) == FloorTile || getTile(xEnd, y) == FloorTile)
+					{
+						setTile(xStart, y, StoneFloorTile);
+						setTile(xEnd, y, StoneFloorTile);
+					}
+				}
+			}
+		}
+	}
+}
+////---------------------------------------------------------------------------
+////function to loop through and delete rooms with decorations
+////---------------------------------------------------------------------------
+void DungeonGen::deleteRoom()
+{
+	for (int i = 0; i < m_rooms.size(); i++)
+	{
+		if (m_rooms[i].decorInRoom >= 1)
+		{
+			m_rooms.erase(m_rooms.begin() + i);
+		}
+	}
+}
+////---------------------------------------------------------------------------
+////Functions to get randon x and a y of the walls top and bottom
+////---------------------------------------------------------------------------
+bool DungeonGen::CheckXAndYPos(int x, int y)
+{
+	return true;
+}
+sf::Vector2i DungeonGen::GenXAndYAtTopWall(int t_i, std::vector<Tile>& t_tileVec)
+{
+	int x = randomInt(t_tileVec[t_i].x, t_tileVec[t_i].x + t_tileVec[t_i].width - 1);
+	int y = t_tileVec[t_i].y;
+	return sf::Vector2i(x, y);
+}
+sf::Vector2i DungeonGen::GenXAndYAtBottomWall(int t_i, std::vector<Tile>& t_tileVec)
+{
+	int x = randomInt(t_tileVec[t_i].x, t_tileVec[t_i].x + t_tileVec[t_i].width - 1);
+	int y = t_tileVec[t_i].y + t_tileVec[t_i].height - 1;
+	return sf::Vector2i(x, y);
+}
+
+
+
+
+
+
+
+////---------------------------------------------------------------------------
+////Functions to place decorations in each of the rooms
+////---------------------------------------------------------------------------
 void DungeonGen::placeDecorInRoom()
 {
 	if (m_rooms.empty() == false)
@@ -328,14 +416,15 @@ void DungeonGen::placeDecorInRoom()
 					sf::Vector2i pos = GenXAndYAtTopWall(i,m_rooms);
 					int x = pos.x;
 					int y = pos.y;
-					if (getTile(x, y) == FloorTile || getTile(x, y) == StoneFloorTile)
+					if (getDecorTile(x, y) == FloorTile || getDecorTile(x, y) == StoneFloorTile)
 
 					{
-						if (getTile(x + 1, y) != Door1 && getTile(x - 1, y) != Door1
-							&& getTile(x, y + 1) != Door2 && getTile(x, y - 1) != Door2)
+						if (getDecorTile(x + 1, y) != Door1 && getDecorTile(x - 1, y) != Door1
+							&& getDecorTile(x, y + 1) != Door2 && getDecorTile(x, y - 1) != Door2
+							&& getDecorTile(x, y - 1) != SpawnPoint)
 						{
 							placedDecor = true;
-							setTile(x, y, Chest);
+							setDecorTiles(x, y, Chest);
 							m_rooms[i].decorInRoom++;
 						}
 					}
@@ -346,14 +435,15 @@ void DungeonGen::placeDecorInRoom()
 					int x = randomInt(m_rooms[i].x, m_rooms[i].x + m_rooms[i].width - 1);
 					int y = randomInt(m_rooms[i].y, m_rooms[i].y + m_rooms[i].height - 1);
 
-					if (getTile(x, y) == FloorTile || getTile(x, y) == StoneFloorTile)
+					if (getDecorTile(x, y) == FloorTile || getDecorTile(x, y) == StoneFloorTile)
 
 					{
-						if (getTile(x + 1, y) != Door1 && getTile(x - 1, y) != Door1
-							&& getTile(x, y + 1) != Door2 && getTile(x, y - 1) != Door2)
+						if (getDecorTile(x + 1, y) != Door1 && getDecorTile(x - 1, y) != Door1
+							&& getDecorTile(x, y + 1) != Door2 && getDecorTile(x, y - 1) != Door2
+							&& getDecorTile(x, y - 1) != SpawnPoint)
 						{
 							placedDecor = true;
-							setTile(x, y, Skull);
+							setDecorTiles(x, y, Skull);
 							m_rooms[i].decorInRoom++;
 						}
 					}
@@ -364,18 +454,19 @@ void DungeonGen::placeDecorInRoom()
 					int x = pos.x;
 					int y = pos.y;
 
-					if (getTile(x, y) == FloorTile || getTile(x, y) == StoneFloorTile)
+					if (getDecorTile(x, y) == FloorTile || getDecorTile(x, y) == StoneFloorTile)
 					{
-						if (getTile(x + 1, y) != Door1 && getTile(x - 1, y) != Door1
-							&& getTile(x, y + 1) != Door2 && getTile(x, y - 1) != Door2)
+						if (getDecorTile(x + 1, y) != Door1 && getDecorTile(x - 1, y) != Door1
+							&& getDecorTile(x, y + 1) != Door2 && getDecorTile(x, y - 1) != Door2
+							&& getDecorTile(x, y - 1) != SpawnPoint)
 						{
 							placedDecor = true;
-							setTile(x, y, Potion);
+							setDecorTiles(x, y, Potion);
 							y += 1;
 							m_rooms[i].decorInRoom++;
-							if (getTile(x, y) == FloorTile || getTile(x, y) == StoneFloorTile)
+							if (getDecorTile(x, y) == FloorTile || getDecorTile(x, y) == StoneFloorTile)
 							{
-								setTile(x, y, ChairF);
+								setDecorTiles(x, y, ChairF);
 							}
 						}
 					}
@@ -386,14 +477,14 @@ void DungeonGen::placeDecorInRoom()
 					int x = pos.x;
 					int y = pos.y;
 
-					if (getTile(x, y) == FloorTile || getTile(x, y) == StoneFloorTile)
+					if (getDecorTile(x, y) == FloorTile || getDecorTile(x, y) == StoneFloorTile)
 					
 					{
-						if (getTile(x + 1, y) != Door1 && getTile(x - 1, y) != Door1
-							&& getTile(x, y + 1) != Door2 && getTile(x, y - 1) != Door2)
+						if (getDecorTile(x + 1, y) != Door1 && getDecorTile(x - 1, y) != Door1
+							&& getDecorTile(x, y + 1) != Door2 && getDecorTile(x, y - 1) != Door2)
 						{ 
 							placedDecor = true;
-							setTile(x, y, Plant);
+							setDecorTiles(x, y, Plant);
 							m_rooms[i].decorInRoom++;
 						}
 					}
@@ -404,19 +495,19 @@ void DungeonGen::placeDecorInRoom()
 					int x = pos.x;
 					int y = pos.y;
 
-					if (getTile(x, y) == FloorTile || getTile(x, y) == StoneFloorTile)
+					if (getDecorTile(x, y) == FloorTile || getDecorTile(x, y) == StoneFloorTile)
 
 					{
-						if (getTile(x + 1, y) != Door1 && getTile(x - 1, y) != Door1
-							&& getTile(x, y + 1) != Door2 && getTile(x, y - 1) != Door2)
+						if (getDecorTile(x + 1, y) != Door1 && getDecorTile(x - 1, y) != Door1
+							&& getDecorTile(x, y + 1) != Door2 && getDecorTile(x, y - 1) != Door2)
 						{
 							placedDecor = true;
-							setTile(x, y, Money);
+							setDecorTiles(x, y, Money);
 							y += 1;
 							m_rooms[i].decorInRoom++;
-							if (getTile(x, y) == FloorTile || getTile(x, y) == StoneFloorTile)
+							if (getDecorTile(x, y) == FloorTile || getDecorTile(x, y) == StoneFloorTile)
 							{
-								setTile(x, y, ChairF);
+								setDecorTiles(x, y, ChairF);
 							}
 						}
 					}
@@ -427,49 +518,44 @@ void DungeonGen::placeDecorInRoom()
 				}
 
 			}
-			if (m_rooms[i].decorInRoom > 0)
-			{
-				m_rooms.erase(m_rooms.begin() + i);
-			}
-			std::cout << "Room Size: " << m_rooms.size() << std::endl;
 		}
 
 	}
 	DEBUG_MSG("Issue placing tiles tile");
 }
+////---------------------------------------------------------------------------
+////Function to create a room of jail cells
+////---------------------------------------------------------------------------
 void DungeonGen::createJailRoom()
 {
 	if (m_rooms.empty() == false)
 	{
 		for (int i = 0; i < m_rooms.size(); i++)
 		{
+			int offSet = 1;
 			int x = m_rooms[i].x;
 			int y = m_rooms[i].y - 1;
 			int maxDecor = 2;
 			for (int decorInRoom = 0; decorInRoom < maxDecor; decorInRoom++)
 			{
-				if (getTile(x, y) == Wall)
+				if (getDecorTile(x, y) == Wall)
 				{
-					if (getTile(x, y + 1) == FloorTile
-						|| getTile(x, y + 1) == StoneFloorTile)
+					if (getDecorTile(x, y + offSet) == FloorTile
+						|| getDecorTile(x, y + offSet) == StoneFloorTile)
 					{
-						setTile(x, y, PrisonTileOne);
-						setTile(x, y + 1, PrisonTileTwo);
+						setDecorTiles(x, y, PrisonTile);
+						setDecorTiles(x, y + offSet, UnusedTile);
 						x += 2; 
 						m_rooms[i].decorInRoom++;
 					}
 				}
-			}
-
-			if (m_rooms[i].decorInRoom >= 1)
-			{
-				m_rooms.erase(m_rooms.begin() + i);
-			}
-			std::cout << "Room Size2: " << m_rooms.size() << std::endl;
+			}	
 		}
 	}
 }
-
+////---------------------------------------------------------------------------
+////Function to create a room of coffins
+////---------------------------------------------------------------------------
 void DungeonGen::createCoffinRoom()
 {
 	if (m_rooms.empty() == false)
@@ -477,40 +563,37 @@ void DungeonGen::createCoffinRoom()
 		for (int i = 0; i < m_rooms.size(); i++)
 		{
 			int maxDecorInRoom = 2;
-			for (int decorType = 0; decorType < maxDecorInRoom; )
+			for (int decorNum = 0; decorNum < maxDecorInRoom; )
 			{
-				sf::Vector2i pos = GenXAndYAtTopWall(i, m_rooms);
-				int x = pos.x;
-				int y = pos.y;
-				if (getTile(x, y) == FloorTile || getTile(x, y) == StoneFloorTile)
+				int offsets = 1;
+				int x = m_rooms[i].x + offsets;
+				int y = m_rooms[i].y + offsets;
+				if (getDecorTile(x, y) == FloorTile || getDecorTile(x, y) == StoneFloorTile)
 				{
-					if (getTile(x + 1, y) == Door1 || getTile(x - 1, y) == Door1)	
+					if (getDecorTile(x + offsets, y) == Door1 || getDecorTile(x - offsets, y) == Door1)
 					{
 						y++;
 					}
-					else if (getTile(x, y + 1) == Door2 || getTile(x, y - 1) == Door2)
+					else if (getDecorTile(x, y + offsets) == Door2 || getDecorTile(x, y - offsets) == Door2 && getDecorTile(x, y - offsets) == SpawnPoint)
 					{
 						x++;
 					}
-					setTile(x, y, CoffinTileOne);
-					setTile(x, y++, CoffinTileTwo);
+					setDecorTiles(x, y, CoffinTile);
+					setDecorTiles(x, y + offsets, UnusedTile);
 					m_rooms[i].decorInRoom++;
 
 				}
-				decorType++;
-			}
-			if (m_rooms[i].decorInRoom >= 1)
-			{
-				m_rooms.erase(m_rooms.begin() + i);
+				decorNum++;
 			}
 		}
 	}
 
 }
-
+////---------------------------------------------------------------------------
+////Function to create a feast room with a table and chairs
+////---------------------------------------------------------------------------
 void DungeonGen::createFeastRoom()
 {
-	std::cout << "Room Size Left: " << m_rooms.size() << std::endl;
 	int roomIndex = 0;
 	int offsetFromCentre = 1;
 	int maxRoomSizeRequired = 7;
@@ -523,46 +606,87 @@ void DungeonGen::createFeastRoom()
 			if (m_rooms[i].width >= maxRoomSizeRequired && m_rooms[i].height >= maxRoomSizeRequired)
 			{
 				roomIndex = i;
-				std::cout << "Room Index: " << roomIndex << std::endl;
 				roomFound = true;
 			}
 		}
 		if (roomFound)
 		{
 			//get the middle of the room if one found 
-			int x = m_rooms[roomIndex].x + m_rooms[roomIndex].width  / 2;
+			int x = m_rooms[roomIndex].x + m_rooms[roomIndex].width / 2;
 			int y = m_rooms[roomIndex].y + m_rooms[roomIndex].height / 2;
 			x -= offsetFromCentre;
 			y -= offsetFromCentre;
 			//check the tile at the x and y val and set if its a floor 
-			if (getTile(x, y) == StoneFloorTile
-				|| getTile(x, y) == FloorTile)
+			if (getDecorTile(x, y) == StoneFloorTile
+				|| getDecorTile(x, y) == FloorTile)
 			{
 				m_rooms[roomIndex].decorInRoom++;
-				setTile(x, y, Table);
+				setDecorTiles(x, y, Table);
 				std::cout << "Table Placed " << std::endl;
 
 			}
-			x = m_rooms[roomIndex].x;
-			y = m_rooms[roomIndex].y;
+			x = m_rooms[roomIndex].x + 1;
+			y = m_rooms[roomIndex].y + 1;
 			// add another decoration
-			if (getTile(x, y) == StoneFloorTile
-				|| getTile(x, y) == FloorTile)
+			if (getDecorTile(x, y) == StoneFloorTile
+				|| getDecorTile(x, y) == FloorTile)
 			{
 				m_rooms[roomIndex].decorInRoom++;
-				setTile(x, y, Plant);
+				setDecorTiles(x, y, Plant);
 			}
 		}
 	}
-	//delete the room once its decorated 
-	if (m_rooms[roomIndex].decorInRoom >= 1)
-	{
-		m_rooms.erase(m_rooms.begin() + roomIndex);
-	}
-	
 	DEBUG_MSG("Issue placing starting position tile");
 }
-
+void DungeonGen::createLibraryRoom()
+{
+	int heightOffset = 3;
+	int roomIndex = 0;
+	int offSet = 1;
+	int maxRoomWidth = 7;
+	int maxRoomHeight = 4;
+	bool roomFound = false;
+	if (m_rooms.empty() == false)
+	{
+		for (int i = 0; i < m_rooms.size(); i++)
+		{
+			//find a room remaining of a certain size
+			if (m_rooms[i].width >= maxRoomWidth && m_rooms[i].height >= maxRoomHeight)
+			{
+				roomIndex = i;
+				roomFound = true;
+			}
+		}
+	}
+	if (roomFound)
+	{
+		//get the middle of the room if one found 
+		int x = m_rooms[roomIndex].x + offSet;
+		int y = m_rooms[roomIndex].y + offSet;
+		int maxXVal = 2;
+		for (int i = 0; i < maxXVal; i++)
+		{
+			if (getDecorTile(x + i, y - offSet) == Door2)
+			{
+				y += offSet;
+				setDecorTiles(x, y, BookShelve);
+				y += heightOffset;
+				setDecorTiles(x, y, BookShelve);
+				//std::cout << "Books Placed" << std::endl;
+			}
+			else
+			{
+				setDecorTiles(x, y, BookShelve);
+				y += heightOffset;
+				setDecorTiles(x, y, BookShelve);
+				//std::cout << "Books Placed" << std::endl;
+			}
+		}
+	}
+}
+////---------------------------------------------------------------------------
+////Function to create cave doors that the player can exit and enter
+////---------------------------------------------------------------------------
 void DungeonGen::playerStartPos()
 {
 	if (m_rooms.empty() == false)
@@ -572,15 +696,17 @@ void DungeonGen::playerStartPos()
 			int x = randomInt(m_rooms[i].x, m_rooms[i].x + m_rooms[i].width -1);
 			int y = m_rooms[i].y - 1;
 
-			if (getTile(x , y) == Wall)
+			if (getDecorTile(x , y) == Wall)
 			{
-				setTile(x, y, SpawnPoint);
+				setDecorTiles(x, y, SpawnPoint);
 			}
 		}
 	}
 	DEBUG_MSG("Issue placing starting position tile");
 }
-
+////---------------------------------------------------------------------------
+////Function to place decorations on the walls(eg torch,chains, pictures)
+////---------------------------------------------------------------------------
 void DungeonGen::placeDecorOnWalls()
 {
 	if (m_rooms.empty() == false)
@@ -591,25 +717,26 @@ void DungeonGen::placeDecorOnWalls()
 			int maxDecorInRoom = randomInt(3, 5);
 			for (int decorType = 0; decorType < maxDecorInRoom;)
 			{
-				int x = randomInt(m_rooms[i].x + 1, m_rooms[i].x + m_rooms[i].width - 1);
-				int y = m_rooms[i].y -1;
+				int offSet = 1;
+				int x = randomInt(m_rooms[i].x + offSet, m_rooms[i].x + m_rooms[i].width - offSet);
+				int y = m_rooms[i].y - offSet;
 				
-				if (getTile(x, y) == Wall &&
-					getTile(x, y) != Door1 &&
-					getTile(x, y) != Door2)
+				if (getDecorTile(x, y) == Wall &&
+					getDecorTile(x, y) != Door1 &&
+					getDecorTile(x, y) != Door2)
 				{
 					
 					if (decorType == 0) {
-						setTile(x, y, Chains);
+						setDecorTiles(x, y, Chains);
 					}
 					else if (decorType == 1) {
-						setTile(x, y, Torch);
+						setDecorTiles(x, y, Torch);
 					}
 					else if (decorType == 2) {
 						if (picNum == 0)
 						{
 							picNum++;
-							setTile(x, y, Picture);
+							setDecorTiles(x, y, Picture);
 						}
 					}
 					
@@ -620,23 +747,9 @@ void DungeonGen::placeDecorOnWalls()
 	}
 	DEBUG_MSG("Issue placing chain Decor tile");
 }
-
-bool DungeonGen::CheckXAndYPos(int x, int y)
-{
-	return true;
-}
-sf::Vector2i DungeonGen::GenXAndYAtTopWall(int t_i , std::vector<Tile> & t_tileVec)
-{
-	int x = randomInt(t_tileVec[t_i].x, t_tileVec[t_i].x + t_tileVec[t_i].width - 1);
-	int y = t_tileVec[t_i].y;
-	return sf::Vector2i(x, y);
-}
-sf::Vector2i DungeonGen::GenXAndYAtBottomWall(int t_i, std::vector<Tile>& t_tileVec)
-{
-	int x = randomInt(t_tileVec[t_i].x, t_tileVec[t_i].x + t_tileVec[t_i].width - 1);
-	int y = t_tileVec[t_i].y + t_tileVec[t_i].height -1;
-	return sf::Vector2i(x, y);
-}
+////---------------------------------------------------------------------------
+////Function to create traps in the rooms
+////---------------------------------------------------------------------------
 void DungeonGen::createTrapsInRooms()
 {
 	if (m_rooms.empty() == false)
@@ -649,81 +762,23 @@ void DungeonGen::createTrapsInRooms()
 				int x = randomInt(m_rooms[i].x, m_rooms[i].x + m_rooms[i].width);
 				int y = randomInt(m_rooms[i].y, m_rooms[i].y + m_rooms[i].height);
 
-				if (getTile(x, y) == FloorTile || getTile(x, y) == StoneFloorTile)
+				if (getDecorTile(x, y) == FloorTile || getDecorTile(x, y) == StoneFloorTile)
 				{
-					setTile(x, y, SpikeTrap);
+					setDecorTiles(x, y, SpikeTrap);
 				}
 			}
 		}
 	}
 }
-void DungeonGen::FloorDecorTiles()
-{
-	if (m_rooms.empty() == false)
-	{
-		for (int i = 0; i < m_rooms.size(); i++)
-		{
-			int xStart = m_rooms[i].x ;
-			int xEnd = m_rooms[i].x + m_rooms[i].width;
-
-			int yStart = m_rooms[i].y +1;
-			int yBottom = m_rooms[i].y + m_rooms[i].height -2;
-
-			for (int x = xStart;x < xEnd ; x++)
-			{
-				if (x != xEnd)
-				{
-					if (getTile(x, yStart) == FloorTile || getTile(x, yBottom) == FloorTile)
-					{
-						setTile(x, yStart, StoneFloorTile);
-						setTile(x, yBottom, StoneFloorTile);
-					}
-				}
-			}
-			xEnd = m_rooms[i].x + m_rooms[i].width -1;
-			for (int y = yStart; y < yBottom; y++)
-			{
-				if (y != yBottom)
-				{
-					if (getTile(xStart, y) == FloorTile || getTile(xEnd, y) == FloorTile)
-					{
-						setTile(xStart, y, StoneFloorTile);
-						setTile(xEnd, y, StoneFloorTile);
-					}
-				}
-			}	
-		}
-	}
-	/*if (m_halls.empty() == false)
-	{
-		for (int i = 0; i < m_halls.size(); i++)
-		{
-			int xStart = m_halls[i].x;
-			int xEnd = m_halls[i].x + m_halls[i].width;
-			int y = m_halls[i].y + m_halls[i].height / 2;
-			for (int x = xStart; x < xEnd; x++)
-			{
-				if (getTile(x, y) == FloorTile)
-				{
-					setTile(x, y, StoneFloorTile);
-				}
-			}
-
-		}
-	}*/
-
-
-
-}
-
-
+////---------------------------------------------------------------------------
+////Function to create decorations in the hall ways
+////---------------------------------------------------------------------------
 void DungeonGen::placeDecorInHalls()
 {
 	if (m_halls.empty() == false)
 	{
 		for (int i = 0; i < m_halls.size(); i++)
 		{
-			
 			int mixDcor = 1;
 			int maxDecor = 3;
 			int maxDecorInRoom = randomInt(mixDcor, maxDecor);
@@ -735,49 +790,37 @@ void DungeonGen::placeDecorInHalls()
 					int x = m_halls[i].x + 1;
 					int y = randomInt(m_halls[i].y +1, m_halls[i].y + m_halls[i].width - 1);
 
-					if (getTile(x, y) == FloorTile
-						&& getTile(x + 1, y) != Door1 && getTile(x - 1, y) != Door1
-						&& getTile(x, y + 1) != Door2 && getTile(x, y - 1) != Door2)
+					if (getDecorTile(x, y) == FloorTile
+						&& getDecorTile(x + 1, y) != Door1 && getDecorTile(x - 1, y) != Door1
+						&& getDecorTile(x, y + 1) != Door2 && getDecorTile(x, y - 1) != Door2)
 					{
-						setTile(x, y, Chest);
+						setDecorTiles(x, y, Plant);
 					}
 				}
 				else if (decorType == 1)
 				{
-					int x = m_halls[i].x + 1;
-					int y = randomInt(m_halls[i].y +1, m_halls[i].y + m_halls[i].width - 1);
+					int offSets = 1;
+					int x = m_halls[i].x + offSets;
+					int y = randomInt(m_halls[i].y + offSets, m_halls[i].y + m_halls[i].width - offSets);
 
-					if (getTile(x, y) == FloorTile
-						&& getTile(x + 1, y) != Door1 && getTile(x - 1, y) != Door1
-						&& getTile(x, y + 1) != Door2 && getTile(x, y - 1) != Door2)
+					if (getDecorTile(x, y) == FloorTile
+						&& getDecorTile(x + offSets, y) != Door1 && getDecorTile(x - offSets, y) != Door1
+						&& getDecorTile(x, y + offSets) != Door2 && getDecorTile(x, y - offSets) != Door2)
 					{
-						setTile(x, y, Potion);
+						setDecorTiles(x, y, Potion);
 					}
 
 				}
 				else if (decorType == 2)
 				{
-
-					/*int x = m_halls[i].x + m_halls[i].width - 1;
-					int y = randomInt(m_halls[i].y, m_halls[i].y + m_halls[i].width - 1);
-
-					if (getTile(x, y) == FloorTile
-						&& getTile(x + 1, y) != Door1 && getTile(x - 1, y) != Door1
-						&& getTile(x, y + 1) != Door2 && getTile(x, y - 1) != Door2)
-					{
-						setTile(x, y, Plant);
-					}*/
-				}
-				else if (decorType == 3)
-				{
 					int x = m_halls[i].x + m_halls[i].width - 1;
 					int y = randomInt(m_halls[i].y, m_halls[i].y + m_halls[i].width - 1);
 
-					if (getTile(x, y) == FloorTile
-						&& getTile(x + 1, y) != Door1 && getTile(x - 1, y) != Door1
-						&& getTile(x, y + 1) != Door2 && getTile(x, y - 1) != Door2)
+					if (getDecorTile(x, y) == FloorTile
+						&& getDecorTile(x + 1, y) != Door1 && getDecorTile(x - 1, y) != Door1
+						&& getDecorTile(x, y + 1) != Door2 && getDecorTile(x, y - 1) != Door2)
 					{
-						setTile(x, y, Money);
+						setDecorTiles(x, y, Money);
 					}
 				}
 			}
