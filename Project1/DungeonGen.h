@@ -159,14 +159,15 @@ public:
 	void placeDecorInRoom();
 	void createUniqueRooms() 
 	{
+		createFeastRoom();
+		createLibraryRoom();
 		createJailRoom();
-		deleteRoom();
 		createCoffinRoom();
-		deleteRoom();
+		
 	}
 	void placeDecorInHalls();
 	void FloorDecorTiles();
-	void deleteRoom();
+	void deleteRoom(int i){ m_rooms.erase(m_rooms.begin() + i); }
 	void playerStartPos();
 	void createJailRoom();
 	void createCoffinRoom();

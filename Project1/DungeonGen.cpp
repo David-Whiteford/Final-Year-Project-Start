@@ -24,15 +24,10 @@ void DungeonGen::createRoomFeatures(Tilemap*& t_tilemap)
 	FloorDecorTiles();
 	createTrapsInRooms();
 	playerStartPos();
-	createFeastRoom();
-	deleteRoom();
-	//createLibraryRoom();
-	//deleteRoom();
+
 	createUniqueRooms();
-	deleteRoom();
 	placeDecorOnWalls();
 	placeDecorInRoom();
-	deleteRoom();
 	placeDecorInHalls();
 	print();
 	Set2DVec(t_tilemap);
@@ -357,19 +352,7 @@ void DungeonGen::FloorDecorTiles()
 		}
 	}
 }
-////---------------------------------------------------------------------------
-////function to loop through and delete rooms with decorations
-////---------------------------------------------------------------------------
-void DungeonGen::deleteRoom()
-{
-	for (int i = 0; i < m_rooms.size(); i++)
-	{
-		if (m_rooms[i].decorInRoom >= 1)
-		{
-			m_rooms.erase(m_rooms.begin() + i);
-		}
-	}
-}
+
 ////---------------------------------------------------------------------------
 ////Functions to get randon x and a y of the walls top and bottom
 ////---------------------------------------------------------------------------
@@ -518,6 +501,10 @@ void DungeonGen::placeDecorInRoom()
 				}
 
 			}
+			if (m_rooms[i].decorInRoom > 0)
+			{
+				deleteRoom(i);
+			}
 		}
 
 	}
@@ -558,34 +545,53 @@ void DungeonGen::createJailRoom()
 ////---------------------------------------------------------------------------
 void DungeonGen::createCoffinRoom()
 {
+	int roomIndex = 0;
+	int offsetFromCentre = 1;
+	int maxRoomSizeWidth = 5;
+	int maxRoomSizeHeight = 4;
+	bool roomFound = false;
+
 	if (m_rooms.empty() == false)
 	{
 		for (int i = 0; i < m_rooms.size(); i++)
 		{
-			int maxDecorInRoom = 2;
-			for (int decorNum = 0; decorNum < maxDecorInRoom; )
+			//find a room remaining of a certain size
+			if (m_rooms[i].width >= maxRoomSizeWidth && m_rooms[i].height >= maxRoomSizeHeight)
 			{
-				int offsets = 1;
-				int x = m_rooms[i].x + offsets;
-				int y = m_rooms[i].y + offsets;
-				if (getDecorTile(x, y) == FloorTile || getDecorTile(x, y) == StoneFloorTile)
-				{
-					if (getDecorTile(x + offsets, y) == Door1 || getDecorTile(x - offsets, y) == Door1)
-					{
-						y++;
-					}
-					else if (getDecorTile(x, y + offsets) == Door2 || getDecorTile(x, y - offsets) == Door2 && getDecorTile(x, y - offsets) == SpawnPoint)
-					{
-						x++;
-					}
-					setDecorTiles(x, y, CoffinTile);
-					setDecorTiles(x, y + offsets, UnusedTile);
-					m_rooms[i].decorInRoom++;
-
-				}
-				decorNum++;
+				roomIndex = i;
+				roomFound = true;
 			}
 		}
+	}
+	if (roomFound)
+	{
+		std::cout << "Found Coffin Room" << std::endl;
+		int maxDecorInRoom = 5;
+		for (int decorNum = 0; decorNum < maxDecorInRoom; )
+		{
+			int offsets = 1;
+			int x = m_rooms[roomIndex].x;
+			int y = m_rooms[roomIndex].y;
+			if (getDecorTile(x, y) == FloorTile || getDecorTile(x, y) == StoneFloorTile)
+			{
+				if (getDecorTile(x + offsets, y) == Door1 || getDecorTile(x - offsets, y) == Door1)
+				{
+					y++;
+				}
+				else if (getDecorTile(x, y + offsets) == Door2 || getDecorTile(x, y - offsets) == Door2 
+					|| getDecorTile(x, y - offsets) == SpawnPoint)
+				{
+					x++;
+				}
+				setDecorTiles(x, y, CoffinTile);
+				setDecorTiles(x, y + offsets, UnusedTile);
+				m_rooms[roomIndex].decorInRoom++;
+
+			}
+			decorNum++;
+		}
+		deleteRoom(roomIndex);
+		
 	}
 
 }
@@ -622,8 +628,6 @@ void DungeonGen::createFeastRoom()
 			{
 				m_rooms[roomIndex].decorInRoom++;
 				setDecorTiles(x, y, Table);
-				std::cout << "Table Placed " << std::endl;
-
 			}
 			x = m_rooms[roomIndex].x + 1;
 			y = m_rooms[roomIndex].y + 1;
@@ -634,6 +638,7 @@ void DungeonGen::createFeastRoom()
 				m_rooms[roomIndex].decorInRoom++;
 				setDecorTiles(x, y, Plant);
 			}
+			deleteRoom(roomIndex);
 		}
 	}
 	DEBUG_MSG("Issue placing starting position tile");
@@ -660,28 +665,33 @@ void DungeonGen::createLibraryRoom()
 	}
 	if (roomFound)
 	{
+		int doorNum = 0;
 		//get the middle of the room if one found 
-		int x = m_rooms[roomIndex].x + offSet;
-		int y = m_rooms[roomIndex].y + offSet;
-		int maxXVal = 2;
+		int x = m_rooms[roomIndex].x +1;
+		int y = m_rooms[roomIndex].y;
+		int maxXVal = 3;
 		for (int i = 0; i < maxXVal; i++)
 		{
-			if (getDecorTile(x + i, y - offSet) == Door2)
+			int x2 = x;
+			int y2 = y - 1;
+			
+			if (getDecorTile(x2 + i, y2) == Door2)
 			{
-				y += offSet;
-				setDecorTiles(x, y, BookShelve);
-				y += heightOffset;
-				setDecorTiles(x, y, BookShelve);
-				//std::cout << "Books Placed" << std::endl;
-			}
-			else
-			{
-				setDecorTiles(x, y, BookShelve);
-				y += heightOffset;
-				setDecorTiles(x, y, BookShelve);
-				//std::cout << "Books Placed" << std::endl;
+				doorNum = x2 +i;
 			}
 		}
+		if (doorNum > 0) 
+		{
+			x = doorNum + offSet;
+			setDecorTiles(x, y, BookShelve);
+			
+		}
+		else if(doorNum == 0)
+		{
+			
+			setDecorTiles(x, y, BookShelve);
+		}
+		deleteRoom(roomIndex);
 	}
 }
 ////---------------------------------------------------------------------------
