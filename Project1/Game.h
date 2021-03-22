@@ -1,6 +1,9 @@
 #ifndef GAME_H
 #define GAME_H
-
+#include <iostream>
+#include <thread>
+#include <chrono>
+#include <mutex>
 #include <SFML/Graphics.hpp>
 #include "Tilemap.h"
 #include "Player.h"
@@ -19,7 +22,8 @@ class Game
 public:
 	Game();
 	~Game();
-
+	void producer();
+	void consumer();
 	void run();
 	//void setTest(bool t_setGenerate)
 	//{
@@ -27,6 +31,7 @@ public:
 	//}
 	GameState m_currentGameState{ GameState::OverWorld };
 private:
+	
 	void init();
 	void processEvents();
 	void update(double dt);
@@ -53,6 +58,8 @@ private:
 	std::vector<Tiles*> m_obstaclesVec;
 	std::vector<Tiles*> m_dunObstaclesVec;
 	std::vector<Tiles*> m_triggersVec;
+	std::mutex* producerLock = new std::mutex;
+	std::mutex* consumerLock = new std::mutex;
 
 
 };

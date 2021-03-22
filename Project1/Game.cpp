@@ -1,6 +1,6 @@
 #include "Game.h"
 
-#include <iostream>
+
 static double const MS_PER_UPDATE = 10.0;
 Game::Game() :
 	m_window{ sf::VideoMode{ desktop.width, desktop.height, desktop.bitsPerPixel }, "SFML Game" }
@@ -17,6 +17,34 @@ Game::Game() :
 
 Game::~Game()
 {
+}
+
+void Game::producer()
+{
+	producerLock->lock();
+	m_player->clearObstacleVec();
+	m_player->clearTriggerVec();
+	m_player->setIfInTrigger(false);
+	m_dungeon->createRoomFeatures(m_tileMap);
+	m_tileMap->Dun(m_dungeon->getTileMapVec(), m_window, m_mapSize, m_mapSize);
+	m_tileMap->DunDecor(m_dungeon->getDecorTileVec(), m_window, m_mapSize, m_mapSize);
+	m_dungeon->getTileMapVec().clear();
+	m_dungeon->getDecorTileVec().clear();
+	m_dunObstaclesVec.clear();
+	m_dunObstaclesVec = m_tileMap->getDunObstaclesVec();
+	m_player->setDebugRects(m_dunObstaclesVec);
+	m_dungeonTest = false; 
+	producerLock->unlock();
+}
+
+void Game::consumer()
+{
+	consumerLock->lock();
+	m_tileMap->DrawDungeon(view2);
+	m_window.draw(m_player->getAnimatedSpriteFrame());
+	//m_player->render(m_window);
+	m_window.setView(view2);
+	consumerLock->unlock();
 }
 
 
@@ -43,6 +71,7 @@ void Game::run()
 		render();
 	}
 }
+
 
 
 void Game::init()
@@ -98,6 +127,7 @@ void Game::update(double dt)
 	case GameState::Dungeon:
 		if (m_dungeonTest == true)
 		{
+			//producer();
 			m_player->clearObstacleVec();
 			m_player->clearTriggerVec();
 			m_player->setIfInTrigger(false);

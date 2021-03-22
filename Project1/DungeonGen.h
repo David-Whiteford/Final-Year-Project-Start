@@ -161,9 +161,10 @@ public:
 	{
 		//creates unique rooms in the dungeon
 		createFeastRoom();
+		createCoffinRoom();
 		createLibraryRoom();
 		createJailRoom();
-		createCoffinRoom();
+		
 	}
 	void placeDecorInHalls();
 	void FloorDecorTiles();
@@ -180,7 +181,7 @@ public:
 	sf::Vector2i GenXAndYAtTopWall(int t_i, std::vector<Tile>& t_tileVec);
 	sf::Vector2i GenXAndYAtBottomWall(int t_i, std::vector<Tile>& t_tileVec);
 	void createTrapsInRooms();
-
+	int GetRoom(int t_roomWidth, int t_roomHeight);
 
 
 private:

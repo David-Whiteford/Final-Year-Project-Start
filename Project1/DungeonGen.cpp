@@ -353,8 +353,28 @@ void DungeonGen::FloorDecorTiles()
 }
 
 ////---------------------------------------------------------------------------
-////Functions to get randon x and a y of the walls top and bottom
+////Functions to get randon x and a y of the walls top and bottom, also to check all rooms and get a index
 ////---------------------------------------------------------------------------
+int DungeonGen::GetRoom(int t_roomWidth, int t_roomHeight)
+{
+	//if the room is found the index will be from 0 to room size
+	//if its 1000 then no room fount, used 1000 as 0 is a index in the rooms vec
+	int roomIndex = 1000;
+	if (m_rooms.empty() == false)
+	{
+		for (int i = 0; i < m_rooms.size(); i++)
+		{
+			//find a room remaining of a certain size
+			if (m_rooms[i].width >= t_roomWidth && m_rooms[i].height >= t_roomHeight)
+			{
+				roomIndex = i;
+				
+			}
+		}
+	}
+	return roomIndex;
+}
+
 bool DungeonGen::CheckXAndYPos(int x, int y)
 {
 	return true;
@@ -514,6 +534,7 @@ void DungeonGen::placeDecorInRoom()
 ////---------------------------------------------------------------------------
 void DungeonGen::createJailRoom()
 {
+	int offSet = 1;
 	int roomIndex = 0;
 	int maxRoomSizeWidth = 5;
 	int maxRoomSizeHeight = 4;
@@ -524,7 +545,7 @@ void DungeonGen::createJailRoom()
 		for (int i = 0; i < m_rooms.size(); i++)
 		{
 			//find a room remaining of a certain size
-			if (m_rooms[i].width == maxRoomSizeWidth && m_rooms[i].height == maxRoomSizeHeight)
+			if (m_rooms[i].width >= maxRoomSizeWidth && m_rooms[i].height >= maxRoomSizeHeight)
 			{
 				roomIndex = i;
 				roomFound = true;
@@ -534,17 +555,17 @@ void DungeonGen::createJailRoom()
 	if(roomFound)
 	{
 		roomCompleted = createJailCells(roomIndex);
-		int x = randomInt(m_rooms[roomIndex].x, m_rooms[roomIndex].x + m_rooms[roomIndex].width - 1);
-		int y = randomInt(m_rooms[roomIndex].y, m_rooms[roomIndex].y + m_rooms[roomIndex].height - 1);
+		int x = randomInt(m_rooms[roomIndex].x + offSet, m_rooms[roomIndex].x + m_rooms[roomIndex].width - 2);
+		int y = randomInt(m_rooms[roomIndex].y + offSet, m_rooms[roomIndex].y + m_rooms[roomIndex].height - 2);
 
-	  /*  int maxSkullNum = 3;
+	    int maxSkullNum = 3;
 		for(int skullNum = 0; skullNum < maxSkullNum; skullNum++)
 		{
 			if (getDecorTile(x, y) == StoneFloorTile || getDecorTile(x, y) == FloorTile)
 			{
 				setDecorTiles(x, y, Skull);
 			}
-		}*/
+		}
 		if (roomCompleted)
 		{
 			m_numJailRoomsPlaced++;
@@ -587,49 +608,33 @@ bool DungeonGen::createJailCells(int t_roomIndex)
 void DungeonGen::createCoffinRoom()
 {
 	int roomIndex = 0;
-	int offsetFromCentre = 1;
+	int offSet = 1;
 	int maxRoomSizeWidth = 5;
 	int maxRoomSizeHeight = 4;
 	bool roomFound = false;
-
-	if (m_rooms.empty() == false)
+	int noIndexFoundVal = 1000;
+	roomIndex = GetRoom(maxRoomSizeWidth, maxRoomSizeHeight);
+	if (roomIndex != noIndexFoundVal)
 	{
-		for (int i = 0; i < m_rooms.size(); i++)
-		{
-			//find a room remaining of a certain size
-			if (m_rooms[i].width >= maxRoomSizeWidth && m_rooms[i].height >= maxRoomSizeHeight)
-			{
-				roomIndex = i;
-				roomFound = true;
-			}
-		}
+		roomFound = true;
 	}
 	if (roomFound)
 	{
 		std::cout << "Found Coffin Room" << std::endl;
 		int maxDecorInRoom = 5;
-		for (int decorNum = 0; decorNum < maxDecorInRoom; )
-		{
-			int offsets = 1;
-			int x = m_rooms[roomIndex].x;
-			int y = m_rooms[roomIndex].y;
-			if (getDecorTile(x, y) == FloorTile || getDecorTile(x, y) == StoneFloorTile)
-			{
-				if (getDecorTile(x + offsets, y) == Door1 || getDecorTile(x - offsets, y) == Door1)
-				{
-					y++;
-				}
-				else if (getDecorTile(x, y + offsets) == Door2 || getDecorTile(x, y - offsets) == Door2 
-					|| getDecorTile(x, y - offsets) == SpawnPoint)
-				{
-					x++;
-				}
-				setDecorTiles(x, y, CoffinTile);
-				setDecorTiles(x, y + offsets, UnusedTile);
-				m_rooms[roomIndex].decorInRoom++;
+		int x = m_rooms[roomIndex].x + offSet;
+		int y = m_rooms[roomIndex].y + offSet;
+		int maxWidth = m_rooms[roomIndex].x + m_rooms[roomIndex].width - 2;
 
+		for (int index = x; index <= maxWidth; index +=2)
+		{
+			if (getDecorTile(index, y) == FloorTile || getDecorTile(index, y) == StoneFloorTile)
+			{
+				std::cout << "Placed Coffin " << std::endl;
+				setDecorTiles(index, y, CoffinTile);
+				setDecorTiles(index, y + 1, UnusedTile);
+				m_rooms[roomIndex].decorInRoom++;
 			}
-			decorNum++;
 		}
 		deleteRoom(roomIndex);
 		
@@ -725,16 +730,35 @@ void DungeonGen::createLibraryRoom()
 		{
 			x = doorNum + offSet;
 			setDecorTiles(x, y, BookShelve);
-			
+			setDecorTiles(x +2, y, UnusedTile);
 		}
 		else if(doorNum == 0)
 		{
-			
 			setDecorTiles(x, y, BookShelve);
+			setDecorTiles(x + 2, y, UnusedTile);
 		}
+		x = m_rooms[roomIndex].x;
+		y = m_rooms[roomIndex].y + m_rooms[roomIndex].height;
+		int maxWidth = 3;
+		for (int index = x; index <= maxWidth; index++)
+		{
+			if (getDecorTile(index, y) == Wall)
+			{
+				std::cout << "Got Here " << std::endl;
+				if (getDecorTile(index, y - offSet) == FloorTile || getDecorTile(index, y - offSet) == StoneFloorTile)
+				{
+					setTile(index, y - offSet, ChairF);
+				}
+			}
+				 
+		}
+		
+
 		deleteRoom(roomIndex);
 	}
 }
+
+
 ////---------------------------------------------------------------------------
 ////Function to create cave doors that the player can exit and enter
 ////---------------------------------------------------------------------------
@@ -821,6 +845,7 @@ void DungeonGen::createTrapsInRooms()
 		}
 	}
 }
+
 ////---------------------------------------------------------------------------
 ////Function to create decorations in the hall ways
 ////---------------------------------------------------------------------------

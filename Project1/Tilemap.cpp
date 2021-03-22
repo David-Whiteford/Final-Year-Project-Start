@@ -360,6 +360,7 @@ void Tilemap::DunDecor(std::vector<char>& t_dunDecorVec, sf::RenderWindow& t_win
 		case 'O':
 			m_dunDecorTileVec.push_back(new Tiles(t_window, m_tileSize,
 				sf::Vector2f(x * m_tileSize, y * m_tileSize), m_chairTileF, "Decor"));
+			break;
 		case 'J':
 			m_dunDecorTileVec.push_back(new Tiles(t_window, m_tileSize,
 				sf::Vector2f(x * m_tileSize, y * m_tileSize), m_coffinTile, "Obstacle"));
