@@ -159,6 +159,7 @@ public:
 	void placeDecorInRoom();
 	void createUniqueRooms() 
 	{
+		//creates unique rooms in the dungeon
 		createFeastRoom();
 		createLibraryRoom();
 		createJailRoom();
