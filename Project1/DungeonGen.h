@@ -123,7 +123,7 @@ public:
 		{
 			for (int col = 0; col < m_width; col++)
 			{
-				std::cout << getTile(col, row);
+				std::cout << getDecorTile(col, row);
 				
 			}
 			std::cout << std::endl;
@@ -164,13 +164,13 @@ public:
 		createLibraryRoom();
 		createJailRoom();
 		createCoffinRoom();
-		
 	}
 	void placeDecorInHalls();
 	void FloorDecorTiles();
 	void deleteRoom(int i){ m_rooms.erase(m_rooms.begin() + i); }
 	void playerStartPos();
 	void createJailRoom();
+	bool createJailCells(int t_roomIndex);
 	void createCoffinRoom();
 	void createFeastRoom();
 	void createLibraryRoom();
@@ -200,4 +200,6 @@ private:
 	int m_tileArr[30][30];
 	int m_index = 0;
 	Tilemap m_tilemap;
+	int m_numJailRoomsPlaced = 0;
+	int m_maxJailRooms = 3;
 };

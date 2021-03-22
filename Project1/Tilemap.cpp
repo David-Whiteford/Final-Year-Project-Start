@@ -53,7 +53,7 @@ void Tilemap::DungeonTilesSetUp()
 	m_torchTile.setTexture(m_texture);
 	m_torchTile.setTextureRect(sf::IntRect(80, 48, 16, 16));
 	m_prisonTile.setTexture(m_texture);
-	m_prisonTile.setTextureRect(sf::IntRect(96, 0, 16, 32));
+	m_prisonTile.setTextureRect(sf::IntRect(128, 0, 16, 16));
 	m_pictureTile.setTexture(m_texture);
 	m_pictureTile.setTextureRect(sf::IntRect(64, 64, 16, 16));
 	m_coffinTile.setTexture(m_texture);
