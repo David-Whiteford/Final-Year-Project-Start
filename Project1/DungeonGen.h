@@ -171,6 +171,10 @@ public:
 	void deleteRoom(int i){ m_rooms.erase(m_rooms.begin() + i); }
 	void playerStartPos();
 	void createJailRoom();
+	void setSpawnToWall(int t_roomIndex);
+	void addChairsDecor(int t_roomIndex);
+	void placeBookShelfDecor(int t_roomIndex);
+	
 	bool createJailCells(int t_roomIndex);
 	void createCoffinRoom();
 	void createFeastRoom();
@@ -185,6 +189,7 @@ public:
 
 
 private:
+	bool m_roomFound = false;
 	sf::Vector2f m_startPosition;
 	std::vector<char> m_tempTileVec;
 	int m_objectCount = 0;

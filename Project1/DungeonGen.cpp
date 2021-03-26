@@ -155,18 +155,22 @@ bool DungeonGen::makeRoom(int t_x, int t_y, Direction t_direction, bool t_firstR
 	if (placeTile(room , FloorTile))
 	{
 		m_rooms.emplace_back(room);
+		//place exit at north Side
 		if (t_direction != South || t_firstRoom)
 		{
 			m_exit.emplace_back(Tile{ room.x,room.y - 1,room.width,1 });
 		}
+		//place exit at south Side
 		if (t_direction != North || t_firstRoom)
 		{
 			m_exit.emplace_back(Tile{ room.x,room.y + room.height ,room.width,1 });
 		}
-		if (t_direction != South || t_firstRoom)
+		//place exit at west Side
+		if (t_direction != East || t_firstRoom)
 		{
 			m_exit.emplace_back(Tile{ room.x - 1, room.y,1,room.height });
 		}
+		//place exit at east Side
 		if (t_direction != West || t_firstRoom)
 		{
 			m_exit.emplace_back(Tile{ room.x + room.width,room.y,1,room.height });
@@ -374,7 +378,6 @@ int DungeonGen::GetRoom(int t_roomWidth, int t_roomHeight)
 	}
 	return roomIndex;
 }
-
 bool DungeonGen::CheckXAndYPos(int x, int y)
 {
 	return true;
@@ -391,6 +394,18 @@ sf::Vector2i DungeonGen::GenXAndYAtBottomWall(int t_i, std::vector<Tile>& t_tile
 	int y = t_tileVec[t_i].y + t_tileVec[t_i].height - 1;
 	return sf::Vector2i(x, y);
 }
+void DungeonGen::setSpawnToWall(int t_roomIndex)
+{
+	int y = m_rooms[t_roomIndex].y - 1;
+	for (int x = m_rooms[t_roomIndex].x; x < m_rooms[t_roomIndex].x + m_rooms[t_roomIndex].width - 1; x++)
+	{
+		if (getDecorTile(x, y) == SpawnPoint)
+		{
+			setDecorTiles(x, y, Wall);
+		}
+	}
+}
+
 
 
 
@@ -554,6 +569,7 @@ void DungeonGen::createJailRoom()
 	}
 	if(roomFound)
 	{
+		setSpawnToWall(roomIndex);
 		roomCompleted = createJailCells(roomIndex);
 		int x = randomInt(m_rooms[roomIndex].x + offSet, m_rooms[roomIndex].x + m_rooms[roomIndex].width - 2);
 		int y = randomInt(m_rooms[roomIndex].y + offSet, m_rooms[roomIndex].y + m_rooms[roomIndex].height - 2);
@@ -573,13 +589,14 @@ void DungeonGen::createJailRoom()
 		}
 	}
 }
+
 bool DungeonGen::createJailCells(int t_roomIndex)
 {
 	bool roomCompleted = false;
 	int offSet = 1;
-	int x = m_rooms[t_roomIndex].x;
+	int x = m_rooms[t_roomIndex].x +1;
 	int y = m_rooms[t_roomIndex].y - offSet;
-	int maxWidth = m_rooms[t_roomIndex].x + m_rooms[t_roomIndex].width - offSet;
+	int maxWidth = m_rooms[t_roomIndex].x + m_rooms[t_roomIndex].width - offSet *2;
 
 	for (int index = x; index <= maxWidth; index++)
 	{
@@ -675,13 +692,16 @@ void DungeonGen::createFeastRoom()
 				m_rooms[roomIndex].decorInRoom++;
 				setDecorTiles(x, y, Table);
 			}
+			int newY = 4;
 			x += 1;
-			y = m_rooms[roomIndex].y + 1;
+			y -= 1;
 			// add another decoration
 			if (getDecorTile(x, y) == StoneFloorTile
 				|| getDecorTile(x, y) == FloorTile)
 			{
 				m_rooms[roomIndex].decorInRoom++;
+				setDecorTiles(x, y, Plant);
+				y += newY;
 				setDecorTiles(x, y, Plant);
 			}
 			deleteRoom(roomIndex);
@@ -711,52 +731,78 @@ void DungeonGen::createLibraryRoom()
 	}
 	if (roomFound)
 	{
-		int doorNum = 0;
-		//get the middle of the room if one found 
-		int x = m_rooms[roomIndex].x +1;
-		int y = m_rooms[roomIndex].y;
-		int maxXVal = 3;
-		for (int i = 0; i < maxXVal; i++)
+		setSpawnToWall(roomIndex);
+		std::cout << "Create library " << std::endl;
+		placeBookShelfDecor(roomIndex);
+		addChairsDecor(roomIndex);
+		//get the bottom right of room and add a plant decor
+		int x = m_rooms[roomIndex].x + m_rooms[roomIndex].width - offSet;
+		int y = m_rooms[roomIndex].y + m_rooms[roomIndex].height - offSet;
+		if (getDecorTile(x, y) == StoneFloorTile || getDecorTile(x, y) == FloorTile)
 		{
-			int x2 = x;
-			int y2 = y - 1;
-			
-			if (getDecorTile(x2 + i, y2) == Door2)
-			{
-				doorNum = x2 +i;
-			}
+			setDecorTiles(x, y, Plant);
 		}
-		if (doorNum > 0) 
-		{
-			x = doorNum + offSet;
-			setDecorTiles(x, y, BookShelve);
-			setDecorTiles(x +2, y, UnusedTile);
-		}
-		else if(doorNum == 0)
-		{
-			setDecorTiles(x, y, BookShelve);
-			setDecorTiles(x + 2, y, UnusedTile);
-		}
-		x = m_rooms[roomIndex].x;
-		y = m_rooms[roomIndex].y + m_rooms[roomIndex].height;
-		int maxWidth = 3;
-		for (int index = x; index <= maxWidth; index++)
-		{
-			if (getDecorTile(index, y) == Wall)
-			{
-				std::cout << "Got Here " << std::endl;
-				if (getDecorTile(index, y - offSet) == FloorTile || getDecorTile(index, y - offSet) == StoneFloorTile)
-				{
-					setTile(index, y - offSet, ChairF);
-				}
-			}
-				 
-		}
-		
-
 		deleteRoom(roomIndex);
 	}
 }
+void DungeonGen::placeBookShelfDecor(int t_roomIndex)
+{
+	int offSet = 1;
+	int doorNum = 0;
+	//get the middle of the room if one found 
+	int x = m_rooms[t_roomIndex].x;
+	int y = m_rooms[t_roomIndex].y;
+	int maxXVal = 3;
+	for (int i = 0; i < maxXVal; i++)
+	{
+		int x2 = x;
+		int y2 = y - 1;
+
+		if (getDecorTile(x2 + i, y2) == Door2)
+		{
+			doorNum = x2 + i;
+		}
+	}
+	if (doorNum > 0)
+	{
+		x = doorNum + offSet;
+		setDecorTiles(x, y, BookShelve);
+		setDecorTiles(x + 2, y, UnusedTile);
+	}
+	else if (doorNum == 0)
+	{
+		setDecorTiles(x, y, BookShelve);
+		setDecorTiles(x + 2, y, UnusedTile);
+	}
+}
+
+
+
+
+void DungeonGen::addChairsDecor(int t_roomIndex)
+{
+	int offSet = 1;
+	//get the bottom right of room
+	int x = m_rooms[t_roomIndex].x;
+	int y = m_rooms[t_roomIndex].y + m_rooms[t_roomIndex].height;
+	int maxWidth = 3;
+	//loop along the x till you get to a certain width 
+	for (int index = x; index <= maxWidth; index++)
+	{
+		//check if there are walls there
+		if (getDecorTile(index, y) == Wall)
+		{
+			//set the room tile to be a chair if so
+			std::cout << "Got Here " << std::endl;
+			if (getDecorTile(index, y - offSet) == FloorTile || getDecorTile(index, y - offSet) == StoneFloorTile)
+			{
+				setDecorTiles(index, y - offSet, ChairF);
+			}
+		}
+
+	}
+}
+
 
 
 ////---------------------------------------------------------------------------
