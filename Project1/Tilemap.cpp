@@ -3,8 +3,6 @@
 Tilemap::Tilemap()
 {
 	init();
-	LoadMap(lvl1,0,0);
-	
 }
 
 Tilemap::~Tilemap()
@@ -72,6 +70,13 @@ void Tilemap::DungeonTilesSetUp()
 	m_spikeTrap.setTexture(m_texture);
 	m_spikeTrap.setTextureRect(sf::IntRect(81, 64, 16, 16));
 }
+sf::Vector2f Tilemap::getPlayerSpawn()
+{
+	//get a random spawn point near a exit in the dungeon
+	int randIndex = rand() % m_exits.size();
+	sf::Vector2f pos = m_exits[randIndex];
+	return pos;
+}
 void Tilemap::OverWorldTilesSetUp()
 {
 	m_grassTile.setTexture(m_texture);
@@ -95,17 +100,6 @@ void Tilemap::OverWorldTilesSetUp()
 	m_caveTile.setTexture(m_texture);
 	m_caveTile.setTextureRect(sf::IntRect(112, 192, 16, 16));
 }
-void Tilemap::LoadMap(int arr[m_mapWidth][m_mapHeigth], int t_mapWidth, int t_mapHeight)
-{
-	for (int row = 0; row < m_tileMapSize; row++)
-	{
-		for (int col = 0; col < m_tileMapSize; col++)
-		{
-			tilemap[row][col] = arr[row][col];
-		}
-	}
-}
-
 void Tilemap::DrawOverWorld(sf::View t_view)
 {
 	for (int i = 0; i < m_tileVec.size(); ++i)
@@ -216,6 +210,13 @@ std::vector<Tiles*> Tilemap::getDunObstaclesVec()
 			obstacles.push_back(m_dunTileVec[i]);
 		}
 	}
+	for (int i = 0; i < m_dunDecorTileVec.size(); i++)
+	{
+		if (m_dunDecorTileVec[i]->getTag() == "Obstacle")
+		{
+			obstacles.push_back(m_dunDecorTileVec[i]);
+		}
+	}
 	return obstacles;
 }
 std::vector<Tiles*> Tilemap::getOverWorldObstaclesVec()
@@ -242,6 +243,19 @@ std::vector<Tiles*> Tilemap::getCavesVec()
 		}
 	}
 	return caves;
+}
+
+std::vector<Tiles*> Tilemap::getDunExitsVec()
+{
+	std::vector<Tiles*> exits;
+	for (int i = 0; i < m_dunDecorTileVec.size(); i++)
+	{
+		if (m_dunDecorTileVec[i]->getTag() == "Exits")
+		{
+			exits.push_back(m_dunDecorTileVec[i]);
+		}
+	}
+	return exits;
 }
 
 void Tilemap::Dun(std::vector<char> &t_dunVec, sf::RenderWindow& t_window, int t_mapWidth, int t_mapHeight)
@@ -338,7 +352,7 @@ void Tilemap::DunDecor(std::vector<char>& t_dunDecorVec, sf::RenderWindow& t_win
 			break;
 		case '9':
 			m_dunDecorTileVec.push_back(new Tiles(t_window, m_tileSize,
-				sf::Vector2f(x * m_tileSize, y * m_tileSize), m_spawnPoint, "Spawn"));
+				sf::Vector2f(x * m_tileSize, y * m_tileSize), m_spawnPoint, "Exits"));
 			m_exits.push_back(sf::Vector2f(x * m_tileSize, y * m_tileSize));
 			break;
 		case 'M':
@@ -359,7 +373,7 @@ void Tilemap::DunDecor(std::vector<char>& t_dunDecorVec, sf::RenderWindow& t_win
 			break;
 		case 'O':
 			m_dunDecorTileVec.push_back(new Tiles(t_window, m_tileSize,
-				sf::Vector2f(x * m_tileSize, y * m_tileSize), m_chairTileF, "Decor"));
+				sf::Vector2f(x * m_tileSize, y * m_tileSize), m_chairTileF, "Obstacle"));
 			break;
 		case 'J':
 			m_dunDecorTileVec.push_back(new Tiles(t_window, m_tileSize,

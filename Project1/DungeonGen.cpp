@@ -21,6 +21,10 @@ void DungeonGen::generateMap(int t_maxFeatures)
 void DungeonGen::createRoomFeatures(Tilemap*& t_tilemap)
 {
 	generateMap(100);
+	/*for (int i = 0; i < m_tiles.size(); i++)
+	{
+		std::cout << " tile Vals: " << m_tiles[i] << std::endl;
+	}*/
 	FloorDecorTiles();
 	createTrapsInRooms();
 	playerStartPos();
@@ -28,7 +32,6 @@ void DungeonGen::createRoomFeatures(Tilemap*& t_tilemap)
 	placeDecorOnWalls();
 	placeDecorInRoom();
 	placeDecorInHalls();
-	print();
 	Set2DVec(t_tilemap);
 }
 

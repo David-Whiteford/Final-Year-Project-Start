@@ -14,17 +14,14 @@ public:
 	void init();
 	void OverWorldTilesSetUp();
     void DungeonTilesSetUp();
-	void LoadMap(int arr[30][30],int t_mapWidth, int t_mapHeight);
-	
-	void SetDunDeor(int arr[30][30]);
+	sf::Vector2f getPlayerSpawn();
 	void DrawOverWorld(sf::View t_view);
 	void DrawDungeon(sf::View t_view);
 	void setMap(sf::RenderWindow& t_window);
-	void setDunMap(sf::RenderWindow& t_window);
-	void setDunGen(bool t_dunGen);
 	std::vector<Tiles*> getDunObstaclesVec();
 	std::vector<Tiles*> getOverWorldObstaclesVec();
 	std::vector<Tiles*> getCavesVec();
+	std::vector<Tiles*> getDunExitsVec();
 	void Dun(std::vector<char> &t_dunVec, sf::RenderWindow& t_window ,int t_mapWidth,  int t_mapHeight);
 	void DunDecor(std::vector<char>& t_dunVec, sf::RenderWindow& t_window, int t_mapWidth, int t_mapHeight);
 	void PushValsToVec()
@@ -36,6 +33,11 @@ public:
 				m_tileVecValues.push_back(lvl1[row][col]);
 			}
 		}
+	}
+	void clearDunVecs()
+	{
+	    m_dunTileVec.clear();
+		m_dunDecorTileVec.clear();
 	}
 private:
 	

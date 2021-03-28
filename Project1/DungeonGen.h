@@ -83,13 +83,10 @@ public:
 		m_rooms(),
 		m_exit()
 	{
-
 	}
 	void generateMap(int t_maxFeatures);
 	void Set2DVec(Tilemap *&t_tilemap)
 	{
-	
-
 		for (int i = 0; i < m_tiles.size(); i++)
 		{
 			m_tempTileVec.push_back(m_tiles[i] );
@@ -99,15 +96,22 @@ public:
 			for (int col = 0; col < m_width; col++) 
 			{
 				m_tileArr[row][col] = m_tempTileVec.front();
-				/*if (!m_tempTileVec.empty())
-				{
-					m_tempTileVec.erase(m_tempTileVec.begin());
-				}*/
-				
 			}
 		}
-		t_tilemap->LoadMap(m_tileArr,1,1);
-		
+	}
+	void resetTileVecs()
+	{
+		for (int i = 0; i < m_tiles.size(); i++)
+		{
+			m_tiles[i] = UnusedTile;
+		}
+		for (int i = 0; i < m_decorTiles.size(); i++)
+		{
+			m_decorTiles[i] = UnusedTile;
+		}
+		m_tempTileVec.clear();
+		m_rooms.clear();
+		m_halls.clear();
 	}
 	std::vector<char> &getTileMapVec()
 	{
@@ -137,6 +141,7 @@ public:
 	}
 	char getDecorTile(int t_x, int t_y)
 	{
+		//gets a decoration tile at a certain x,y
 		if (t_x < 0 || t_y < 0 || t_x >= m_width || t_y >= m_height)
 			return UnusedTile;
 		return m_decorTiles[t_x + t_y * m_width];
@@ -164,7 +169,6 @@ public:
 		createCoffinRoom();
 		createLibraryRoom();
 		createJailRoom();
-		
 	}
 	void placeDecorInHalls();
 	void FloorDecorTiles();

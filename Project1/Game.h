@@ -35,6 +35,16 @@ private:
 	void init();
 	void processEvents();
 	void update(double dt);
+	void setUpDun();
+	void setUpOverWorld();
+	void clearVecs()
+	{
+		m_obstaclesVec.clear();
+		m_triggersVec.clear();
+		m_player->clearObstacleVec();
+		m_player->clearTriggerVec();
+	}
+
 	void render();
 	void handleInputs();
 	Player* m_player;
@@ -49,14 +59,15 @@ private:
 	gpp::Events input;
 	sf::Vector2f m_textOffset = sf::Vector2f(500.0f, 0.0f);
 	sf::Vector2f m_playerOrigin;
-	bool m_dungeonTest = false;
+	bool m_overWorldSetUp = false;
+	bool m_dungeonSetUp = false;
 	bool m_transitionStart = false;
 	sf::RenderWindow m_window; // main SFML window
+	sf::Vector2f m_spawnPos = Vector2f(0.0f,0.0f);
 	sf::View view2;
 	int m_mapSize = 50;
 	double timer = 0.0;
 	std::vector<Tiles*> m_obstaclesVec;
-	std::vector<Tiles*> m_dunObstaclesVec;
 	std::vector<Tiles*> m_triggersVec;
 	std::mutex* producerLock = new std::mutex;
 	std::mutex* consumerLock = new std::mutex;

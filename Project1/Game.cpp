@@ -8,46 +8,14 @@ Game::Game() :
 	init();
 	m_tileMap->PushValsToVec();
 	m_tileMap->setMap(m_window);
-	m_obstaclesVec = m_tileMap->getOverWorldObstaclesVec();
-	m_triggersVec = m_tileMap->getCavesVec();
-	m_player->setDebugRects(m_obstaclesVec);
-	m_player->setDebugRects(m_triggersVec);
+	m_spawnPos = m_player->getPosition();
+	setUpOverWorld();
 }
 
 
 Game::~Game()
 {
 }
-
-void Game::producer()
-{
-	producerLock->lock();
-	m_player->clearObstacleVec();
-	m_player->clearTriggerVec();
-	m_player->setIfInTrigger(false);
-	m_dungeon->createRoomFeatures(m_tileMap);
-	m_tileMap->Dun(m_dungeon->getTileMapVec(), m_window, m_mapSize, m_mapSize);
-	m_tileMap->DunDecor(m_dungeon->getDecorTileVec(), m_window, m_mapSize, m_mapSize);
-	m_dungeon->getTileMapVec().clear();
-	m_dungeon->getDecorTileVec().clear();
-	m_dunObstaclesVec.clear();
-	m_dunObstaclesVec = m_tileMap->getDunObstaclesVec();
-	m_player->setDebugRects(m_dunObstaclesVec);
-	m_dungeonTest = false; 
-	producerLock->unlock();
-}
-
-void Game::consumer()
-{
-	consumerLock->lock();
-	m_tileMap->DrawDungeon(view2);
-	m_window.draw(m_player->getAnimatedSpriteFrame());
-	//m_player->render(m_window);
-	m_window.setView(view2);
-	consumerLock->unlock();
-}
-
-
 void Game::run()
 {
 	sf::Clock clock;
@@ -91,7 +59,6 @@ void Game::init()
 	view2.zoom(3.0f);
 	m_tileMap = new Tilemap();
 	m_dungeon = new DungeonGen(m_mapSize, m_mapSize);
-	
 }
 
 void Game::processEvents()
@@ -100,8 +67,7 @@ void Game::processEvents()
 
 void Game::update(double dt)
 {
-	
-	//calls the update depending on the screen / gamestate or closes
+   //calls the update depending on the screen / gamestate or closes
 	switch (m_currentGameState)
 	{
 	case GameState::None:
@@ -110,6 +76,10 @@ void Game::update(double dt)
 		m_window.close();
 		break;
 	case GameState::OverWorld:
+		if (m_overWorldSetUp == true)
+		{
+			setUpOverWorld();
+		}
 		m_playerOrigin = m_player->getOrigin();
 		view2.setCenter(m_player->getPosition());
 		handleInputs();
@@ -118,33 +88,29 @@ void Game::update(double dt)
 		m_player->triggerCheck(m_triggersVec);
 		if (m_player->getIfInTrigger())
 		{
+			clearVecs();
 			m_player->resetCollisions();
-			m_transitionStart = true;
-			m_dungeonTest = true;
+			m_dungeonSetUp = true;
 			m_currentGameState = GameState::Dungeon;
 		}
 		break;
 	case GameState::Dungeon:
-		if (m_dungeonTest == true)
+		if (m_dungeonSetUp == true)
 		{
-			//producer();
-			m_player->clearObstacleVec();
-			m_player->clearTriggerVec();
-			m_player->setIfInTrigger(false);
-			m_dungeon->createRoomFeatures(m_tileMap);
-			m_tileMap->Dun(m_dungeon->getTileMapVec(), m_window, m_mapSize, m_mapSize);
-			m_tileMap->DunDecor(m_dungeon->getDecorTileVec(), m_window, m_mapSize, m_mapSize);
-			m_dungeon->getTileMapVec().clear();
-			m_dungeon->getDecorTileVec().clear();
-			m_dunObstaclesVec.clear();
-			m_dunObstaclesVec = m_tileMap->getDunObstaclesVec();
-			m_player->setDebugRects(m_dunObstaclesVec);
-			m_dungeonTest = false;
+			setUpDun();
 		}
-		
 		m_playerOrigin = m_player->getOrigin();
 		view2.setCenter(m_player->getPosition());
-		m_player->collisionCheck(m_dunObstaclesVec);
+		m_player->playerRays();
+		m_player->collisionCheck(m_obstaclesVec);
+		m_player->triggerCheck(m_triggersVec);
+		if (m_player->getIfInTrigger())
+		{
+			clearVecs();
+			m_player->resetCollisions();
+			m_overWorldSetUp = true;
+			m_currentGameState = GameState::OverWorld;
+		}
 		handleInputs();
 		break;
 	default:
@@ -152,24 +118,41 @@ void Game::update(double dt)
 	}
 	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Space) && m_transitionStart == false)
 	{
+		clearVecs();
 		m_transitionStart = true;
-		m_dungeonTest = true;
+		m_dungeonSetUp = true;
 		m_currentGameState = GameState::Dungeon;
 	}
-	//if (timer < 0.5 && m_transitionStart == true)
-	//{
-	//	//increment timer
-	//	timer += 0.01;
-	//}
-	//else
-	//{
-	//	//set move to true and reset timer to 0
-	//	m_transitionStart = false;
-	//	timer = 0.0;
-	//}
-	
+}
 
+void Game::setUpDun()
+{
+	sf::Vector2f offSetFromSpawn = Vector2f(0.0f, 20.0f);
+	m_player->setIfInTrigger(false);
+    m_dungeon->createRoomFeatures(m_tileMap);
+	m_tileMap->Dun(m_dungeon->getTileMapVec(), m_window, m_mapSize, m_mapSize);
+	m_tileMap->DunDecor(m_dungeon->getDecorTileVec(), m_window, m_mapSize, m_mapSize);
+	sf::Vector2f playerStartPos = sf::Vector2f(0.0f, 0.0f);
+	playerStartPos = m_tileMap->getPlayerSpawn();
+	m_player->setPosition(playerStartPos + offSetFromSpawn);
+	m_triggersVec = m_tileMap->getDunExitsVec();
+	m_obstaclesVec = m_tileMap->getDunObstaclesVec();
+	m_player->setDebugRects(m_obstaclesVec);
+	m_player->setDebugRects(m_triggersVec);
+	m_dungeonSetUp = false;
+}
 
+void Game::setUpOverWorld()
+{
+	m_player->setIfInTrigger(false);
+	m_tileMap->clearDunVecs();
+	m_dungeon->resetTileVecs();
+	m_player->setPosition(m_spawnPos);
+	m_obstaclesVec = m_tileMap->getOverWorldObstaclesVec();
+	m_triggersVec = m_tileMap->getCavesVec();
+	m_player->setDebugRects(m_obstaclesVec);
+	m_player->setDebugRects(m_triggersVec);
+	m_overWorldSetUp = false;
 }
 
 void Game::render()
@@ -187,11 +170,13 @@ void Game::render()
 		m_tileMap->DrawOverWorld(view2);
 		m_window.draw(m_player->getAnimatedSpriteFrame());
 		m_window.setView(view2);
+		//to render debug like colliders and rays
 		m_player->render(m_window);
 		break;
 	case GameState::Dungeon:
 		m_tileMap->DrawDungeon(view2);
 		m_window.draw(m_player->getAnimatedSpriteFrame());
+		//to render debug like colliders and rays
 		//m_player->render(m_window);
 		m_window.setView(view2);
 		break;
@@ -203,36 +188,6 @@ void Game::render()
 
 void Game::handleInputs()
 {
-	//switch (event.type)
-	//{
-	//case sf::Event::Closed:
-	//	// Close window : exit
-	//	//m_window.close();
-	//	break;
-	//	// Deal with KeyPressed
-	//case sf::Event::KeyPressed:
-	//	// Died Event
-	//	if (sf::Keyboard::isKeyPressed(sf::Keyboard::D)) {
-	//		DEBUG_MSG("gpp::Events::Event::Move_RIGHT_EVENT");
-	//		input.setCurrent(gpp::Events::Event::PLAYERMOVERIGTH);
-	//	}
-	//	break;
-	//	// Deal with KeyReleased
-	//case sf::Event::KeyReleased:
-	//	// Run and Stop Attack
-	//	if (sf::Keyboard::isKeyPressed(sf::Keyboard::D))
-	//	{
-	//		DEBUG_MSG("gpp::Events::Event::RUN_RIGHT_START_EVENT");
-	//		input.setCurrent(gpp::Events::Event::IDLE);
-	//	}
-	//	break;
-	//default:
-	//	DEBUG_MSG("gpp::Events::Event::NONE");
-	//	input.setCurrent(gpp::Events::Event::IDLE);
-	//	break;
-	//}
-
-	
 	if (sf::Keyboard::isKeyPressed(sf::Keyboard::D)) 
 	{
 		//DEBUG_MSG("gpp::Events::Event::Move_RIGHT_EVENT");

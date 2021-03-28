@@ -50,8 +50,6 @@ void Player::render(sf::RenderWindow& t_window)
 	{
 		t_window.draw(m_triggerRects[i]);
 	}
-	
-
 	m_collisions.render(t_window);
 }
 sf::Vector2f Player::getPosition()
@@ -144,7 +142,6 @@ void Player::setHealthCost(int t_healthCost, bool t_takeDamage)
 
 void Player::setDebugRects(std::vector<Tiles*>& t_tilemapObstacles)
 {
-	
 	for (int i = 0; i < t_tilemapObstacles.size(); i++)
 	{
 		if (t_tilemapObstacles[i]->getTag() == "Obstacle") {
@@ -157,7 +154,8 @@ void Player::setDebugRects(std::vector<Tiles*>& t_tilemapObstacles)
 			rect.setPosition(t_tilemapObstacles[i]->getPosition().x, t_tilemapObstacles[i]->getPosition().y);
 			m_debugRects.push_back(rect);
 		}
-		else if (t_tilemapObstacles[i]->getTag() == "Cave")
+		else if (t_tilemapObstacles[i]->getTag() == "Cave" 
+			|| t_tilemapObstacles[i]->getTag() == "Exits")
 		{
 			sf::RectangleShape rect;
 			rect.setSize(sf::Vector2f(16, 16));
