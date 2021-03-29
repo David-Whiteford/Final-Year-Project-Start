@@ -59,6 +59,9 @@ public:
 		ChairR = 'CR',
 		ChairF = 'O',
 		Table = 'U',
+		DirtTile = 'D',
+		HoleTile = 'H',
+		HealthPos = 'N',
 		Chair = 'TB',
 		SpikeTrap = 'L',
 		TrapDoorTrap = 'TD',
@@ -149,7 +152,6 @@ public:
 	void setTile(int t_x, int t_y, char t_tile)
 	{
 		m_tiles[t_x + t_y * m_width] = t_tile;
-		m_decorTiles[t_x + t_y * m_width] = t_tile;
 	}
 	void setDecorTiles(int t_x, int t_y, char t_tile)
 	{
@@ -165,6 +167,7 @@ public:
 	void createUniqueRooms() 
 	{
 		//creates unique rooms in the dungeon
+		BossRoom();
 		createFeastRoom();
 		createCoffinRoom();
 		createLibraryRoom();
@@ -178,7 +181,11 @@ public:
 	void setSpawnToWall(int t_roomIndex);
 	void addChairsDecor(int t_roomIndex);
 	void placeBookShelfDecor(int t_roomIndex);
-	
+	void BossRoomGroundTiles();
+	void BossRoom();
+	void BossRoomSkull();
+	void BossRoomHealth();
+	void BossRoomWalls();
 	bool createJailCells(int t_roomIndex);
 	void createCoffinRoom();
 	void createFeastRoom();
@@ -193,6 +200,7 @@ public:
 
 
 private:
+	int m_bossRoomIndex = 1000;
 	bool m_roomFound = false;
 	sf::Vector2f m_startPosition;
 	std::vector<char> m_tempTileVec;
