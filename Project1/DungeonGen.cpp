@@ -21,7 +21,7 @@ void DungeonGen::generateMap(int t_maxFeatures)
 void DungeonGen::createRoomFeatures(Tilemap*& t_tilemap)
 {
 	generateMap(100);
-	BossRoomGroundTiles();
+	changeGroundTiles();
 	m_decorTiles = m_tiles;
 	/*for (int i = 0; i < m_tiles.size(); i++)
 	{
@@ -663,39 +663,50 @@ void DungeonGen::createCoffinRoom()
 	}
 
 }
-////---------------------------------------------------------------------------
-////Function to create a boss room thats different From the others
-////---------------------------------------------------------------------------
-void DungeonGen::BossRoomGroundTiles()
+int DungeonGen::setUniqueGroundTiles(char t_dunTile,int t_maxRoomSizeWidth,int t_maxRoomSizeHeight)
 {
-	int maxRoomSizeWidth = 6;
-	int maxRoomSizeHeight = 6;
 	bool roomFound = false;
 	int noIndexFoundVal = 1000;
-	m_bossRoomIndex = GetRoom(maxRoomSizeWidth, maxRoomSizeHeight);
-	if (m_bossRoomIndex != noIndexFoundVal)
+	int roomIndex = 0;
+	roomIndex = GetRoom(t_maxRoomSizeWidth, t_maxRoomSizeHeight);
+	if (roomIndex != noIndexFoundVal)
 	{
 		roomFound = true;
 	}
 	if (roomFound)
 	{
-		std::cout << "Room Found" << std::endl;
-		for (int x = m_rooms[m_bossRoomIndex].x; x < m_rooms[m_bossRoomIndex].x
-			+ m_rooms[m_bossRoomIndex].width; x++)
+		for (int x = m_rooms[roomIndex].x; x < m_rooms[roomIndex].x
+			+ m_rooms[roomIndex].width; x++)
 		{
-			for (int y = m_rooms[m_bossRoomIndex].y; y < m_rooms[m_bossRoomIndex].y
-				+ m_rooms[m_bossRoomIndex].height; y++)
+			for (int y = m_rooms[roomIndex].y; y < m_rooms[roomIndex].y
+				+ m_rooms[roomIndex].height; y++)
 			{
-				if (getTile(x, y) == StoneFloorTile 
+				if (getTile(x, y) == StoneFloorTile
 					|| getTile(x, y) == FloorTile)
 				{
-					std::cout << "Room tile replaced" << std::endl;
-					setTile(x, y, DirtTile);
+					setTile(x, y, t_dunTile);
 				}
 			}
 		}
-	
 	}
+	return roomIndex;
+}
+
+
+////---------------------------------------------------------------------------
+////Function to create a boss room thats different From the others
+////---------------------------------------------------------------------------
+void DungeonGen::bossRoomGroundTiles()
+{
+	int maxRoomSizeWidth = 6;
+	int maxRoomSizeHeight = 6;
+	m_bossRoomIndex = setUniqueGroundTiles(DirtTile, maxRoomSizeWidth, maxRoomSizeHeight);
+}
+void DungeonGen::worsipRoomGroundTiles()
+{
+	int maxRoomSizeWidth = 5;
+	int maxRoomSizeHeight = 5;
+	m_worshipRoomIndex = setUniqueGroundTiles(DarkTiles, maxRoomSizeWidth, maxRoomSizeHeight);
 }
 void DungeonGen::BossRoom()
 {
@@ -704,9 +715,7 @@ void DungeonGen::BossRoom()
 	int y = m_rooms[m_bossRoomIndex].y + m_rooms[m_bossRoomIndex].height / 2 - offSetFromCentre;
 	if (getDecorTile(x, y) == DirtTile)
 	{
-		std::cout << "Hole Placed" << std::endl;
 		setDecorTiles(x, y, HoleTile);
-
 	}
 	
 	BossRoomSkull();
@@ -736,8 +745,13 @@ void DungeonGen::BossRoomHealth()
 {
 	int offSet = 1;
 	int x = randomInt(m_rooms[m_bossRoomIndex].x + offSet, m_rooms[m_bossRoomIndex].x + m_rooms[m_bossRoomIndex].width - (offSet * 2));
-	int y = m_rooms[m_bossRoomIndex].y + offSet;
-	if (getDecorTile(x, y) == DirtTile)
+	int y = m_rooms[m_bossRoomIndex].y + m_rooms[m_bossRoomIndex].height - offSet *2;
+	if (getDecorTile(x, y) != DirtTile)
+	{
+		x++;
+		setDecorTiles(x, y, HealthPos);
+	}
+	else
 	{
 		setDecorTiles(x, y, HealthPos);
 	}
@@ -758,6 +772,31 @@ void DungeonGen::BossRoomWalls()
 			setDecorTiles(x, y, Torch);
 		}
 	}
+	
+}
+void DungeonGen::WorshipRoom()
+{
+	int offSet = 1;
+	int x = m_rooms[m_worshipRoomIndex].x + m_rooms[m_worshipRoomIndex].width / 2 ;
+	int y = m_rooms[m_worshipRoomIndex].y + m_rooms[m_worshipRoomIndex].height / 2 ;
+	if (getDecorTile(x, y) == DarkTiles)
+	{
+		setDecorTiles(x, y, Worship);
+	}
+	x = m_rooms[m_worshipRoomIndex].x + m_rooms[m_worshipRoomIndex].width - offSet;
+	y = m_rooms[m_worshipRoomIndex].y + offSet; 
+	int	maxChairs = 3;
+	for (int i = 0; i < maxChairs; i++)
+	{
+		if (getDecorTile(x + 1, y) == Wall)
+		{
+			setDecorTiles(x, y, ChairL);
+			y++;
+		}
+	}
+	deleteRoom(m_worshipRoomIndex);
+	
+
 }
 ////---------------------------------------------------------------------------
 ////Function to create a feast room with a table and chairs
@@ -879,6 +918,9 @@ void DungeonGen::placeBookShelfDecor(int t_roomIndex)
 		setDecorTiles(x + 2, y, UnusedTile);
 	}
 }
+
+
+
 
 
 void DungeonGen::addChairsDecor(int t_roomIndex)

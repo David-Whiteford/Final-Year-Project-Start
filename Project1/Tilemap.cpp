@@ -60,13 +60,16 @@ void Tilemap::DungeonTilesSetUp()
 	m_bookCaseTile.setTextureRect(sf::IntRect(49, 192, 45, 28));
 	m_tableSprite.setTexture(m_dunTexture);
 	m_tableSprite.setTextureRect(sf::IntRect(332, 89, 48, 44));
-
+	m_worshipStone.setTexture(m_dunTexture);
+	m_worshipStone.setTextureRect(sf::IntRect(96, 34, 32, 28));
 	m_holeTile.setTexture(m_dunTexture);
 	m_holeTile.setTextureRect(sf::IntRect(555, 237, 48, 48));
-
+	m_darkFloorTiles.setTexture(m_dunTexture);
+	m_darkFloorTiles.setTextureRect(sf::IntRect(0, 32, 16, 16));
 	m_caveDirtTile.setTexture(m_dunTexture);
 	m_caveDirtTile.setTextureRect(sf::IntRect(491, 221, 16, 16));
-	
+	m_chairTileL.setTexture(m_dunTexture);
+	m_chairTileL.setTextureRect(sf::IntRect(289, 84, 16, 16));
 
 	//trigger
 	m_skullTile.setTexture(m_texture);
@@ -75,6 +78,8 @@ void Tilemap::DungeonTilesSetUp()
 	m_spawnPoint.setTextureRect(sf::IntRect(80, 0, 16, 16));
 	m_spikeTrap.setTexture(m_texture);
 	m_spikeTrap.setTextureRect(sf::IntRect(81, 64, 16, 16));
+	m_health.setTexture(m_dunTexture);
+	m_health.setTextureRect(sf::IntRect(289, 3, 15, 13));
 }
 sf::Vector2f Tilemap::getPlayerSpawn()
 {
@@ -300,8 +305,12 @@ void Tilemap::Dun(std::vector<char> &t_dunVec, sf::RenderWindow& t_window, int t
 					sf::Vector2f(x * m_tileSize, y * m_tileSize), m_stoneFloorTile, "Floor"));
 				break;
 			case 'D':
-				m_dunDecorTileVec.push_back(new Tiles(t_window, m_tileSize,
+				m_dunTileVec.push_back(new Tiles(t_window, m_tileSize,
 					sf::Vector2f(x * m_tileSize, y * m_tileSize), m_caveDirtTile, "Floor"));
+				break;
+			case 'Q':
+				m_dunTileVec.push_back(new Tiles(t_window, m_tileSize,
+					sf::Vector2f(x * m_tileSize, y * m_tileSize), m_darkFloorTiles, "Floor"));
 				break;
 			default:
 				break;
@@ -400,6 +409,18 @@ void Tilemap::DunDecor(std::vector<char>& t_dunDecorVec, sf::RenderWindow& t_win
 		case 'L':
 			m_dunTileVec.push_back(new Tiles(t_window, m_tileSize,
 				sf::Vector2f(x * m_tileSize, y * m_tileSize), m_spikeTrap, "Trigger"));
+			break;
+		case 'N':
+			m_dunTileVec.push_back(new Tiles(t_window, m_tileSize,
+				sf::Vector2f(x * m_tileSize, y * m_tileSize), m_health, "Trigger"));
+			break;
+		case 'W':
+			m_dunTileVec.push_back(new Tiles(t_window, m_tileSize,
+				sf::Vector2f(x * m_tileSize, y * m_tileSize), m_worshipStone, "Obstacle"));
+			break;
+		case 'Z':
+			m_dunTileVec.push_back(new Tiles(t_window, m_tileSize,
+				sf::Vector2f(x * m_tileSize, y * m_tileSize), m_chairTileL, "Obstacle"));
 			break;
 		default:
 			break;

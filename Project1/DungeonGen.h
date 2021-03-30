@@ -55,12 +55,14 @@ public:
 		Chest = '7',
 		Skull = '8',
 		SpawnPoint = '9',
-		ChairL = 'CL',
+		ChairL = 'Z',
 		ChairR = 'CR',
 		ChairF = 'O',
 		Table = 'U',
 		DirtTile = 'D',
 		HoleTile = 'H',
+		DarkTiles = 'Q',
+		Worship = 'W',
 		HealthPos = 'N',
 		Chair = 'TB',
 		SpikeTrap = 'L',
@@ -167,6 +169,7 @@ public:
 	void createUniqueRooms() 
 	{
 		//creates unique rooms in the dungeon
+		WorshipRoom();
 		BossRoom();
 		createFeastRoom();
 		createCoffinRoom();
@@ -181,11 +184,19 @@ public:
 	void setSpawnToWall(int t_roomIndex);
 	void addChairsDecor(int t_roomIndex);
 	void placeBookShelfDecor(int t_roomIndex);
-	void BossRoomGroundTiles();
+	int setUniqueGroundTiles(char t_dunTile, int t_maxRoomSizeWidth, int t_maxRoomSizeHeight);
+	void bossRoomGroundTiles();
+	void worsipRoomGroundTiles();
+	void changeGroundTiles()
+	{
+		bossRoomGroundTiles();
+		worsipRoomGroundTiles();
+	}
 	void BossRoom();
 	void BossRoomSkull();
 	void BossRoomHealth();
 	void BossRoomWalls();
+	void WorshipRoom();
 	bool createJailCells(int t_roomIndex);
 	void createCoffinRoom();
 	void createFeastRoom();
@@ -201,6 +212,7 @@ public:
 
 private:
 	int m_bossRoomIndex = 1000;
+	int m_worshipRoomIndex = 1000;
 	bool m_roomFound = false;
 	sf::Vector2f m_startPosition;
 	std::vector<char> m_tempTileVec;
