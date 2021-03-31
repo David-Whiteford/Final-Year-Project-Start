@@ -187,16 +187,18 @@ public:
 	int setUniqueGroundTiles(char t_dunTile, int t_maxRoomSizeWidth, int t_maxRoomSizeHeight);
 	void bossRoomGroundTiles();
 	void worsipRoomGroundTiles();
+	bool checkForDoors(int t_x, int t_y);
 	void changeGroundTiles()
 	{
 		bossRoomGroundTiles();
-		worsipRoomGroundTiles();
+	    worsipRoomGroundTiles();
 	}
 	void BossRoom();
 	void BossRoomSkull();
 	void BossRoomHealth();
 	void BossRoomWalls();
 	void WorshipRoom();
+	void WorshipRoomDecor();
 	bool createJailCells(int t_roomIndex);
 	void createCoffinRoom();
 	void createFeastRoom();

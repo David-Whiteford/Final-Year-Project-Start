@@ -22,12 +22,13 @@ void DungeonGen::createRoomFeatures(Tilemap*& t_tilemap)
 {
 	generateMap(100);
 	changeGroundTiles();
+	FloorDecorTiles();
 	m_decorTiles = m_tiles;
 	/*for (int i = 0; i < m_tiles.size(); i++)
 	{
 		std::cout << " tile Vals: " << m_tiles[i] << std::endl;
 	}*/
-	FloorDecorTiles();
+	
 	createUniqueRooms();
 	createTrapsInRooms();
 	playerStartPos();
@@ -410,7 +411,18 @@ void DungeonGen::setSpawnToWall(int t_roomIndex)
 		}
 	}
 }
-
+bool DungeonGen::checkForDoors(int t_x, int t_y)
+{
+	bool doorDetected = false;
+	int offSet = 1;
+	if (getTile(t_x - offSet,t_y) == Door1 || getTile(t_x + offSet, t_y) == Door1
+		|| getTile(t_x, t_y - offSet) == Door2 || getTile(t_x, t_y + offSet) == Door2
+		|| getTile (t_x ,t_y - offSet) == SpawnPoint)
+	{
+		doorDetected = true;
+	}
+	return doorDetected;
+}
 
 
 
@@ -665,15 +677,11 @@ void DungeonGen::createCoffinRoom()
 }
 int DungeonGen::setUniqueGroundTiles(char t_dunTile,int t_maxRoomSizeWidth,int t_maxRoomSizeHeight)
 {
-	bool roomFound = false;
+	
 	int noIndexFoundVal = 1000;
-	int roomIndex = 0;
+	int roomIndex = 1000;
 	roomIndex = GetRoom(t_maxRoomSizeWidth, t_maxRoomSizeHeight);
 	if (roomIndex != noIndexFoundVal)
-	{
-		roomFound = true;
-	}
-	if (roomFound)
 	{
 		for (int x = m_rooms[roomIndex].x; x < m_rooms[roomIndex].x
 			+ m_rooms[roomIndex].width; x++)
@@ -701,6 +709,7 @@ void DungeonGen::bossRoomGroundTiles()
 	int maxRoomSizeWidth = 6;
 	int maxRoomSizeHeight = 6;
 	m_bossRoomIndex = setUniqueGroundTiles(DirtTile, maxRoomSizeWidth, maxRoomSizeHeight);
+	std::cout << "Boss Index: " << m_bossRoomIndex << std::endl;
 }
 void DungeonGen::worsipRoomGroundTiles()
 {
@@ -708,20 +717,26 @@ void DungeonGen::worsipRoomGroundTiles()
 	int maxRoomSizeHeight = 5;
 	m_worshipRoomIndex = setUniqueGroundTiles(DarkTiles, maxRoomSizeWidth, maxRoomSizeHeight);
 }
+
 void DungeonGen::BossRoom()
 {
-	int offSetFromCentre = 1;
-	int x = m_rooms[m_bossRoomIndex].x + m_rooms[m_bossRoomIndex].width / 2 - offSetFromCentre;
-	int y = m_rooms[m_bossRoomIndex].y + m_rooms[m_bossRoomIndex].height / 2 - offSetFromCentre;
-	if (getDecorTile(x, y) == DirtTile)
+	int invalidIndex = 1000;
+	if (m_bossRoomIndex != invalidIndex)
 	{
-		setDecorTiles(x, y, HoleTile);
+		int offSetFromCentre = 1;
+		int x = m_rooms[m_bossRoomIndex].x + m_rooms[m_bossRoomIndex].width / 2 - offSetFromCentre;
+		int y = m_rooms[m_bossRoomIndex].y + m_rooms[m_bossRoomIndex].height / 2 - offSetFromCentre;
+		if (getDecorTile(x, y) == DirtTile)
+		{
+			setDecorTiles(x, y, HoleTile);
+		}
+
+		BossRoomSkull();
+		BossRoomHealth();
+		BossRoomWalls();
+		std::cout << "Boss Index: " << m_bossRoomIndex << std::endl;
+		deleteRoom(m_bossRoomIndex);
 	}
-	
-	BossRoomSkull();
-	BossRoomHealth();
-	BossRoomWalls();
-	deleteRoom(m_bossRoomIndex);
 }
 void DungeonGen::BossRoomSkull()
 {
@@ -776,27 +791,42 @@ void DungeonGen::BossRoomWalls()
 }
 void DungeonGen::WorshipRoom()
 {
-	int offSet = 1;
-	int x = m_rooms[m_worshipRoomIndex].x + m_rooms[m_worshipRoomIndex].width / 2 ;
-	int y = m_rooms[m_worshipRoomIndex].y + m_rooms[m_worshipRoomIndex].height / 2 ;
-	if (getDecorTile(x, y) == DarkTiles)
+	int invalidIndex = 1000;
+	if (m_worshipRoomIndex != invalidIndex)
 	{
-		setDecorTiles(x, y, Worship);
+		int x = m_rooms[m_worshipRoomIndex].x + m_rooms[m_worshipRoomIndex].width / 2;
+		int y = m_rooms[m_worshipRoomIndex].y + m_rooms[m_worshipRoomIndex].height / 2;
+		if (getDecorTile(x, y) == DarkTiles)
+		{
+			setDecorTiles(x, y, Worship);
+		}
+		WorshipRoomDecor();
+		
+		deleteRoom(m_worshipRoomIndex);
 	}
-	x = m_rooms[m_worshipRoomIndex].x + m_rooms[m_worshipRoomIndex].width - offSet;
-	y = m_rooms[m_worshipRoomIndex].y + offSet; 
+}
+void DungeonGen::WorshipRoomDecor()
+{
+	int offSet = 1;
+	int x = m_rooms[m_worshipRoomIndex].x + m_rooms[m_worshipRoomIndex].width - offSet;
+	int y = m_rooms[m_worshipRoomIndex].y;
 	int	maxChairs = 3;
 	for (int i = 0; i < maxChairs; i++)
 	{
-		if (getDecorTile(x + 1, y) == Wall)
+		if (checkForDoors(x, y) == false)
 		{
 			setDecorTiles(x, y, ChairL);
 			y++;
 		}
 	}
-	deleteRoom(m_worshipRoomIndex);
-	
-
+	x = m_rooms[m_worshipRoomIndex].x;
+	y = m_rooms[m_worshipRoomIndex].y;
+	if (checkForDoors(x, y) == false)
+	{
+		setDecorTiles(x, y, Plant);
+		y = m_rooms[m_worshipRoomIndex].y + m_rooms[m_worshipRoomIndex].height - offSet;
+		setDecorTiles(x, y, Plant);
+	}
 }
 ////---------------------------------------------------------------------------
 ////Function to create a feast room with a table and chairs
@@ -1027,9 +1057,12 @@ void DungeonGen::createTrapsInRooms()
 				int x = randomInt(m_rooms[i].x, m_rooms[i].x + m_rooms[i].width);
 				int y = randomInt(m_rooms[i].y, m_rooms[i].y + m_rooms[i].height);
 
-				if (getDecorTile(x, y) == FloorTile || getDecorTile(x, y) == StoneFloorTile)
+				if (getDecorTile(x, y) == FloorTile 
+					|| getDecorTile(x, y) == StoneFloorTile)
 				{
-					setDecorTiles(x, y, SpikeTrap);
+					if (checkForDoors(x, y) == false) {
+						setDecorTiles(x, y, SpikeTrap);
+					}
 				}
 			}
 		}
@@ -1057,8 +1090,7 @@ void DungeonGen::placeDecorInHalls()
 					int y = randomInt(m_halls[i].y +1, m_halls[i].y + m_halls[i].width - 1);
 
 					if (getDecorTile(x, y) == FloorTile
-						&& getDecorTile(x + 1, y) != Door1 && getDecorTile(x - 1, y) != Door1
-						&& getDecorTile(x, y + 1) != Door2 && getDecorTile(x, y - 1) != Door2)
+						&& checkForDoors(x,y)==false)
 					{
 						setDecorTiles(x, y, Plant);
 					}
@@ -1070,8 +1102,7 @@ void DungeonGen::placeDecorInHalls()
 					int y = randomInt(m_halls[i].y + offSets, m_halls[i].y + m_halls[i].width - offSets);
 
 					if (getDecorTile(x, y) == FloorTile
-						&& getDecorTile(x + offSets, y) != Door1 && getDecorTile(x - offSets, y) != Door1
-						&& getDecorTile(x, y + offSets) != Door2 && getDecorTile(x, y - offSets) != Door2)
+						&& checkForDoors(x, y) == false)
 					{
 						setDecorTiles(x, y, Potion);
 					}
@@ -1083,8 +1114,7 @@ void DungeonGen::placeDecorInHalls()
 					int y = randomInt(m_halls[i].y, m_halls[i].y + m_halls[i].width - 1);
 
 					if (getDecorTile(x, y) == FloorTile
-						&& getDecorTile(x + 1, y) != Door1 && getDecorTile(x - 1, y) != Door1
-						&& getDecorTile(x, y + 1) != Door2 && getDecorTile(x, y - 1) != Door2)
+						&& checkForDoors(x, y) == false)
 					{
 						setDecorTiles(x, y, Money);
 					}
