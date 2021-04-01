@@ -144,10 +144,13 @@ void Game::setUpDun()
 
 void Game::setUpOverWorld()
 {
+	sf::Vector2f offSetFromSpawn = Vector2f(0.0f, 20.0f);
 	m_player->setIfInTrigger(false);
 	m_tileMap->clearDunVecs();
 	m_dungeon->resetTileVecs();
-	m_player->setPosition(m_spawnPos);
+	sf::Vector2f playerCavePos = sf::Vector2f(0.0f, 0.0f);
+	playerCavePos = m_tileMap->getPlayerCave();
+	m_player->setPosition(playerCavePos + offSetFromSpawn);
 	m_obstaclesVec = m_tileMap->getOverWorldObstaclesVec();
 	m_triggersVec = m_tileMap->getCavesVec();
 	m_player->setDebugRects(m_obstaclesVec);
@@ -171,7 +174,7 @@ void Game::render()
 		m_window.draw(m_player->getAnimatedSpriteFrame());
 		m_window.setView(view2);
 		//to render debug like colliders and rays
-		m_player->render(m_window);
+		//m_player->render(m_window);
 		break;
 	case GameState::Dungeon:
 		m_tileMap->DrawDungeon(view2);

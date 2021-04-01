@@ -169,8 +169,6 @@ public:
 	void createUniqueRooms() 
 	{
 		//creates unique rooms in the dungeon
-		WorshipRoom();
-		BossRoom();
 		createFeastRoom();
 		createCoffinRoom();
 		createLibraryRoom();
@@ -184,15 +182,11 @@ public:
 	void setSpawnToWall(int t_roomIndex);
 	void addChairsDecor(int t_roomIndex);
 	void placeBookShelfDecor(int t_roomIndex);
-	int setUniqueGroundTiles(char t_dunTile, int t_maxRoomSizeWidth, int t_maxRoomSizeHeight);
+	void setUniqueGroundTiles(char t_newTile, int t_maxRoomSizeWidth, int t_maxRoomSizeHeight,int t_index);
 	void bossRoomGroundTiles();
 	void worsipRoomGroundTiles();
 	bool checkForDoors(int t_x, int t_y);
-	void changeGroundTiles()
-	{
-		bossRoomGroundTiles();
-	    worsipRoomGroundTiles();
-	}
+	
 	void BossRoom();
 	void BossRoomSkull();
 	void BossRoomHealth();

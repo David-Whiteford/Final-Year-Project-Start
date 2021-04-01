@@ -15,6 +15,7 @@ public:
 	void OverWorldTilesSetUp();
     void DungeonTilesSetUp();
 	sf::Vector2f getPlayerSpawn();
+	sf::Vector2f getPlayerCave();
 	void DrawOverWorld(sf::View t_view);
 	void DrawDungeon(sf::View t_view);
 	void setMap(sf::RenderWindow& t_window);
@@ -48,6 +49,7 @@ private:
 	std::vector<Tiles*> m_dunDecorTileVec;
 	std::vector<sf::Vector2f> m_enemySpawn;
 	std::vector<sf::Vector2f> m_exits;
+	std::vector<sf::Vector2f> m_caves;
 	sf::Texture m_texture;
 	sf::Texture m_dunTexture;
 	static const int m_mapWidth = 30;

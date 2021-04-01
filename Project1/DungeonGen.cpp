@@ -20,14 +20,17 @@ void DungeonGen::generateMap(int t_maxFeatures)
 
 void DungeonGen::createRoomFeatures(Tilemap*& t_tilemap)
 {
+	int numberOfRooms = 2;
 	generateMap(100);
-	changeGroundTiles();
 	FloorDecorTiles();
 	m_decorTiles = m_tiles;
-	/*for (int i = 0; i < m_tiles.size(); i++)
+	for (int i = 0; i < numberOfRooms; i++)
 	{
-		std::cout << " tile Vals: " << m_tiles[i] << std::endl;
-	}*/
+		bossRoomGroundTiles();
+		BossRoom();
+		worsipRoomGroundTiles();
+		WorshipRoom();
+	}
 	
 	createUniqueRooms();
 	createTrapsInRooms();
@@ -35,6 +38,7 @@ void DungeonGen::createRoomFeatures(Tilemap*& t_tilemap)
 	placeDecorOnWalls();
 	placeDecorInRoom();
 	placeDecorInHalls();
+	std::cout << "Empty Rooms Left " << m_rooms.size() << std::endl;
 	print();
 	Set2DVec(t_tilemap);
 }
@@ -675,29 +679,23 @@ void DungeonGen::createCoffinRoom()
 	}
 
 }
-int DungeonGen::setUniqueGroundTiles(char t_dunTile,int t_maxRoomSizeWidth,int t_maxRoomSizeHeight)
+void DungeonGen::setUniqueGroundTiles(char t_newTile, int t_maxRoomSizeWidth, int t_maxRoomSizeHeight, int t_index)
 {
-	
-	int noIndexFoundVal = 1000;
-	int roomIndex = 1000;
-	roomIndex = GetRoom(t_maxRoomSizeWidth, t_maxRoomSizeHeight);
-	if (roomIndex != noIndexFoundVal)
+	for (int x = m_rooms[t_index].x; x < m_rooms[t_index].x
+		+ m_rooms[t_index].width; x++)
 	{
-		for (int x = m_rooms[roomIndex].x; x < m_rooms[roomIndex].x
-			+ m_rooms[roomIndex].width; x++)
+		for (int y = m_rooms[t_index].y; y < m_rooms[t_index].y
+			+ m_rooms[t_index].height; y++)
 		{
-			for (int y = m_rooms[roomIndex].y; y < m_rooms[roomIndex].y
-				+ m_rooms[roomIndex].height; y++)
+			if (getTile(x, y) == StoneFloorTile
+				|| getTile(x, y) == FloorTile)
 			{
-				if (getTile(x, y) == StoneFloorTile
-					|| getTile(x, y) == FloorTile)
-				{
-					setTile(x, y, t_dunTile);
-				}
+				setTile(x, y, t_newTile);
+				setDecorTiles(x, y, t_newTile);
 			}
 		}
 	}
-	return roomIndex;
+
 }
 
 
@@ -708,35 +706,35 @@ void DungeonGen::bossRoomGroundTiles()
 {
 	int maxRoomSizeWidth = 6;
 	int maxRoomSizeHeight = 6;
-	m_bossRoomIndex = setUniqueGroundTiles(DirtTile, maxRoomSizeWidth, maxRoomSizeHeight);
-	std::cout << "Boss Index: " << m_bossRoomIndex << std::endl;
+	m_bossRoomIndex = GetRoom(maxRoomSizeWidth, maxRoomSizeHeight);
+	setUniqueGroundTiles(DirtTile, maxRoomSizeWidth, maxRoomSizeHeight, m_bossRoomIndex);
+	
+	
 }
 void DungeonGen::worsipRoomGroundTiles()
 {
 	int maxRoomSizeWidth = 5;
 	int maxRoomSizeHeight = 5;
-	m_worshipRoomIndex = setUniqueGroundTiles(DarkTiles, maxRoomSizeWidth, maxRoomSizeHeight);
+	m_worshipRoomIndex = GetRoom(maxRoomSizeWidth, maxRoomSizeHeight);
+	setUniqueGroundTiles(DarkTiles, maxRoomSizeWidth, maxRoomSizeHeight, m_worshipRoomIndex);
+	
 }
 
 void DungeonGen::BossRoom()
 {
-	int invalidIndex = 1000;
-	if (m_bossRoomIndex != invalidIndex)
+	int offSetFromCentre = 1;
+	int x = m_rooms[m_bossRoomIndex].x + m_rooms[m_bossRoomIndex].width / 2 - offSetFromCentre;
+	int y = m_rooms[m_bossRoomIndex].y + m_rooms[m_bossRoomIndex].height / 2 - offSetFromCentre;
+	if (getDecorTile(x, y) == DirtTile)
 	{
-		int offSetFromCentre = 1;
-		int x = m_rooms[m_bossRoomIndex].x + m_rooms[m_bossRoomIndex].width / 2 - offSetFromCentre;
-		int y = m_rooms[m_bossRoomIndex].y + m_rooms[m_bossRoomIndex].height / 2 - offSetFromCentre;
-		if (getDecorTile(x, y) == DirtTile)
-		{
-			setDecorTiles(x, y, HoleTile);
-		}
-
-		BossRoomSkull();
-		BossRoomHealth();
-		BossRoomWalls();
-		std::cout << "Boss Index: " << m_bossRoomIndex << std::endl;
-		deleteRoom(m_bossRoomIndex);
+		setDecorTiles(x, y, HoleTile);
 	}
+
+	BossRoomSkull();
+	BossRoomHealth();
+	BossRoomWalls();
+	deleteRoom(m_bossRoomIndex);
+	
 }
 void DungeonGen::BossRoomSkull()
 {
@@ -791,19 +789,16 @@ void DungeonGen::BossRoomWalls()
 }
 void DungeonGen::WorshipRoom()
 {
-	int invalidIndex = 1000;
-	if (m_worshipRoomIndex != invalidIndex)
+	int x = m_rooms[m_worshipRoomIndex].x + m_rooms[m_worshipRoomIndex].width / 2;
+	int y = m_rooms[m_worshipRoomIndex].y + m_rooms[m_worshipRoomIndex].height / 2;
+	if (getDecorTile(x, y) == DarkTiles)
 	{
-		int x = m_rooms[m_worshipRoomIndex].x + m_rooms[m_worshipRoomIndex].width / 2;
-		int y = m_rooms[m_worshipRoomIndex].y + m_rooms[m_worshipRoomIndex].height / 2;
-		if (getDecorTile(x, y) == DarkTiles)
-		{
-			setDecorTiles(x, y, Worship);
-		}
-		WorshipRoomDecor();
-		
-		deleteRoom(m_worshipRoomIndex);
+		setDecorTiles(x, y, Worship);
 	}
+	WorshipRoomDecor();
+		
+	deleteRoom(m_worshipRoomIndex);
+	
 }
 void DungeonGen::WorshipRoomDecor()
 {

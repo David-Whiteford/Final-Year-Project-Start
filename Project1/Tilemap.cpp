@@ -88,6 +88,13 @@ sf::Vector2f Tilemap::getPlayerSpawn()
 	sf::Vector2f pos = m_exits[randIndex];
 	return pos;
 }
+sf::Vector2f Tilemap::getPlayerCave()
+{
+	//get a random spawn point near a exit in the dungeon
+	int randIndex = rand() % m_caves.size();
+	sf::Vector2f pos = m_caves[randIndex];
+	return pos;
+}
 void Tilemap::OverWorldTilesSetUp()
 {
 	m_grassTile.setTexture(m_texture);
@@ -198,6 +205,7 @@ void Tilemap::setMap(sf::RenderWindow& t_window)
 			case 10:
 				m_tileVec.push_back(new Tiles(t_window, m_tileSize,
 					sf::Vector2f(x * m_tileSize, y * m_tileSize), m_caveTile, "Cave"));
+				m_caves.push_back(sf::Vector2f(x * m_tileSize, y * m_tileSize));
 				break;
 			default:
 				break;
