@@ -28,7 +28,7 @@ class DungeonGen
 {
 public:
 
-	struct Tile
+	struct RoomVals
 	{
 		int x, y;
 		int width, height;
@@ -59,6 +59,9 @@ public:
 		ChairR = 'CR',
 		ChairF = 'O',
 		Table = 'U',
+		TilePattern = 'G',
+		Statue = 'I',
+		FlameCauldron = 'R',
 		DirtTile = 'D',
 		HoleTile = 'H',
 		DarkTiles = 'Q',
@@ -164,7 +167,7 @@ public:
 	bool createFeat(int t_x ,int t_y, Direction t_direction);
 	bool makeRoom(int t_x, int t_y, Direction t_direction,bool t_firstRoom);
 	bool makeCorridor(int t_x, int t_y, Direction t_direction);
-	bool placeTile(Tile& t_rect, char t_tile);
+	bool placeTile(RoomVals& t_rect, char t_tile);
 	void placeDecorInRoom();
 	void createUniqueRooms() 
 	{
@@ -185,14 +188,17 @@ public:
 	void setUniqueGroundTiles(char t_newTile, int t_maxRoomSizeWidth, int t_maxRoomSizeHeight,int t_index);
 	void bossRoomGroundTiles();
 	void worsipRoomGroundTiles();
+	void statueRoomTiles();
 	bool checkForDoors(int t_x, int t_y);
-	
-	void BossRoom();
-	void BossRoomSkull();
-	void BossRoomHealth();
-	void BossRoomWalls();
-	void WorshipRoom();
-	void WorshipRoomDecor();
+	void bedRoom();
+	void bossRoom();
+	void bossRoomSkull();
+	void bossRoomHealth();
+	void bossRoomWalls();
+	void worshipRoom();
+	void worshipRoomDecor();
+	void statueRoom();
+	void statueRoomDecor();
 	bool createJailCells(int t_roomIndex);
 	void createCoffinRoom();
 	void createFeastRoom();
@@ -200,8 +206,8 @@ public:
 	void Test() { placeDecorInRoom(); };
 	void placeDecorOnWalls();
 	bool CheckXAndYPos(int x, int y);
-	sf::Vector2i GenXAndYAtTopWall(int t_i, std::vector<Tile>& t_tileVec);
-	sf::Vector2i GenXAndYAtBottomWall(int t_i, std::vector<Tile>& t_tileVec);
+	sf::Vector2i GenXAndYAtTopWall(int t_i, std::vector<RoomVals>& t_tileVec);
+	sf::Vector2i GenXAndYAtBottomWall(int t_i, std::vector<RoomVals>& t_tileVec);
 	void createTrapsInRooms();
 	int GetRoom(int t_roomWidth, int t_roomHeight);
 
@@ -209,6 +215,7 @@ public:
 private:
 	int m_bossRoomIndex = 1000;
 	int m_worshipRoomIndex = 1000;
+	int m_statueRoomIndex = 1000;
 	bool m_roomFound = false;
 	sf::Vector2f m_startPosition;
 	std::vector<char> m_tempTileVec;
@@ -218,9 +225,9 @@ private:
 	int m_roomMaxDecor = 10;
 	std::vector<char> m_tiles;
 	std::vector<char> m_decorTiles;
-	std::vector<Tile> m_halls;
-	std::vector<Tile> m_rooms;
-	std::vector<Tile> m_exit;
+	std::vector<RoomVals> m_halls;
+	std::vector<RoomVals> m_rooms;
+	std::vector<RoomVals> m_exit;
 	std::vector<int> m_tileNums;
 	int m_tileDecorArr[30][30];
 	int m_tileArr[30][30];

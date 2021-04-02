@@ -26,12 +26,13 @@ void DungeonGen::createRoomFeatures(Tilemap*& t_tilemap)
 	m_decorTiles = m_tiles;
 	for (int i = 0; i < numberOfRooms; i++)
 	{
-		bossRoomGroundTiles();
-		BossRoom();
 		worsipRoomGroundTiles();
-		WorshipRoom();
+		worshipRoom();
+		statueRoomTiles();
+		statueRoom();
 	}
-	
+	bossRoomGroundTiles();
+	bossRoom();
 	createUniqueRooms();
 	createTrapsInRooms();
 	playerStartPos();
@@ -39,6 +40,7 @@ void DungeonGen::createRoomFeatures(Tilemap*& t_tilemap)
 	placeDecorInRoom();
 	placeDecorInHalls();
 	std::cout << "Empty Rooms Left " << m_rooms.size() << std::endl;
+	placeDecorInRoom();
 	print();
 	Set2DVec(t_tilemap);
 }
@@ -51,7 +53,7 @@ bool DungeonGen::createFeature()
 		{
 			break;
 		}
-		//gets a random side of a random room or corridor
+		
 		int r = randomInt(m_exit.size());
 		int x = randomInt(m_exit[r].x, m_exit[r].x + m_exit[r].width - 1);
 		int y = randomInt(m_exit[r].y, m_exit[r].y + m_exit[r].height - 1);
@@ -91,7 +93,8 @@ bool DungeonGen::createFeat(int t_x, int t_y, Direction t_direction)
 	{
 		x = -1;
 	}
-	if (getTile(t_x + x, t_y + y) != FloorTile && getTile(t_x + x, t_y + y) != CorridorTile)
+	if (getTile(t_x + x, t_y + y) != FloorTile 
+		&& getTile(t_x + x, t_y + y) != CorridorTile)
 	{
 		return false;
 	}
@@ -99,8 +102,7 @@ bool DungeonGen::createFeat(int t_x, int t_y, Direction t_direction)
 	{
 		if (makeRoom(t_x, t_y, t_direction,false))
 		{
-			if (t_direction == North || t_direction == South)
-			{
+			if (t_direction == North || t_direction == South){
 				setTile(t_x, t_y, Door2);
 				return true;
 			}
@@ -143,7 +145,7 @@ bool DungeonGen::makeRoom(int t_x, int t_y, Direction t_direction, bool t_firstR
 	int roomSizeMin = 5;
 	int roomSizeMax = 9;
 
-	Tile room;
+	RoomVals room;
 	room.width = randomInt(roomSizeMin, roomSizeMax);
 	room.height = randomInt(roomSizeMin, roomSizeMax);
 
@@ -169,22 +171,22 @@ bool DungeonGen::makeRoom(int t_x, int t_y, Direction t_direction, bool t_firstR
 		//place exit at north Side
 		if (t_direction != South || t_firstRoom)
 		{
-			m_exit.emplace_back(Tile{ room.x,room.y - 1,room.width,1 });
+			m_exit.emplace_back(RoomVals{ room.x,room.y - 1,room.width,1 });
 		}
 		//place exit at south Side
 		if (t_direction != North || t_firstRoom)
 		{
-			m_exit.emplace_back(Tile{ room.x,room.y + room.height ,room.width,1 });
+			m_exit.emplace_back(RoomVals{ room.x,room.y + room.height ,room.width,1 });
 		}
 		//place exit at west Side
 		if (t_direction != East || t_firstRoom)
 		{
-			m_exit.emplace_back(Tile{ room.x - 1, room.y,1,room.height });
+			m_exit.emplace_back(RoomVals{ room.x - 1, room.y,1,room.height });
 		}
 		//place exit at east Side
 		if (t_direction != West || t_firstRoom)
 		{
-			m_exit.emplace_back(Tile{ room.x + room.width,room.y,1,room.height });
+			m_exit.emplace_back(RoomVals{ room.x + room.width,room.y,1,room.height });
 		}
 		return true;
 	}
@@ -194,10 +196,10 @@ bool DungeonGen::makeRoom(int t_x, int t_y, Direction t_direction, bool t_firstR
 
 bool DungeonGen::makeCorridor(int t_x, int t_y, Direction t_direction)
 {
-	int corridorLengthMin = 3;
-	int corridorLengthMax = 6;
+	int corridorLengthMin = 5;
+	int corridorLengthMax = 10;
 
-	Tile corridor;
+	RoomVals corridor;
 	corridor.x = t_x;
 	corridor.y = t_y;
 
@@ -269,19 +271,19 @@ bool DungeonGen::makeCorridor(int t_x, int t_y, Direction t_direction)
 		m_halls.emplace_back(corridor);
 		if (t_direction != South && corridor.width != 1)
 		{
-			m_exit.emplace_back(Tile{ corridor.x,corridor.y - 1,corridor.width,1 });
+			m_exit.emplace_back(RoomVals{ corridor.x,corridor.y - 1,corridor.width,1 });
 		}
 		if (t_direction != North && corridor.width != 1)
 		{
-			m_exit.emplace_back(Tile{ corridor.x,corridor.y + corridor.height,corridor.width,1 });
+			m_exit.emplace_back(RoomVals{ corridor.x,corridor.y + corridor.height,corridor.width,1 });
 		}
 		if (t_direction != East && corridor.height != 1)
 		{
-			m_exit.emplace_back(Tile{ corridor.x - 1, corridor.y, 1, corridor.height });
+			m_exit.emplace_back(RoomVals{ corridor.x - 1, corridor.y, 1, corridor.height });
 		}
 		if (t_direction != West && corridor.height != 1)
 		{
-			m_exit.emplace_back(Tile{ corridor.x + corridor.width, corridor.y, 1, corridor.height });
+			m_exit.emplace_back(RoomVals{ corridor.x + corridor.width, corridor.y, 1, corridor.height });
 		}
 		return true;
 	}
@@ -289,7 +291,7 @@ bool DungeonGen::makeCorridor(int t_x, int t_y, Direction t_direction)
 	return false;
 }
 
-bool DungeonGen::placeTile(Tile& t_Tile, char t_tile)
+bool DungeonGen::placeTile(RoomVals& t_Tile, char t_tile)
 {
 	if (t_Tile.x < 1 || t_Tile.y < 1 || t_Tile.x + t_Tile.width > m_width - 1
 		|| t_Tile.y + t_Tile.height>m_height - 1)
@@ -392,13 +394,13 @@ bool DungeonGen::CheckXAndYPos(int x, int y)
 {
 	return true;
 }
-sf::Vector2i DungeonGen::GenXAndYAtTopWall(int t_i, std::vector<Tile>& t_tileVec)
+sf::Vector2i DungeonGen::GenXAndYAtTopWall(int t_i, std::vector<RoomVals>& t_tileVec)
 {
 	int x = randomInt(t_tileVec[t_i].x, t_tileVec[t_i].x + t_tileVec[t_i].width - 1);
 	int y = t_tileVec[t_i].y;
 	return sf::Vector2i(x, y);
 }
-sf::Vector2i DungeonGen::GenXAndYAtBottomWall(int t_i, std::vector<Tile>& t_tileVec)
+sf::Vector2i DungeonGen::GenXAndYAtBottomWall(int t_i, std::vector<RoomVals>& t_tileVec)
 {
 	int x = randomInt(t_tileVec[t_i].x, t_tileVec[t_i].x + t_tileVec[t_i].width - 1);
 	int y = t_tileVec[t_i].y + t_tileVec[t_i].height - 1;
@@ -426,14 +428,15 @@ bool DungeonGen::checkForDoors(int t_x, int t_y)
 		doorDetected = true;
 	}
 	return doorDetected;
+
 }
-
-
-
-
-
-
-
+////---------------------------------------------------------------------------
+////Functions to place decorations in each of the rooms
+////---------------------------------------------------------------------------
+void DungeonGen::bedRoom()
+{
+	
+}
 ////---------------------------------------------------------------------------
 ////Functions to place decorations in each of the rooms
 ////---------------------------------------------------------------------------
@@ -670,7 +673,8 @@ void DungeonGen::createCoffinRoom()
 			{
 				
 				setDecorTiles(index, y, CoffinTile);
-				setDecorTiles(index, y + 1, UnusedTile);
+				setDecorTiles(index, y + offSet, UnusedTile);
+				setDecorTiles(index, y + offSet *2, FlameCauldron);
 				m_rooms[roomIndex].decorInRoom++;
 			}
 		}
@@ -679,6 +683,10 @@ void DungeonGen::createCoffinRoom()
 	}
 
 }
+////---------------------------------------------------------------------------
+////Function to create rooms with different tiles from the standard roooms 
+//// takes a tile type to replace all others
+////---------------------------------------------------------------------------
 void DungeonGen::setUniqueGroundTiles(char t_newTile, int t_maxRoomSizeWidth, int t_maxRoomSizeHeight, int t_index)
 {
 	for (int x = m_rooms[t_index].x; x < m_rooms[t_index].x
@@ -708,8 +716,6 @@ void DungeonGen::bossRoomGroundTiles()
 	int maxRoomSizeHeight = 6;
 	m_bossRoomIndex = GetRoom(maxRoomSizeWidth, maxRoomSizeHeight);
 	setUniqueGroundTiles(DirtTile, maxRoomSizeWidth, maxRoomSizeHeight, m_bossRoomIndex);
-	
-	
 }
 void DungeonGen::worsipRoomGroundTiles()
 {
@@ -717,10 +723,19 @@ void DungeonGen::worsipRoomGroundTiles()
 	int maxRoomSizeHeight = 5;
 	m_worshipRoomIndex = GetRoom(maxRoomSizeWidth, maxRoomSizeHeight);
 	setUniqueGroundTiles(DarkTiles, maxRoomSizeWidth, maxRoomSizeHeight, m_worshipRoomIndex);
-	
 }
-
-void DungeonGen::BossRoom()
+void DungeonGen::statueRoomTiles()
+{
+	int maxRoomSizeWidth = 6;
+	int maxRoomSizeHeight = 6;
+	m_statueRoomIndex = GetRoom(maxRoomSizeWidth, maxRoomSizeHeight);
+	setUniqueGroundTiles(TilePattern, maxRoomSizeWidth, maxRoomSizeHeight, m_statueRoomIndex);
+}
+////---------------------------------------------------------------------------
+////Creates a room with a pit that tthe boss will appear from
+////littered with fallen heroes that failed to defeat the boss
+////---------------------------------------------------------------------------
+void DungeonGen::bossRoom()
 {
 	int offSetFromCentre = 1;
 	int x = m_rooms[m_bossRoomIndex].x + m_rooms[m_bossRoomIndex].width / 2 - offSetFromCentre;
@@ -730,13 +745,16 @@ void DungeonGen::BossRoom()
 		setDecorTiles(x, y, HoleTile);
 	}
 
-	BossRoomSkull();
-	BossRoomHealth();
-	BossRoomWalls();
+	bossRoomSkull();
+	bossRoomHealth();
+	bossRoomWalls();
 	deleteRoom(m_bossRoomIndex);
 	
 }
-void DungeonGen::BossRoomSkull()
+////---------------------------------------------------------------------------
+////Adds skull decor toi the boss room
+////---------------------------------------------------------------------------
+void DungeonGen::bossRoomSkull()
 {
 	int offSet = 1;
 	int moveBy = 3;
@@ -754,7 +772,10 @@ void DungeonGen::BossRoomSkull()
 		}
 	}
 }
-void DungeonGen::BossRoomHealth()
+////---------------------------------------------------------------------------
+////Adds health to the boss room
+////---------------------------------------------------------------------------
+void DungeonGen::bossRoomHealth()
 {
 	int offSet = 1;
 	int x = randomInt(m_rooms[m_bossRoomIndex].x + offSet, m_rooms[m_bossRoomIndex].x + m_rooms[m_bossRoomIndex].width - (offSet * 2));
@@ -769,7 +790,10 @@ void DungeonGen::BossRoomHealth()
 		setDecorTiles(x, y, HealthPos);
 	}
 }
-void DungeonGen::BossRoomWalls()
+////---------------------------------------------------------------------------
+////Adds decor to the walls of the boss room
+////---------------------------------------------------------------------------
+void DungeonGen::bossRoomWalls()
 {
 	int offSet = 1;
 	int x = m_rooms[m_bossRoomIndex].x;
@@ -787,7 +811,10 @@ void DungeonGen::BossRoomWalls()
 	}
 	
 }
-void DungeonGen::WorshipRoom()
+////---------------------------------------------------------------------------
+////creates the worship room
+////---------------------------------------------------------------------------
+void DungeonGen::worshipRoom()
 {
 	int x = m_rooms[m_worshipRoomIndex].x + m_rooms[m_worshipRoomIndex].width / 2;
 	int y = m_rooms[m_worshipRoomIndex].y + m_rooms[m_worshipRoomIndex].height / 2;
@@ -795,12 +822,16 @@ void DungeonGen::WorshipRoom()
 	{
 		setDecorTiles(x, y, Worship);
 	}
-	WorshipRoomDecor();
+	worshipRoomDecor();
 		
 	deleteRoom(m_worshipRoomIndex);
 	
 }
-void DungeonGen::WorshipRoomDecor()
+
+////---------------------------------------------------------------------------
+////creates the decorations for the worship room
+////---------------------------------------------------------------------------
+void DungeonGen::worshipRoomDecor()
 {
 	int offSet = 1;
 	int x = m_rooms[m_worshipRoomIndex].x + m_rooms[m_worshipRoomIndex].width - offSet;
@@ -822,6 +853,54 @@ void DungeonGen::WorshipRoomDecor()
 		y = m_rooms[m_worshipRoomIndex].y + m_rooms[m_worshipRoomIndex].height - offSet;
 		setDecorTiles(x, y, Plant);
 	}
+}
+////---------------------------------------------------------------------------
+////Function to create a room with a statue of some famous person.
+////In this case can be of the boss as a warning to players
+////---------------------------------------------------------------------------
+void DungeonGen::statueRoom()
+{
+	int offSetFromCentre = 1;
+	int x = m_rooms[m_statueRoomIndex].x + m_rooms[m_statueRoomIndex].width / 2 - offSetFromCentre;
+	int y = m_rooms[m_statueRoomIndex].y + m_rooms[m_statueRoomIndex].height / 2 - offSetFromCentre;
+	if (getDecorTile(x, y) == TilePattern)
+	{
+		setDecorTiles(x, y, Statue);
+	}
+	statueRoomDecor();
+	deleteRoom(m_statueRoomIndex);
+}
+////---------------------------------------------------------------------------
+////Function to add some decor to the statue room
+////---------------------------------------------------------------------------
+void DungeonGen::statueRoomDecor()
+{
+	int offSet = 1;
+	int x = m_rooms[m_statueRoomIndex].x;
+	int y = m_rooms[m_statueRoomIndex].y;
+	//place a flaming cauldron in all 4 corners of the room
+	if (checkForDoors(x, y) == false)
+	{
+		setDecorTiles(x, y, FlameCauldron);
+		x = m_rooms[m_statueRoomIndex].x + m_rooms[m_statueRoomIndex].width - offSet;
+		y = m_rooms[m_statueRoomIndex].y + m_rooms[m_statueRoomIndex].height - offSet;
+	}
+	if (checkForDoors(x, y) == false)
+	{
+		setDecorTiles(x, y, FlameCauldron);
+		x = m_rooms[m_statueRoomIndex].x;
+		y = m_rooms[m_statueRoomIndex].y + m_rooms[m_statueRoomIndex].height - offSet;
+	}
+	if (checkForDoors(x, y) == false)
+	{
+		setDecorTiles(x, y, FlameCauldron);
+		x = m_rooms[m_statueRoomIndex].x + m_rooms[m_statueRoomIndex].width - offSet;
+		y = m_rooms[m_statueRoomIndex].y;
+	}
+	if (checkForDoors(x, y) == false){
+		setDecorTiles(x, y, FlameCauldron);
+	}
+	
 }
 ////---------------------------------------------------------------------------
 ////Function to create a feast room with a table and chairs

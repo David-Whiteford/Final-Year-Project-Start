@@ -30,6 +30,8 @@ void Tilemap::DungeonTilesSetUp()
 	m_stoneFloorTile.setTextureRect(sf::IntRect(80, 16, 16, 16));
 	m_wallTile.setTexture(m_texture);
 	m_wallTile.setTextureRect(sf::IntRect(64, 48, 16, 16));
+	m_tilePatternTile.setTexture(m_dunTexture);
+	m_tilePatternTile.setTextureRect(sf::IntRect(0, 0, 16, 16));
 
 	//Decor Tiles
 	m_chainsTile.setTexture(m_texture);
@@ -70,6 +72,10 @@ void Tilemap::DungeonTilesSetUp()
 	m_caveDirtTile.setTextureRect(sf::IntRect(491, 221, 16, 16));
 	m_chairTileL.setTexture(m_dunTexture);
 	m_chairTileL.setTextureRect(sf::IntRect(289, 84, 16, 16));
+	m_statueTile.setTexture(m_texture);
+	m_statueTile.setTextureRect(sf::IntRect(128, 496, 32, 45));
+	m_flameCauldron.setTexture(m_dunTexture);
+	m_flameCauldron.setTextureRect(sf::IntRect(162, 180, 12, 11));
 
 	//trigger
 	m_skullTile.setTexture(m_texture);
@@ -320,6 +326,11 @@ void Tilemap::Dun(std::vector<char> &t_dunVec, sf::RenderWindow& t_window, int t
 				m_dunTileVec.push_back(new Tiles(t_window, m_tileSize,
 					sf::Vector2f(x * m_tileSize, y * m_tileSize), m_darkFloorTiles, "Floor"));
 				break;
+			case 'G':
+				m_dunTileVec.push_back(new Tiles(t_window, m_tileSize,
+					sf::Vector2f(x * m_tileSize, y * m_tileSize), m_tilePatternTile, "Floor"));
+				break;
+	
 			default:
 				break;
 		}
@@ -429,6 +440,14 @@ void Tilemap::DunDecor(std::vector<char>& t_dunDecorVec, sf::RenderWindow& t_win
 		case 'Z':
 			m_dunTileVec.push_back(new Tiles(t_window, m_tileSize,
 				sf::Vector2f(x * m_tileSize, y * m_tileSize), m_chairTileL, "Obstacle"));
+			break;
+		case 'I':
+			m_dunTileVec.push_back(new Tiles(t_window, m_tileSize,
+				sf::Vector2f(x * m_tileSize, y * m_tileSize), m_statueTile, "Obstacle"));
+			break;
+		case 'R':
+			m_dunTileVec.push_back(new Tiles(t_window, m_tileSize,
+				sf::Vector2f(x * m_tileSize, y * m_tileSize), m_flameCauldron, "Obstacle"));
 			break;
 		default:
 			break;
