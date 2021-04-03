@@ -62,7 +62,7 @@ private:
 	sf::Sprite m_floorTile, m_stoneFloorTile, m_wallTile, m_corridorTile, m_DoorTile, m_Door2Tile, m_stairsTile,m_darkFloorTiles,m_tilePatternTile;
 	//Decor Tiles
 	sf::Sprite m_chainsTile, m_chestTile,m_plantTile, m_potionTile,m_torchTile,m_moneyTile,m_pictureTile,m_statueTile,m_flameCauldron
-		,m_prisonTile, m_chairTileF, m_chairTileL, m_coffinTile, m_tableSprite,m_bookCaseTile, m_caveDirtTile,m_holeTile,m_worshipStone;
+		,m_prisonTile, m_chairTileF, m_chairTileL, m_coffinTile, m_tableSprite,m_bookCaseTile, m_caveDirtTile,m_holeTile,m_worshipStone ,m_bedTile,m_nightStand;
 	//Trgger Tiles
 	sf::Sprite m_skullTile, m_spawnPoint, m_spikeTrap,m_health;
 

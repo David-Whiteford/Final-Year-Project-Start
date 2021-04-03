@@ -76,6 +76,10 @@ void Tilemap::DungeonTilesSetUp()
 	m_statueTile.setTextureRect(sf::IntRect(128, 496, 32, 45));
 	m_flameCauldron.setTexture(m_dunTexture);
 	m_flameCauldron.setTextureRect(sf::IntRect(162, 180, 12, 11));
+	m_bedTile.setTexture(m_dunTexture);
+	m_bedTile.setTextureRect(sf::IntRect(256, 16, 16, 45));
+	m_nightStand.setTexture(m_dunTexture);
+	m_nightStand.setTextureRect(sf::IntRect(344, 61, 14, 21));
 
 	//trigger
 	m_skullTile.setTexture(m_texture);
@@ -448,6 +452,14 @@ void Tilemap::DunDecor(std::vector<char>& t_dunDecorVec, sf::RenderWindow& t_win
 		case 'R':
 			m_dunTileVec.push_back(new Tiles(t_window, m_tileSize,
 				sf::Vector2f(x * m_tileSize, y * m_tileSize), m_flameCauldron, "Obstacle"));
+			break;
+		case 'K':
+			m_dunTileVec.push_back(new Tiles(t_window, m_tileSize,
+				sf::Vector2f(x * m_tileSize, y * m_tileSize), m_bedTile, "Obstacle"));
+			break;
+		case 'Y':
+			m_dunTileVec.push_back(new Tiles(t_window, m_tileSize,
+				sf::Vector2f(x * m_tileSize, y * m_tileSize), m_nightStand, "Obstacle"));
 			break;
 		default:
 			break;
