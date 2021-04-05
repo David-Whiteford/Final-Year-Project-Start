@@ -423,7 +423,7 @@ bool DungeonGen::checkForDoors(int t_x, int t_y)
 	int offSet = 1;
 	if (getTile(t_x - offSet,t_y) == Door1 || getTile(t_x + offSet, t_y) == Door1
 		|| getTile(t_x, t_y - offSet) == Door2 || getTile(t_x, t_y + offSet) == Door2
-		|| getTile (t_x ,t_y - offSet) == SpawnPoint)
+		|| getDecorTile(t_x ,t_y - offSet) == SpawnPoint)
 	{
 		doorDetected = true;
 	}
@@ -451,10 +451,6 @@ void DungeonGen::setUniqueGroundTiles(char t_newTile, int t_maxRoomSizeWidth, in
 	}
 }
 
-
-
-
-
 ////---------------------------------------------------------------------------
 ////Function to create a bedroom
 ////---------------------------------------------------------------------------
@@ -466,28 +462,68 @@ void DungeonGen::bedRoom()
 		int randRoom = randomInt(m_rooms.size());
 		int x = m_rooms[randRoom].x;
 		int y = m_rooms[randRoom].y - offSet;
-		int bedNum = 3;
+		int bedNum = 2;
 		for (int i = 0; i < bedNum; i++)
 		{
-			if (getDecorTile(x, y) == Wall)
-			{
-				y++;
-				if (getDecorTile(x, y) == FloorTile 
-					|| getDecorTile(x, y) == StoneFloorTile)
-				{
-					int tempY = y;
-					setDecorTiles(x, y, Bed);
-					setDecorTiles(x, tempY++, UnusedTile);
-					setDecorTiles(x, tempY++, UnusedTile);
-					tempY = y;
-					x++;
-					setDecorTiles(x, y, NightStand);
-					setDecorTiles(x, tempY++, UnusedTile);
-					x += 2;
-				}
-			}
+			placeBeds(x, y);
+			int x = m_rooms[randRoom].x + m_rooms[randRoom].width - offSet;
+			int y = m_rooms[randRoom].y - offSet;
+			placeBeds(x, y);
 		}
 		deleteRoom(randRoom);
+	}
+}
+////---------------------------------------------------------------------------
+////Function to create a bedroom with beds in it.place the bed and places tiles under the bed as unused tiles
+////also place a table next to bed and +1 on the x
+////---------------------------------------------------------------------------
+void DungeonGen::placeBeds(int t_x, int t_y)
+{
+	int x = t_x;
+	int y = t_y;
+	if (getDecorTile(x, y) == Wall)
+	{
+		y++;
+		if (getDecorTile(x, y) == FloorTile
+			|| getDecorTile(x, y) == StoneFloorTile)
+		{
+			//check all tiles that the bed will occupy havnt got a door or exit next to them
+			if (checkForDoors(x, y) == false)
+			{
+				int newY = y;
+				newY++;
+				if (checkForDoors(x, newY) == false)
+				{
+					newY++;
+					if (checkForDoors(x, newY) == false)
+					{
+						//place the bed and make all tile under it unused
+						int tempY = y;
+ 					    setDecorTiles(x, y, Bed);
+						tempY++;
+						setDecorTiles(x, tempY, UnusedTile);
+						tempY++;
+						setDecorTiles(x, tempY, UnusedTile);
+					}
+				}
+				x++;
+				//check all tiles around end table havnt got a door or exit next to them
+				if (checkForDoors(x, y) == false)
+				{
+					int newY = y;
+					newY++;
+					if (checkForDoors(x, newY) == false)
+					{
+						newY++;
+						if (checkForDoors(x, newY) == false)
+						{
+							setDecorTiles(x, y, NightStand);
+						}
+					}
+				}
+			}
+
+		}
 	}
 }
 ////---------------------------------------------------------------------------
@@ -511,7 +547,6 @@ void DungeonGen::placeDecorInRoom()
 					int x = pos.x;
 					int y = pos.y;
 					if (getDecorTile(x, y) == FloorTile || getDecorTile(x, y) == StoneFloorTile)
-
 					{
 						if (checkForDoors(x,y) == false)
 						{
@@ -527,8 +562,8 @@ void DungeonGen::placeDecorInRoom()
 					int x = randomInt(m_rooms[i].x, m_rooms[i].x + m_rooms[i].width - 1);
 					int y = randomInt(m_rooms[i].y, m_rooms[i].y + m_rooms[i].height - 1);
 
-					if (getDecorTile(x, y) == FloorTile || getDecorTile(x, y) == StoneFloorTile)
-
+					if (getDecorTile(x, y) == FloorTile 
+						|| getDecorTile(x, y) == StoneFloorTile)
 					{
 						if (checkForDoors(x, y) == false)
 						{
@@ -1174,11 +1209,10 @@ void DungeonGen::placeDecorInHalls()
 		for (int i = 0; i < m_halls.size(); i++)
 		{
 			int mixDcor = 1;
-			int maxDecor = 3;
+			int maxDecor = 4;
 			int maxDecorInRoom = randomInt(mixDcor, maxDecor);
 			for (int decorType = 0; decorType < maxDecorInRoom; decorType++)
 			{
-	
 				if (decorType == 0)
 				{
 					int x = m_halls[i].x + 1;

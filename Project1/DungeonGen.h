@@ -193,6 +193,7 @@ public:
 	void statueRoomTiles();
 	bool checkForDoors(int t_x, int t_y);
 	void bedRoom();
+	void placeBeds(int t_x, int t_y);
 	void bossRoom();
 	void bossRoomSkull();
 	void bossRoomHealth();
