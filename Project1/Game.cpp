@@ -84,7 +84,7 @@ void Game::update(double dt)
 		view2.setCenter(m_player->getPosition());
 		handleInputs();
 		m_player->playerRays();
-		m_player->collisionCheck(m_obstaclesVec);
+		m_player->collisionCheck();
 		m_player->triggerCheck(m_triggersVec);
 		if (m_player->getIfInTrigger())
 		{
@@ -102,7 +102,7 @@ void Game::update(double dt)
 		m_playerOrigin = m_player->getOrigin();
 		view2.setCenter(m_player->getPosition());
 		m_player->playerRays();
-		m_player->collisionCheck(m_obstaclesVec);
+		m_player->collisionCheck();
 		m_player->triggerCheck(m_triggersVec);
 		if (m_player->getIfInTrigger())
 		{

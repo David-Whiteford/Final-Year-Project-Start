@@ -419,7 +419,7 @@ void Tilemap::DunDecor(std::vector<char>& t_dunDecorVec, sf::RenderWindow& t_win
 			break;
 		case 'U':
 			m_dunDecorTileVec.push_back(new Tiles(t_window, m_tileSize,
-				sf::Vector2f(x * m_tileSize, y * m_tileSize), m_tableSprite, "Obstacle", 1));
+				sf::Vector2f(x * m_tileSize, y * m_tileSize), m_tableSprite, "Table", 1));
 			break;
 		case 'B':
 			m_dunDecorTileVec.push_back(new Tiles(t_window, m_tileSize,
@@ -439,7 +439,7 @@ void Tilemap::DunDecor(std::vector<char>& t_dunDecorVec, sf::RenderWindow& t_win
 			break;
 		case 'W':
 			m_dunTileVec.push_back(new Tiles(t_window, m_tileSize,
-				sf::Vector2f(x * m_tileSize, y * m_tileSize), m_worshipStone, "Obstacle", 1));
+				sf::Vector2f(x * m_tileSize, y * m_tileSize), m_worshipStone, "WorshipStone", 1));
 			break;
 		case 'Z':
 			m_dunTileVec.push_back(new Tiles(t_window, m_tileSize,
@@ -447,7 +447,7 @@ void Tilemap::DunDecor(std::vector<char>& t_dunDecorVec, sf::RenderWindow& t_win
 			break;
 		case 'I':
 			m_dunTileVec.push_back(new Tiles(t_window, m_tileSize,
-				sf::Vector2f(x * m_tileSize, y * m_tileSize), m_statueTile, "Obstacle", 1));
+				sf::Vector2f(x * m_tileSize, y * m_tileSize), m_statueTile, "Statue", 1));
 			break;
 		case 'R':
 			m_dunTileVec.push_back(new Tiles(t_window, m_tileSize,
@@ -455,7 +455,7 @@ void Tilemap::DunDecor(std::vector<char>& t_dunDecorVec, sf::RenderWindow& t_win
 			break;
 		case 'K':
 			m_dunTileVec.push_back(new Tiles(t_window, m_tileSize,
-				sf::Vector2f(x * m_tileSize, y * m_tileSize), m_bedTile, "Obstacle", 1));
+				sf::Vector2f(x * m_tileSize, y * m_tileSize), m_bedTile, "Bed", 1));
 			break;
 		case 'Y':
 			m_dunTileVec.push_back(new Tiles(t_window, m_tileSize,

@@ -30,7 +30,7 @@ public:
 	void setPlayerState(PlayerState*);
 	float getCircleRadius();
 	void BoundryControl(sf::VideoMode desktop);
-	void collisionCheck(std::vector<Tiles*> &t_tilemapObstacles);
+	void collisionCheck();
 	void triggerCheck(std::vector<Tiles*>& t_triggerVec);
 
 	void init();
@@ -42,6 +42,8 @@ public:
 	float getSpeed();
 	void setHealthCost(int t_healthCost, bool t_takeDamage);
 	void setDebugRects(std::vector<Tiles*>& t_tilemapObstacles);
+	void setUniqueObstacles(std::vector<Tiles*>& t_tilemapObstacles);
+	void setObstacles(std::vector<Tiles*>& t_tilemapObstacles);
 	void clearObstacleVec() { m_debugRects.clear(); }
 	void clearTriggerVec() { m_triggerRects.clear(); }
 	bool getColUp() { return m_collisionUp; }

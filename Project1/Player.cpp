@@ -61,24 +61,24 @@ float Player::getCircleRadius()
 	return 0.0f;
 }
 
-void Player::collisionCheck(std::vector<Tiles*>& t_tilemapObstacles)
+void Player::collisionCheck()
 {
-	for (int i = 0; i < t_tilemapObstacles.size(); i++)
+	for (int i = 0; i < m_debugRects.size(); i++)
 	{
-		float size = t_tilemapObstacles[i]->getSize();
-		if (m_collisions.rayCastToSpriteCol(m_raycastRigth.getEndPoint(), t_tilemapObstacles[i]->getPosition(), size, size)){
+		
+		if (m_collisions.rayCastToSpriteCol(m_raycastRigth.getEndPoint(), m_debugRects[i].getPosition(), m_debugRects[i].getSize())){
 			//std::cout << "Collision";
 			m_collisionRight = true;
 		}
-		else if (m_collisions.rayCastToSpriteCol(m_raycastLeft.getEndPoint(), t_tilemapObstacles[i]->getPosition(), size, size)){
+		else if (m_collisions.rayCastToSpriteCol(m_raycastLeft.getEndPoint(), m_debugRects[i].getPosition(), m_debugRects[i].getSize())){
 			//std::cout << "Collision";
 			m_collisionLeft = true;
 		}
-		else if (m_collisions.rayCastToSpriteCol(m_raycastUp.getEndPoint(), t_tilemapObstacles[i]->getPosition(), size, size)){
+		else if (m_collisions.rayCastToSpriteCol(m_raycastUp.getEndPoint(), m_debugRects[i].getPosition(), m_debugRects[i].getSize())){
 			//std::cout << "Collision";
 			m_collisionUp = true;
 		}
-		else if (m_collisions.rayCastToSpriteCol(m_raycastDown.getEndPoint(), t_tilemapObstacles[i]->getPosition(), size, size)){
+		else if (m_collisions.rayCastToSpriteCol(m_raycastDown.getEndPoint(), m_debugRects[i].getPosition(), m_debugRects[i].getSize())){
 			//std::cout << "Collision";
 			m_collisionDown = true;
 		}
@@ -99,16 +99,16 @@ void Player::triggerCheck(std::vector<Tiles*>& t_triggerVec)
 	for (int i = 0; i < t_triggerVec.size(); i++)
 	{
 		float size = t_triggerVec[i]->getSize();
-		if (m_collisions.rayCastToSpriteCol(m_raycastRigth.getEndPoint(), t_triggerVec[i]->getPosition(), size, size)) {
+		if (m_collisions.rayCastToSpriteCol(m_raycastRigth.getEndPoint(), t_triggerVec[i]->getPosition(), sf::Vector2f(size, size))) {
 			m_inTrigger = true;
 		}
-		else if (m_collisions.rayCastToSpriteCol(m_raycastLeft.getEndPoint(), t_triggerVec[i]->getPosition(), size, size)) {
+		else if (m_collisions.rayCastToSpriteCol(m_raycastLeft.getEndPoint(), t_triggerVec[i]->getPosition(), sf::Vector2f(size, size))) {
 			m_inTrigger = true;
 		}
-		else if (m_collisions.rayCastToSpriteCol(m_raycastUp.getEndPoint(), t_triggerVec[i]->getPosition(), size, size)) {
+		else if (m_collisions.rayCastToSpriteCol(m_raycastUp.getEndPoint(), t_triggerVec[i]->getPosition(), sf::Vector2f(size, size))) {
 			m_inTrigger = true;
 		}
-		else if (m_collisions.rayCastToSpriteCol(m_raycastDown.getEndPoint(), t_triggerVec[i]->getPosition(), size, size)) {
+		else if (m_collisions.rayCastToSpriteCol(m_raycastDown.getEndPoint(), t_triggerVec[i]->getPosition(), sf::Vector2f(size, size))) {
 			m_inTrigger = true;
 		}
 	}
@@ -142,8 +142,44 @@ void Player::setHealthCost(int t_healthCost, bool t_takeDamage)
 
 void Player::setDebugRects(std::vector<Tiles*>& t_tilemapObstacles)
 {
+	setObstacles(t_tilemapObstacles);
+	setUniqueObstacles(t_tilemapObstacles);
+}
+
+void Player::setUniqueObstacles(std::vector<Tiles*>& t_tilemapObstacles)
+{
 	for (int i = 0; i < t_tilemapObstacles.size(); i++)
 	{
+		sf::RectangleShape rect;
+		rect.setOutlineColor(sf::Color::White);
+		rect.setOutlineThickness(0.1f);
+		rect.setFillColor(sf::Color::Transparent);
+		rect.setPosition(t_tilemapObstacles[i]->getPosition().x, t_tilemapObstacles[i]->getPosition().y);
+		if (t_tilemapObstacles[i]->getTag() == "Bed") 
+		{
+			rect.setSize(sf::Vector2f(16, 45));
+		}
+		else if (t_tilemapObstacles[i]->getTag() == "Statue")	
+		{
+			rect.setSize(sf::Vector2f(32, 45));
+		}
+		else if (t_tilemapObstacles[i]->getTag() == "WorshipStone")
+		{
+			rect.setSize(sf::Vector2f(32, 28));
+		}
+		else if (t_tilemapObstacles[i]->getTag() == "Table")
+		{
+			rect.setSize(sf::Vector2f(48, 44));
+		}
+		m_debugRects.push_back(rect);
+	}
+}
+
+void Player::setObstacles(std::vector<Tiles*>& t_tilemapObstacles)
+{
+	for (int i = 0; i < t_tilemapObstacles.size(); i++)
+	{
+		sf::RectangleShape rect;
 		if (t_tilemapObstacles[i]->getTag() == "Obstacle") {
 
 			sf::RectangleShape rect;
@@ -154,7 +190,7 @@ void Player::setDebugRects(std::vector<Tiles*>& t_tilemapObstacles)
 			rect.setPosition(t_tilemapObstacles[i]->getPosition().x, t_tilemapObstacles[i]->getPosition().y);
 			m_debugRects.push_back(rect);
 		}
-		else if (t_tilemapObstacles[i]->getTag() == "Cave" 
+		else if (t_tilemapObstacles[i]->getTag() == "Cave"
 			|| t_tilemapObstacles[i]->getTag() == "Exits")
 		{
 			sf::RectangleShape rect;

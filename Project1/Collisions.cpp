@@ -33,14 +33,14 @@ bool Collisions::circleToCircleCol(sf::Vector2f t_circle1, sf::Vector2f t_circle
 	return false;
 }
 
-bool Collisions::rayCastToSpriteCol(sf::Vector2f t_rayEnd, sf::Vector2f t_spritePos, float t_width, float t_height)
+bool Collisions::rayCastToSpriteCol(sf::Vector2f t_rayEnd, sf::Vector2f t_spritePos, sf::Vector2f t_size)
 {
 	testCircle.setPosition(t_spritePos.x, t_spritePos.y);
-	testCircle2.setPosition(t_spritePos.x + t_width, t_spritePos.y + t_height);
+	testCircle2.setPosition(t_spritePos.x + t_size.x, t_spritePos.y + t_size.y);
 
-	if (t_rayEnd.x < t_spritePos.x + t_width
+	if (t_rayEnd.x < t_spritePos.x + t_size.x
 		&& t_rayEnd.x  > t_spritePos.x
-		&& t_rayEnd.y < t_spritePos.y + t_height
+		&& t_rayEnd.y < t_spritePos.y + t_size.y
 		&& t_rayEnd.y > t_spritePos.y)
 	{
 		return true;
