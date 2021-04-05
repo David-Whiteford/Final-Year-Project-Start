@@ -99,7 +99,8 @@ bool DungeonGen::createFeat(int t_x, int t_y, Direction t_direction)
 	{
 		return false;
 	}
-	if (randomInt(100) < roomChance)
+	int randRoomVal = randomInt(100);
+	if (randRoomVal < roomChance)
 	{
 		if (makeRoom(t_x, t_y, t_direction,false))
 		{
@@ -112,7 +113,6 @@ bool DungeonGen::createFeat(int t_x, int t_y, Direction t_direction)
 				setTile(t_x, t_y, Door1);
 				return true;
 			}
-
 		}
 	}
 	else
@@ -150,19 +150,23 @@ bool DungeonGen::makeRoom(int t_x, int t_y, Direction t_direction, bool t_firstR
 	room.width = randomInt(roomSizeMin, roomSizeMax);
 	room.height = randomInt(roomSizeMin, roomSizeMax);
 
-	if (t_direction == North){
+	if (t_direction == North)
+	{
 		room.x = t_x - room.width / 2;
 		room.y = t_y - room.height;
 	}
-	else if (t_direction == South){
+	else if (t_direction == South)
+	{
 		room.x = t_x - room.width / 2;
 		room.y = t_y + 1;
 	}
-	else if (t_direction == West){
+	else if (t_direction == West)
+	{
 		room.x = t_x - room.width;
 		room.y = t_y - room.height / 2;
 	}
-	else if (t_direction == East){
+	else if (t_direction == East)
+	{
 		room.x = t_x + 1;
 		room.y = t_y - room.height / 2;
 	}
@@ -191,7 +195,6 @@ bool DungeonGen::makeRoom(int t_x, int t_y, Direction t_direction, bool t_firstR
 		}
 		return true;
 	}
-
 	return false;
 }
 
@@ -211,21 +214,21 @@ bool DungeonGen::makeCorridor(int t_x, int t_y, Direction t_direction)
 
 		if (t_direction == North)
 		{
-			corridor.y = t_y - 1;
-
+			corridor.x = t_x - corridor.width + 1;
+			/*corridor.y = t_y - 1;
 			if (randomBool())
 			{
 				corridor.x = t_x - corridor.width + 1;
-			}
+			}*/
 		}
 		else if (t_direction == South)
 		{
-			corridor.y = t_y + 1;
-
+			corridor.x = t_x - corridor.width + 1;
+			/*corridor.y = t_y + 1;
 			if (randomBool())
 			{
 				corridor.x = t_x - corridor.width + 1;
-			}
+			}*/
 		}
 		else if (t_direction == West)
 		{

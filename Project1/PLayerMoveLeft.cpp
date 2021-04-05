@@ -35,7 +35,7 @@ void PlayerMoveLeftState::update(Player& player)
 {
 	if (player.getColLeft() == false) {
 		sf::Vector2f pos = player.getPosition();
-		pos.x -= 0.05f;
+		pos.x -= 0.1f;
 
 		player.setPosition(pos);
 	}

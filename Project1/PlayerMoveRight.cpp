@@ -37,7 +37,7 @@ void PlayerMoveRigthState::update(Player& player)
 	if (player.getColRight() == false) {
 		m_player.setPosition(sf::Vector2f(1000, 200));
 		sf::Vector2f pos = player.getPosition();
-		pos.x += 0.05f;
+		pos.x += 0.1f;
 
 		player.setPosition(pos);
 	}

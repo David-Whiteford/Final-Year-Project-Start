@@ -7,13 +7,14 @@
 class Tiles : public GameObject
 {
 public:
-	Tiles(sf::RenderWindow& t_window, float size, sf::Vector2f pos,sf::Sprite t_sprite,std::string t_tag) :
+	Tiles(sf::RenderWindow& t_window, float size, sf::Vector2f pos,sf::Sprite t_sprite,std::string t_tag,int t_numTag) :
 		m_window(t_window)
 	{
 		m_sprites = t_sprite;
 		m_sprites.setPosition(pos);
 		m_tag = t_tag;
 		m_size = size;
+		m_numTag = t_numTag;
 		//m_sprites.setOrigin(sf::Vector2f(size / 2, size / 2));
 		
 
@@ -23,6 +24,7 @@ public:
 	void setPosition(sf::Vector2f(t_pos)) { m_sprites.setPosition(t_pos); }
 	sf::Vector2f getPosition() { return m_sprites.getPosition(); }
 	std::string getTag(){ return m_tag; }
+	int getNumTag() { return m_numTag; }
 	float getSize() { return m_size; }
 	//void setShape(sf::RectangleShape shapeParam) { m_wall = shapeParam; }
 	void draw() { m_window.draw(m_sprites); }
@@ -36,5 +38,5 @@ private:
 	std::string m_tag;
 	float m_size;
 	
-	
+	int m_numTag;
 };

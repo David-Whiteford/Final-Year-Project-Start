@@ -34,7 +34,7 @@ void PlayerMoveDownState::update(Player& player)
 {
 	if (player.getColDown() == false) {
 		sf::Vector2f pos = player.getPosition();
-		pos.y += 0.05f;
+		pos.y += 0.1f;
 
 		player.setPosition(pos);
 	}
