@@ -22,28 +22,24 @@ public:
 	void playerRays();
 	sf::Vector2f getPosition();
 	void setPosition(sf::Vector2f t_position);
-	void playerMovement(double dt);
 	AnimatedSprite& getAnimatedSprite();
 	AnimatedSprite& getAnimatedSpriteFrame();
 	void setAnimatedSprite(AnimatedSprite&);
 	PlayerState* getPlayerState();
 	void setPlayerState(PlayerState*);
 	float getCircleRadius();
-	void BoundryControl(sf::VideoMode desktop);
 	void collisionCheck();
 	void triggerCheck(std::vector<Tiles*>& t_triggerVec);
-
-	void init();
 	void update();
-	void setUpPlayer();
 	sf::Vector2f getOrigin();
-	void render(sf::RenderWindow& t_window);
+	void render(sf::RenderWindow& t_window,sf::View t_view);
 	void handleKeyInput(gpp::Events input);
 	float getSpeed();
 	void setHealthCost(int t_healthCost, bool t_takeDamage);
 	void setDebugRects(std::vector<Tiles*>& t_tilemapObstacles);
 	void setUniqueObstacles(std::vector<Tiles*>& t_tilemapObstacles);
 	void setObstacles(std::vector<Tiles*>& t_tilemapObstacles);
+	void setOtherTriggers(std::vector<Tiles*>& t_tilemapObstacles);
 	void clearObstacleVec() { m_debugRects.clear(); }
 	void clearTriggerVec() { m_triggerRects.clear(); }
 	bool getColUp() { return m_collisionUp; }

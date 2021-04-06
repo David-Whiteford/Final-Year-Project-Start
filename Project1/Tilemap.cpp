@@ -64,8 +64,6 @@ void Tilemap::DungeonTilesSetUp()
 	m_tableSprite.setTextureRect(sf::IntRect(332, 89, 48, 44));
 	m_worshipStone.setTexture(m_dunTexture);
 	m_worshipStone.setTextureRect(sf::IntRect(96, 34, 32, 28));
-	m_holeTile.setTexture(m_dunTexture);
-	m_holeTile.setTextureRect(sf::IntRect(555, 237, 48, 48));
 	m_darkFloorTiles.setTexture(m_dunTexture);
 	m_darkFloorTiles.setTextureRect(sf::IntRect(0, 32, 16, 16));
 	m_caveDirtTile.setTexture(m_dunTexture);
@@ -90,6 +88,8 @@ void Tilemap::DungeonTilesSetUp()
 	m_spikeTrap.setTextureRect(sf::IntRect(81, 64, 16, 16));
 	m_health.setTexture(m_dunTexture);
 	m_health.setTextureRect(sf::IntRect(289, 3, 15, 13));
+	m_holeTile.setTexture(m_dunTexture);
+	m_holeTile.setTextureRect(sf::IntRect(555, 237, 48, 48));
 }
 sf::Vector2f Tilemap::getPlayerSpawn()
 {
@@ -145,20 +145,14 @@ void Tilemap::DrawDungeon(sf::View t_view)
 {
 	for (int i = 0; i < m_dunTileVec.size(); ++i)
 	{
-		if (t_view.getCenter().x + t_view.getSize().x / 2 > m_dunTileVec[i]->getSprite().getPosition().x
-			&& t_view.getCenter().x - t_view.getSize().x / 2 < m_dunTileVec[i]->getSprite().getPosition().x
-			&& t_view.getCenter().y + t_view.getSize().y / 2 > m_dunTileVec[i]->getSprite().getPosition().y
-			&& t_view.getCenter().y - t_view.getSize().y / 2 < m_dunTileVec[i]->getSprite().getPosition().y)
+		if (m_col.ViewCheck(t_view, m_dunTileVec[i]->getSprite().getPosition()))
 		{
 			m_dunTileVec[i]->draw();
 		}
 	}
 	for (int i = 0; i < m_dunDecorTileVec.size(); ++i)
 	{
-		if (t_view.getCenter().x + t_view.getSize().x / 2 > m_dunDecorTileVec[i]->getSprite().getPosition().x
-			&& t_view.getCenter().x - t_view.getSize().x / 2 < m_dunDecorTileVec[i]->getSprite().getPosition().x
-			&& t_view.getCenter().y + t_view.getSize().y / 2 > m_dunDecorTileVec[i]->getSprite().getPosition().y
-			&& t_view.getCenter().y - t_view.getSize().y / 2 < m_dunDecorTileVec[i]->getSprite().getPosition().y)
+		if (m_col.ViewCheck(t_view, m_dunDecorTileVec[i]->getSprite().getPosition()))
 		{
 			m_dunDecorTileVec[i]->draw();
 		}
@@ -279,7 +273,7 @@ std::vector<Tiles*> Tilemap::getDunExitsVec()
 	std::vector<Tiles*> exits;
 	for (int i = 0; i < m_dunDecorTileVec.size(); i++)
 	{
-		if (m_dunDecorTileVec[i]->getTag() == "Exits")
+		if (m_dunDecorTileVec[i]->getNumTag() == 2)
 		{
 			exits.push_back(m_dunDecorTileVec[i]);
 		}
@@ -390,7 +384,7 @@ void Tilemap::DunDecor(std::vector<char>& t_dunDecorVec, sf::RenderWindow& t_win
 			break;
 		case '9':
 			m_dunDecorTileVec.push_back(new Tiles(t_window, m_tileSize,
-				sf::Vector2f(x * m_tileSize, y * m_tileSize), m_spawnPoint, "Exits", 0));
+				sf::Vector2f(x * m_tileSize, y * m_tileSize), m_spawnPoint, "Exits", 2));
 			m_exits.push_back(sf::Vector2f(x * m_tileSize, y * m_tileSize));
 			break;
 		case 'M':
@@ -423,19 +417,19 @@ void Tilemap::DunDecor(std::vector<char>& t_dunDecorVec, sf::RenderWindow& t_win
 			break;
 		case 'B':
 			m_dunDecorTileVec.push_back(new Tiles(t_window, m_tileSize,
-				sf::Vector2f(x * m_tileSize, y * m_tileSize), m_bookCaseTile, "Obstacle", 1));
+				sf::Vector2f(x * m_tileSize, y * m_tileSize), m_bookCaseTile, "BookCase", 1));
 			break;
 		case 'H':
 			m_dunDecorTileVec.push_back(new Tiles(t_window, m_tileSize,
-				sf::Vector2f(x * m_tileSize, y * m_tileSize), m_holeTile, "FallToDeath", 0));
+				sf::Vector2f(x * m_tileSize, y * m_tileSize), m_holeTile, "FallToDeath", 2));
 			break;
 		case 'L':
 			m_dunTileVec.push_back(new Tiles(t_window, m_tileSize,
-				sf::Vector2f(x * m_tileSize, y * m_tileSize), m_spikeTrap, "Trigger", 0));
+				sf::Vector2f(x * m_tileSize, y * m_tileSize), m_spikeTrap, "Spike", 2));
 			break;
 		case 'N':
 			m_dunTileVec.push_back(new Tiles(t_window, m_tileSize,
-				sf::Vector2f(x * m_tileSize, y * m_tileSize), m_health, "Trigger", 0));
+				sf::Vector2f(x * m_tileSize, y * m_tileSize), m_health, "Health", 2));
 			break;
 		case 'W':
 			m_dunTileVec.push_back(new Tiles(t_window, m_tileSize,

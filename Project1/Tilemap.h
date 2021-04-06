@@ -5,7 +5,7 @@
 #include <iostream>
 #include <SFML/Graphics.hpp>
 #include "Tiles.h"
-
+#include "Collisions.h"
 class Tilemap
 {
 public:
@@ -42,7 +42,7 @@ public:
 		m_exits.clear();
 	}
 private:
-	
+	Collisions m_col;
 	std::vector<Tiles*> m_cavesVec;
 	std::vector<Tiles*> m_tileVec;
 	std::vector<Tiles*> m_dunTileVec;

@@ -587,12 +587,18 @@ void DungeonGen::placeDecorInRoom()
 						if (checkForDoors(x, y) == false)
 						{
 							placedDecor = true;
+							//place a potion table and move down 1 on the y to then place chair
 							setDecorTiles(x, y, Potion);
 							y += 1;
 							m_rooms[i].decorInRoom++;
 							if (getDecorTile(x, y) == FloorTile || getDecorTile(x, y) == StoneFloorTile)
 							{
-								setDecorTiles(x, y, ChairF);
+								//check there are no doors or exits around the x,y and then place chair
+								if (checkForDoors(x, y) == false)
+								{
+									setDecorTiles(x, y, ChairF);
+									m_rooms[i].decorInRoom++;
+								}
 							}
 						}
 					}
@@ -825,21 +831,23 @@ void DungeonGen::bossRoomSkull()
 	{
 		if (getDecorTile(x, y) == DirtTile)
 		{
-			std::cout << "skeletom placed" << std::endl;
+			//place the skeleton if the tiles dirt
 			setDecorTiles(x, y, Skull);
+			//move the x and y by a certain amount and place another
 			x = m_rooms[m_bossRoomIndex].x + moveBy;
 			y++;
 			setDecorTiles(x, y, Skull);
 		}
 	}
-	x = m_rooms[m_bossRoomIndex].x + m_rooms[m_bossRoomIndex].x - offSet;
+	//get a new x,y position of right corner of room and place flame cauldron decor 
+	x = m_rooms[m_bossRoomIndex].x + m_rooms[m_bossRoomIndex].width - offSet;
 	y = m_rooms[m_bossRoomIndex].y;
 	if (checkForDoors(x, y) == false)
 	{
 		setDecorTiles(x, y, FlameCauldron);
-
 	}
-	x = m_rooms[m_bossRoomIndex].x + m_rooms[m_bossRoomIndex].x - offSet;
+	//get a new x,y position of bottom right corner of room and place flame cauldron decor 
+	x = m_rooms[m_bossRoomIndex].x + m_rooms[m_bossRoomIndex].width - offSet;
 	y = m_rooms[m_bossRoomIndex].y + m_rooms[m_bossRoomIndex].height - offSet;
 	if (checkForDoors(x, y) == false)
 	{

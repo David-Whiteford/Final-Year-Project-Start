@@ -36,21 +36,31 @@ void Player::playerRays()
 	m_rays.push_back(m_raycastLeft.getEndPoint());
 	m_rays.push_back(m_raycastRigth.getEndPoint());
 }
-void Player::render(sf::RenderWindow& t_window)
+void Player::render(sf::RenderWindow& t_window, sf::View t_view)
 {
 	t_window.draw(m_raycastUp.drawArray());
 	t_window.draw(m_raycastDown.drawArray());
 	t_window.draw(m_raycastLeft.drawArray());
 	t_window.draw(m_raycastRigth.drawArray());
+	
 	for (int i = 0; i < m_debugRects.size(); i++)
 	{
-		t_window.draw(m_debugRects[i]);
+		if (m_collisions.ViewCheck(t_view, m_debugRects[i].getPosition()) && DEBUG >= 1)
+		{
+			t_window.draw(m_debugRects[i]);
+		}
 	}
 	for (int i = 0; i < m_triggerRects.size(); i++)
 	{
-		t_window.draw(m_triggerRects[i]);
+		if (m_collisions.ViewCheck(t_view, m_triggerRects[i].getPosition()) && DEBUG >= 1)
+		{
+			t_window.draw(m_triggerRects[i]);
+		}
 	}
-	m_collisions.render(t_window);
+	if (DEBUG >= 1)
+	{
+		m_collisions.render(t_window);
+	}
 }
 sf::Vector2f Player::getPosition()
 {
@@ -82,38 +92,44 @@ void Player::collisionCheck()
 			//std::cout << "Collision";
 			m_collisionDown = true;
 		}
-
-	/*	for (int j = 0; j < m_rays.size(); j++)
-		{
-			if (m_collisions.rayCastToSpriteCol(m_rays[j], t_tilemapObstacles[i]->getPosition(), size, size))
-			{
-				std::cout << "Collision";
-			}
-		}*/
 	}
 
 }
 
 void Player::triggerCheck(std::vector<Tiles*>& t_triggerVec)
 {
+	String triggerString;
 	for (int i = 0; i < t_triggerVec.size(); i++)
 	{
 		float size = t_triggerVec[i]->getSize();
 		if (m_collisions.rayCastToSpriteCol(m_raycastRigth.getEndPoint(), t_triggerVec[i]->getPosition(), sf::Vector2f(size, size))) {
 			m_inTrigger = true;
+			triggerString = t_triggerVec[i]->getTag();
 		}
 		else if (m_collisions.rayCastToSpriteCol(m_raycastLeft.getEndPoint(), t_triggerVec[i]->getPosition(), sf::Vector2f(size, size))) {
 			m_inTrigger = true;
+			triggerString = t_triggerVec[i]->getTag();
 		}
 		else if (m_collisions.rayCastToSpriteCol(m_raycastUp.getEndPoint(), t_triggerVec[i]->getPosition(), sf::Vector2f(size, size))) {
 			m_inTrigger = true;
+			triggerString = t_triggerVec[i]->getTag();
+			
 		}
 		else if (m_collisions.rayCastToSpriteCol(m_raycastDown.getEndPoint(), t_triggerVec[i]->getPosition(), sf::Vector2f(size, size))) {
 			m_inTrigger = true;
+			triggerString = t_triggerVec[i]->getTag();
+		}
+		if (triggerString == "FallToDeath"){
+			DEBUG_MSG("Player Falls to Death");
+		}
+		else if (triggerString == "Spike"){
+			DEBUG_MSG("Player takes Damage");
+		}
+		else if (triggerString == "Health"){
+			DEBUG_MSG("Player Gets Health");
 		}
 	}
 }
-
 void Player::setPosition(sf::Vector2f t_position)
 {
 	m_animated_sprite.setPosition(t_position);
@@ -143,6 +159,7 @@ void Player::setHealthCost(int t_healthCost, bool t_takeDamage)
 void Player::setDebugRects(std::vector<Tiles*>& t_tilemapObstacles)
 {
 	setObstacles(t_tilemapObstacles);
+	setOtherTriggers(t_tilemapObstacles);
 	setUniqueObstacles(t_tilemapObstacles);
 }
 
@@ -170,6 +187,10 @@ void Player::setUniqueObstacles(std::vector<Tiles*>& t_tilemapObstacles)
 		else if (t_tilemapObstacles[i]->getTag() == "Table")
 		{
 			rect.setSize(sf::Vector2f(48, 44));
+		}
+		else if (t_tilemapObstacles[i]->getTag() == "BookCase")
+		{
+			rect.setSize(sf::Vector2f(45, 28));
 		}
 		m_debugRects.push_back(rect);
 	}
@@ -201,6 +222,31 @@ void Player::setObstacles(std::vector<Tiles*>& t_tilemapObstacles)
 			rect.setPosition(t_tilemapObstacles[i]->getPosition().x, t_tilemapObstacles[i]->getPosition().y);
 			m_triggerRects.push_back(rect);
 		}
+	}
+}
+
+void Player::setOtherTriggers(std::vector<Tiles*>& t_tilemapObstacles)
+{
+	for (int i = 0; i < t_tilemapObstacles.size(); i++)
+	{
+		sf::RectangleShape rect;
+		rect.setOutlineColor(sf::Color::Green);
+		rect.setOutlineThickness(0.1f);
+		rect.setFillColor(sf::Color::Transparent);
+		rect.setPosition(t_tilemapObstacles[i]->getPosition().x, t_tilemapObstacles[i]->getPosition().y);
+		if (t_tilemapObstacles[i]->getTag() == "FallToDeath")
+		{
+			rect.setSize(sf::Vector2f(48, 48));
+		}
+		else if (t_tilemapObstacles[i]->getTag() == "Spike")
+		{
+			rect.setSize(sf::Vector2f(16, 16));
+		}
+		else if (t_tilemapObstacles[i]->getTag() == "Health")
+		{
+			rect.setSize(sf::Vector2f(16, 16));
+		}
+		m_triggerRects.push_back(rect);
 	}
 }
 

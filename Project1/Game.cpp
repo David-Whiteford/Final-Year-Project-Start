@@ -84,7 +84,10 @@ void Game::update(double dt)
 		view2.setCenter(m_player->getPosition());
 		handleInputs();
 		m_player->playerRays();
-		m_player->collisionCheck();
+		if (DEBUG == 0)
+		{
+			m_player->collisionCheck();
+		}
 		m_player->triggerCheck(m_triggersVec);
 		if (m_player->getIfInTrigger())
 		{
@@ -102,7 +105,10 @@ void Game::update(double dt)
 		m_playerOrigin = m_player->getOrigin();
 		view2.setCenter(m_player->getPosition());
 		m_player->playerRays();
-		m_player->collisionCheck();
+		if (DEBUG == 0)
+		{
+			m_player->collisionCheck();
+		}
 		m_player->triggerCheck(m_triggersVec);
 		if (m_player->getIfInTrigger())
 		{
@@ -174,13 +180,13 @@ void Game::render()
 		m_window.draw(m_player->getAnimatedSpriteFrame());
 		m_window.setView(view2);
 		//to render debug like colliders and rays
-		//m_player->render(m_window);
+		m_player->render(m_window, view2);
 		break;
 	case GameState::Dungeon:
 		m_tileMap->DrawDungeon(view2);
 		m_window.draw(m_player->getAnimatedSpriteFrame());
 		//to render debug like colliders and rays
-		//m_player->render(m_window);
+		m_player->render(m_window, view2);
 		m_window.setView(view2);
 		break;
 	default:

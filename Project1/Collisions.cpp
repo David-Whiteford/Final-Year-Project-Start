@@ -46,8 +46,19 @@ bool Collisions::rayCastToSpriteCol(sf::Vector2f t_rayEnd, sf::Vector2f t_sprite
 		return true;
 	}
 	return false;
-	
-
+}
+bool Collisions::ViewCheck(sf::View t_view, sf::Vector2f t_pos)
+{
+	t_view.getViewport().left;
+	int x1 = t_view.getCenter().x - t_view.getSize().x / 2;
+	int x2 = t_view.getCenter().x + t_view.getSize().x / 2;
+	int y1 = t_view.getCenter().y - t_view.getSize().y / 2;
+	int y2 = t_view.getCenter().y + t_view.getSize().y / 2;
+	if (t_pos.x > x1 && t_pos.x< x2 && t_pos.y > y1&& t_pos.y < y2)
+	{
+		return true;
+	}
+	return false;
 }
 
 void Collisions::render(sf::RenderWindow& t_window)
@@ -55,3 +66,5 @@ void Collisions::render(sf::RenderWindow& t_window)
 	t_window.draw(testCircle);
 	t_window.draw(testCircle2);
 }
+
+
