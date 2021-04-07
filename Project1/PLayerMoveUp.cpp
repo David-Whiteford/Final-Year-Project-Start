@@ -10,22 +10,34 @@ PlayerState* PlayerMoveUpState::handleInput(gpp::Events& input)
 {
 	if (input.getCurrent() == gpp::Events::Event::IDLE)
 	{
-		DEBUG_MSG("PlayerMoveUpState -> IdlePlayerState ");
+		if (DEBUG == 2)
+		{
+			DEBUG_MSG("PlayerMoveUpState -> IdlePlayerState ");
+		}
 		return new IdlePlayerState();
 	}
 	else if (input.getCurrent() == gpp::Events::Event::PLAYERMOVELEFT)
 	{
-		DEBUG_MSG("PlayerMoveUpState -> PlayerMoveLeft");
+		if (DEBUG == 2)
+		{
+			DEBUG_MSG("PlayerMoveUpState -> PlayerMoveLeft");
+		}
 		return new PlayerMoveLeftState();
 	}
 	else if (input.getCurrent() == gpp::Events::Event::PLAYERMOVERIGTH)
 	{
-		DEBUG_MSG("PlayerMoveUpState -> PlayerMoveRigth");
+		if (DEBUG == 2)
+		{
+			DEBUG_MSG("PlayerMoveUpState -> PlayerMoveRigth");
+		}
 		return new PlayerMoveRigthState();
 	}
 	else if (input.getCurrent() == gpp::Events::Event::PLAYERMOVEDOWN)
 	{
-		DEBUG_MSG("PlayerMoveUpState -> PlayerMoveDown");
+		if (DEBUG == 2)
+		{
+			DEBUG_MSG("PlayerMoveUpState -> PlayerMoveDown");
+		}
 		return new PlayerMoveDownState();
 	}
 	return nullptr;
@@ -45,7 +57,10 @@ void PlayerMoveUpState::update(Player& player)
 }
 void PlayerMoveUpState::enter(Player& player)
 {
-	DEBUG_MSG("Entering MoveUpState");
+	if (DEBUG == 2)
+	{
+		DEBUG_MSG("Entering MoveUpState");
+	}
 	player.getAnimatedSprite().clearFrames();
 
 	player.getAnimatedSprite().addFrame(sf::IntRect(0, 64, 16, 32));
@@ -57,8 +72,10 @@ void PlayerMoveUpState::enter(Player& player)
 }
 void PlayerMoveUpState::exit(Player& player)
 {
-	DEBUG_MSG("Exiting MoveRightPlayerState");
-	
+	if (DEBUG == 2)
+	{
+		DEBUG_MSG("Exiting MoveRightPlayerState");
+	}
 }
 
 

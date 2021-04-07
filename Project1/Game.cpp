@@ -88,9 +88,11 @@ void Game::update(double dt)
 		{
 			m_player->collisionCheck();
 		}
-		m_player->triggerCheck(m_triggersVec);
-		if (m_player->getIfInTrigger())
+		m_triggerType = m_player->triggerCheck(m_triggersVec);
+		if (m_player->getIfInTrigger() 
+ 			&& m_triggerType != "Health")
 		{
+			m_triggerType = "";
 			clearVecs();
 			m_player->resetCollisions();
 			m_dungeonSetUp = true;
@@ -109,9 +111,11 @@ void Game::update(double dt)
 		{
 			m_player->collisionCheck();
 		}
-		m_player->triggerCheck(m_triggersVec);
-		if (m_player->getIfInTrigger())
+		m_triggerType = m_player->triggerCheck(m_triggersVec);
+		if (m_player->getIfInTrigger()
+			&& m_triggerType != "Health")
 		{
+			m_triggerType = "";
 			clearVecs();
 			m_player->resetCollisions();
 			m_overWorldSetUp = true;

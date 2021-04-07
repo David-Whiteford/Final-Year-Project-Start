@@ -8,23 +8,35 @@ AnimatedSprite::AnimatedSprite() :
 	m_max_plays(0),
 	m_played(false)
 {
-	DEBUG_MSG("AnimatedSprite()");
+	if (DEBUG == 2)
+	{
+		DEBUG_MSG("AnimatedSprite()");
+	}
 }
 
 AnimatedSprite::AnimatedSprite(const sf::Texture& t) : AnimatedSprite() {
-	DEBUG_MSG("AnimatedSprite(const Texture&)");
+	if (DEBUG == 2)
+	{
+		DEBUG_MSG("AnimatedSprite(const Texture&)");
+	}
 	this->setTexture(t);
 }
 
 AnimatedSprite::AnimatedSprite(const sf::Texture& t, const sf::IntRect& rect) :
 	AnimatedSprite(t)
 {
-	DEBUG_MSG("AnimatedSprite(const Texture&, const IntRect&)");
+	if (DEBUG == 2)
+	{
+		DEBUG_MSG("AnimatedSprite(const Texture&, const IntRect&)");
+	}
 	m_frames.push_back(rect);
 }
 
 AnimatedSprite::~AnimatedSprite() {
-	DEBUG_MSG("~AnimatedSprite()");
+	if (DEBUG == 2)
+	{
+		DEBUG_MSG("~AnimatedSprite()");
+	}
 }
 
 const sf::Clock& AnimatedSprite::getClock() {

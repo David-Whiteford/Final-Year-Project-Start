@@ -71,7 +71,7 @@ private:
 	std::vector<Tiles*> m_triggersVec;
 	std::mutex* producerLock = new std::mutex;
 	std::mutex* consumerLock = new std::mutex;
-
+	std::string m_triggerType;
 
 };
 #endif

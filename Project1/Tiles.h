@@ -7,7 +7,7 @@
 class Tiles : public GameObject
 {
 public:
-	Tiles(sf::RenderWindow& t_window, float size, sf::Vector2f pos,sf::Sprite t_sprite,std::string t_tag,int t_numTag) :
+	Tiles(sf::RenderWindow& t_window, sf::Vector2f size, sf::Vector2f pos,sf::Sprite t_sprite,std::string t_tag,int t_numTag) :
 		m_window(t_window)
 	{
 		m_sprites = t_sprite;
@@ -25,7 +25,7 @@ public:
 	sf::Vector2f getPosition() { return m_sprites.getPosition(); }
 	std::string getTag(){ return m_tag; }
 	int getNumTag() { return m_numTag; }
-	float getSize() { return m_size; }
+	sf::Vector2f getSize() { return m_size; }
 	//void setShape(sf::RectangleShape shapeParam) { m_wall = shapeParam; }
 	void draw() { m_window.draw(m_sprites); }
 
@@ -36,7 +36,7 @@ private:
 	sf::RenderWindow& m_window;
 	sf::Sprite m_sprites;
 	std::string m_tag;
-	float m_size;
+	sf::Vector2f m_size;
 	
 	int m_numTag;
 };

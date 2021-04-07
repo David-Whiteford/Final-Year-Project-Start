@@ -96,26 +96,25 @@ void Player::collisionCheck()
 
 }
 
-void Player::triggerCheck(std::vector<Tiles*>& t_triggerVec)
+std::string Player::triggerCheck(std::vector<Tiles*>& t_triggerVec)
 {
-	String triggerString;
+	std::string triggerString;
 	for (int i = 0; i < t_triggerVec.size(); i++)
 	{
-		float size = t_triggerVec[i]->getSize();
-		if (m_collisions.rayCastToSpriteCol(m_raycastRigth.getEndPoint(), t_triggerVec[i]->getPosition(), sf::Vector2f(size, size))) {
+		sf::Vector2f size = t_triggerVec[i]->getSize();
+		if (m_collisions.rayCastToSpriteCol(m_raycastRigth.getEndPoint(), t_triggerVec[i]->getPosition(), size)) {
 			m_inTrigger = true;
 			triggerString = t_triggerVec[i]->getTag();
 		}
-		else if (m_collisions.rayCastToSpriteCol(m_raycastLeft.getEndPoint(), t_triggerVec[i]->getPosition(), sf::Vector2f(size, size))) {
+		else if (m_collisions.rayCastToSpriteCol(m_raycastLeft.getEndPoint(), t_triggerVec[i]->getPosition(), size)) {
 			m_inTrigger = true;
 			triggerString = t_triggerVec[i]->getTag();
 		}
-		else if (m_collisions.rayCastToSpriteCol(m_raycastUp.getEndPoint(), t_triggerVec[i]->getPosition(), sf::Vector2f(size, size))) {
+		else if (m_collisions.rayCastToSpriteCol(m_raycastUp.getEndPoint(), t_triggerVec[i]->getPosition(), size)) {
 			m_inTrigger = true;
 			triggerString = t_triggerVec[i]->getTag();
-			
 		}
-		else if (m_collisions.rayCastToSpriteCol(m_raycastDown.getEndPoint(), t_triggerVec[i]->getPosition(), sf::Vector2f(size, size))) {
+		else if (m_collisions.rayCastToSpriteCol(m_raycastDown.getEndPoint(), t_triggerVec[i]->getPosition(), size)) {
 			m_inTrigger = true;
 			triggerString = t_triggerVec[i]->getTag();
 		}
@@ -129,6 +128,7 @@ void Player::triggerCheck(std::vector<Tiles*>& t_triggerVec)
 			DEBUG_MSG("Player Gets Health");
 		}
 	}
+	return triggerString;
 }
 void Player::setPosition(sf::Vector2f t_position)
 {
@@ -191,6 +191,10 @@ void Player::setUniqueObstacles(std::vector<Tiles*>& t_tilemapObstacles)
 		else if (t_tilemapObstacles[i]->getTag() == "BookCase")
 		{
 			rect.setSize(sf::Vector2f(45, 28));
+		}
+		else if (t_tilemapObstacles[i]->getTag() == "Coffin")
+		{
+			rect.setSize(sf::Vector2f(16, 32));
 		}
 		m_debugRects.push_back(rect);
 	}

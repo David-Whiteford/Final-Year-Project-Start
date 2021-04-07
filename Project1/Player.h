@@ -29,7 +29,7 @@ public:
 	void setPlayerState(PlayerState*);
 	float getCircleRadius();
 	void collisionCheck();
-	void triggerCheck(std::vector<Tiles*>& t_triggerVec);
+	std::string triggerCheck(std::vector<Tiles*>& t_triggerVec);
 	void update();
 	sf::Vector2f getOrigin();
 	void render(sf::RenderWindow& t_window,sf::View t_view);
@@ -54,6 +54,10 @@ public:
 	void resetCollisions();
 	void setIfInTrigger(bool t_inTrigger) { m_inTrigger = t_inTrigger; }
 	bool getIfInTrigger() { return m_inTrigger; }
+
+
+	void setIfInKilledTrigger(bool t_inDeathTrigger) { m_inDeathTrigger = t_inDeathTrigger; }
+	bool getIfInKilledTrigger() { return m_inDeathTrigger; }
 private:
 	Collisions m_collisions;
 	Raycast m_raycastUp, m_raycastDown, m_raycastLeft, m_raycastRigth;
@@ -69,5 +73,6 @@ private:
 	std::vector<sf::RectangleShape> m_triggerRects;
 	bool m_collisionRight, m_collisionLeft, m_collisionUp, m_collisionDown;
 	bool m_inTrigger = false;
+	bool m_inDeathTrigger = false;
 };
 #endif

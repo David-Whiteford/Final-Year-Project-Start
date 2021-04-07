@@ -393,6 +393,37 @@ int DungeonGen::GetRoom(int t_roomWidth, int t_roomHeight)
 	}
 	return roomIndex;
 }
+void DungeonGen::setUnusedTile(int x, int y, char t_tile,char t_secondTile)
+{
+	int maxSize = 2;
+	int xVal = x;
+	int yVal = y;
+	int maxX = xVal + maxSize;
+	for (int i = 0; i < maxSize; i++)
+	{
+		for (int j = 0; j < maxSize; j++)
+		{
+			if (getDecorTile(xVal, yVal) == t_tile 
+				|| getDecorTile(xVal, yVal) == t_secondTile)
+			{
+				setDecorTiles(xVal, yVal, UnusedTile);
+			}
+			xVal++;
+			//std::cout << "XVal: " << xVal << "maxX: " << maxX << std::endl;
+			if (xVal == maxX)
+			{
+				yVal++;
+				xVal = x;
+			}
+		}
+	}
+}
+////---------------------------------------------------------------------------
+////Functions that can be used multiple times
+////They are to check if there are doors,check the x,y,check if x ,y is at top or bottom walls of room
+////set the spawn and Function to create rooms with different tiles from the standard roooms
+////takes a tile type to replace all others
+////---------------------------------------------------------------------------
 bool DungeonGen::CheckXAndYPos(int x, int y)
 {
 	return true;
@@ -424,18 +455,16 @@ bool DungeonGen::checkForDoors(int t_x, int t_y)
 {
 	bool doorDetected = false;
 	int offSet = 1;
+	//check if the tiles one to the north ,south,east,west directions are doors
 	if (getTile(t_x - offSet,t_y) == Door1 || getTile(t_x + offSet, t_y) == Door1
 		|| getTile(t_x, t_y - offSet) == Door2 || getTile(t_x, t_y + offSet) == Door2
 		|| getDecorTile(t_x ,t_y - offSet) == SpawnPoint)
 	{
+		//set bool if door was detected and return
 		doorDetected = true;
 	}
 	return doorDetected;
 }
-////---------------------------------------------------------------------------
-////Function to create rooms with different tiles from the standard roooms 
-//// takes a tile type to replace all others
-////---------------------------------------------------------------------------
 void DungeonGen::setUniqueGroundTiles(char t_newTile, int t_maxRoomSizeWidth, int t_maxRoomSizeHeight, int t_index)
 {
 	for (int x = m_rooms[t_index].x; x < m_rooms[t_index].x
@@ -453,6 +482,9 @@ void DungeonGen::setUniqueGroundTiles(char t_newTile, int t_maxRoomSizeWidth, in
 		}
 	}
 }
+
+
+
 
 ////---------------------------------------------------------------------------
 ////Function to create a bedroom
@@ -517,10 +549,15 @@ void DungeonGen::placeBeds(int t_x, int t_y)
 					newY++;
 					if (checkForDoors(x, newY) == false)
 					{
+						//check if there are door at the x ,y 
 						newY++;
 						if (checkForDoors(x, newY) == false)
 						{
-							setDecorTiles(x, y, NightStand);
+							//also check the x ,y is a Floor and place a NightStand
+							if (getDecorTile(x, y) == StoneFloorTile
+								|| getDecorTile(x, y) == FloorTile) {
+								setDecorTiles(x, y, NightStand);
+							}
 						}
 					}
 				}
@@ -759,7 +796,6 @@ void DungeonGen::createCoffinRoom()
 			if (getDecorTile(index, y) == FloorTile 
 				|| getDecorTile(index, y) == StoneFloorTile)
 			{
-				
 				setDecorTiles(index, y, CoffinTile);
 				setDecorTiles(index, y + offSet, UnusedTile);
 				setDecorTiles(index, y + offSet *2, FlameCauldron);
@@ -771,8 +807,6 @@ void DungeonGen::createCoffinRoom()
 	}
 
 }
-
-
 
 ////---------------------------------------------------------------------------
 ////Function to create a boss room thats different From the others
@@ -810,6 +844,27 @@ void DungeonGen::bossRoom()
 	if (getDecorTile(x, y) == DirtTile)
 	{
 		setDecorTiles(x, y, HoleTile);
+		int maxSize = 3;
+		int xVal = x;
+		int yVal = y;
+		int maxX = xVal + maxSize;
+		for (int i = 0; i < maxSize; i++)
+		{
+			for (int j = 0; j < maxSize; j++)
+			{
+				if (getDecorTile(xVal, yVal) == DirtTile)
+				{
+					setDecorTiles(xVal, yVal, UnusedTile);
+				}
+				xVal++;
+				//std::cout << "XVal: " << xVal << "maxX: " << maxX << std::endl;
+				if (xVal == maxX)
+				{
+					yVal++;
+					xVal = x;
+				}
+			}
+		}
 	}
 
 	bossRoomSkull();
@@ -903,6 +958,7 @@ void DungeonGen::worshipRoom()
 	if (getDecorTile(x, y) == DarkTiles)
 	{
 		setDecorTiles(x, y, Worship);
+		setUnusedTile(x, y, DarkTiles,FloorTile);
 	}
 	worshipRoomDecor();
 		
@@ -948,6 +1004,7 @@ void DungeonGen::statueRoom()
 	if (getDecorTile(x, y) == TilePattern)
 	{
 		setDecorTiles(x, y, Statue);
+		setUnusedTile(x, y, TilePattern, FloorTile);
 	}
 	statueRoomDecor();
 	deleteRoom(m_statueRoomIndex);
@@ -1014,6 +1071,7 @@ void DungeonGen::createFeastRoom()
 			{
 				m_rooms[roomIndex].decorInRoom++;
 				setDecorTiles(x, y, Table);
+				setUnusedTile(x, y, FloorTile,StoneFloorTile);
 			}
 			int newY = 4;
 			x += 1;
@@ -1117,7 +1175,33 @@ void DungeonGen::addChairsDecor(int t_roomIndex)
 	}
 }
 
-
+////---------------------------------------------------------------------------
+////Function to add traps to the halls ----------------------------------------
+////---------------------------------------------------------------------------
+void DungeonGen::placeTrapsInHalls()
+{
+	//place some traps in random halls and up 8 halls
+	int offSet = 1;
+	int maxHallsWithTraps = 8;
+	if (m_halls.empty() == false)
+	{
+		for (int i = 0; i < maxHallsWithTraps; i++)
+		{
+			//find a random room and a random x y in that room
+			int r = randomInt(0, m_halls.size());
+			int x = randomInt(m_halls[r].x, m_halls[r].x + m_halls[r].width - offSet);
+			int y = randomInt(m_halls[r].y, m_halls[r].y + m_halls[r].height - offSet);
+			//check the floor tile adn place spike if its a floor tile
+			if (getDecorTile(x, y) == FloorTile)
+			{
+				if (checkForDoors(x, y) == false) {
+					setDecorTiles(x, y, SpikeTrap);
+				}
+			}
+			
+		}
+	}
+}
 
 ////---------------------------------------------------------------------------
 ////Function to create cave doors that the player can exit and enter
@@ -1183,21 +1267,24 @@ void DungeonGen::placeDecorOnWalls()
 	DEBUG_MSG("Issue placing chain Decor tile");
 }
 ////---------------------------------------------------------------------------
-////Function to create traps in the rooms
+////Function to create traps in the rooms--------------------------------------
 ////---------------------------------------------------------------------------
 void DungeonGen::createTrapsInRooms()
 {
+	int offSet = 1;
 	if (m_rooms.empty() == false)
 	{
-		int offSet = 1;
+		//loop through all rooms
 		for (int i = 0; i < m_rooms.size(); i++)
 		{
+			//set teh max amout of traps allowed in a room and create loop till there set
 			int maxTraps = 2;
 			for (int trap = 0; trap < maxTraps; trap++)
 			{
+				//get a random x y in each room
 				int x = randomInt(m_rooms[i].x, m_rooms[i].x + m_rooms[i].width - offSet);
 				int y = randomInt(m_rooms[i].y, m_rooms[i].y + m_rooms[i].height - offSet);
-
+				//check if the tile at x,y is a floor tile and set a spike if so
 				if (getDecorTile(x, y) == FloorTile 
 					|| getDecorTile(x, y) == StoneFloorTile)
 				{
@@ -1208,6 +1295,8 @@ void DungeonGen::createTrapsInRooms()
 			}
 		}
 	}
+	//call funtion to place traps in halls
+	placeTrapsInHalls();
 }
 
 ////---------------------------------------------------------------------------

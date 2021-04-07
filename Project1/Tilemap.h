@@ -65,7 +65,7 @@ private:
 		,m_prisonTile, m_chairTileF, m_chairTileL, m_coffinTile, m_tableSprite,m_bookCaseTile, m_caveDirtTile,m_holeTile,m_worshipStone ,m_bedTile,m_nightStand;
 	//Trgger Tiles
 	sf::Sprite m_skullTile, m_spawnPoint, m_spikeTrap,m_health;
-
+	sf::Vector2f m_holeSize = sf::Vector2f(48,48);
 	sf::Vector2f m_tilePosition = sf::Vector2f(0.0f, 0.0f);
 	int m_tileSize = 16;
 	bool m_dungeonGen = false;

@@ -182,6 +182,8 @@ public:
 	void placeDecorInHalls();
 	void FloorDecorTiles();
 	void deleteRoom(int i){ m_rooms.erase(m_rooms.begin() + i); }
+	void deleteHalls(int i) { m_rooms.erase(m_rooms.begin() + i); }
+	void placeTrapsInHalls();
 	void playerStartPos();
 	void createJailRoom();
 	void setSpawnToWall(int t_roomIndex);
@@ -213,7 +215,7 @@ public:
 	sf::Vector2i GenXAndYAtBottomWall(int t_i, std::vector<RoomVals>& t_tileVec);
 	void createTrapsInRooms();
 	int GetRoom(int t_roomWidth, int t_roomHeight);
-
+	void setUnusedTile(int x, int y, char t_tile, char t_secondTile);
 
 private:
 	int m_bossRoomIndex = 1000;

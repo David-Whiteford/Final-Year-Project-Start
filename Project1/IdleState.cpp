@@ -1,6 +1,5 @@
 #include "Events.h"
 #include "IdleState.h"
-
 #include "PlayerMoveRight.h"
 #include "PLayerMoveLeft.h"
 #include "PLayerMoveUp.h"
@@ -10,22 +9,34 @@ PlayerState* IdlePlayerState::handleInput(gpp::Events& input)
 {
 	if (input.getCurrent() == gpp::Events::Event::PLAYERMOVERIGTH)
 	{
-		DEBUG_MSG("IdlePlayerState -> PlayerMoveRigthState");
+		if (DEBUG == 2)
+		{
+			DEBUG_MSG("IdlePlayerState -> PlayerMoveRigthState");
+		}
 		return new PlayerMoveRigthState();
 	}
 	else if (input.getCurrent() == gpp::Events::Event::PLAYERMOVELEFT)
 	{
-		DEBUG_MSG("IdlePlayerState -> PlayerMoveLeftState");
+		if (DEBUG == 2)
+		{
+			DEBUG_MSG("IdlePlayerState -> PlayerMoveLeftState");
+		}
 		return new PlayerMoveLeftState();
 	}
 	else if (input.getCurrent() == gpp::Events::Event::PLAYERMOVEUP)
 	{
-		DEBUG_MSG("IdlePlayerState -> PlayerMoveUpState");
+		if (DEBUG == 2)
+		{
+			DEBUG_MSG("IdlePlayerState -> PlayerMoveUpState");
+		}
 		return new PlayerMoveUpState();
 	}
 	else if (input.getCurrent() == gpp::Events::Event::PLAYERMOVEDOWN)
 	{
-		DEBUG_MSG("IdlePlayerState -> PlayerMoveDownState");
+		if (DEBUG == 2)
+		{
+			DEBUG_MSG("IdlePlayerState -> PlayerMoveDownState");
+		}
 		return new PlayerMoveDownState();
 	}
 	return nullptr;
@@ -33,7 +44,10 @@ PlayerState* IdlePlayerState::handleInput(gpp::Events& input)
 void IdlePlayerState::update(Player& player) {}
 void IdlePlayerState::enter(Player& player)
 {
-	DEBUG_MSG("Entering IdlePlayerState");
+	if (DEBUG == 2)
+	{
+		DEBUG_MSG("Entering IdlePlayerState");
+	}
 	player.getAnimatedSprite().clearFrames();
 
 	player.getAnimatedSprite().addFrame(sf::IntRect(80, 0, 16, 32));
@@ -44,6 +58,9 @@ void IdlePlayerState::enter(Player& player)
 }
 void IdlePlayerState::exit(Player& player)
 {
-	DEBUG_MSG("Exiting IdlePlayerState");
+	if (DEBUG == 2)
+	{
+		DEBUG_MSG("Exiting IdlePlayerState");
+	}
 
 }
