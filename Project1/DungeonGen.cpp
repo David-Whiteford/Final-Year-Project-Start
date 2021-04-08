@@ -2,17 +2,13 @@
 
 void DungeonGen::generateMap(int t_maxFeatures)
 {
-	if (!makeRoom(m_width / 2, m_height / 2,
-		static_cast<Direction>(randomInt(4)), true))
-	{
-		std::cout << "Cant place room" << std::endl;
-		return;
-	}
+	//create the first room in the map in the middle of the map
+	makeRoom(m_width / 2, m_height / 2, static_cast<Direction>(randomInt(4)), true);
 	for (int i = 1; i < t_maxFeatures; i++)
 	{
 		if (!createFeature())
 		{
-			std::cout << "Cant place more features" << i << std::endl;
+			DEBUG_MSG("Cant place more features");
 			break;
 		}
 	}
@@ -48,36 +44,37 @@ void DungeonGen::createRoomFeatures(Tilemap*& t_tilemap)
 
 bool DungeonGen::createFeature()
 {
-	for (int i = 0; i < 1000; i++)
+	//if there are exits present the continue
+	if (m_exit.empty() == false)
 	{
-		if (m_exit.empty())
+		//loop till the max features are met
+		for (int i = 0; i < m_maxFeatureNum; i++)
 		{
-			break;
-		}
-		
-		int r = randomInt(m_exit.size());
-		int x = randomInt(m_exit[r].x, m_exit[r].x + m_exit[r].width - 1);
-		int y = randomInt(m_exit[r].y, m_exit[r].y + m_exit[r].height - 1);
-
-		for (int j = 0; j < DirectionNum; j++)
-		{
-			if (createFeat(x, y, static_cast<Direction>(j)))
+			//get a random exit of a romdom room / corridor
+			int r = randomInt(m_exit.size());
+			int x = randomInt(m_exit[r].x, m_exit[r].x + m_exit[r].width - 1);
+			int y = randomInt(m_exit[r].y, m_exit[r].y + m_exit[r].height - 1);
+			//loop through all direction
+			for (int j = 0; j < DirectionNum; j++)
 			{
-				m_exit.erase(m_exit.begin() + r);
-				return true;
+				if (createFeat(x, y, static_cast<Direction>(j)))
+				{
+					//delete the exit once used
+					m_exit.erase(m_exit.begin() + r);
+					return true;
+				}
 			}
 		}
 	}
-
 	return false;
 }
 
 bool DungeonGen::createFeat(int t_x, int t_y, Direction t_direction)
 {
-	static const int roomChance = 50;
+	bool successCreatingRoom = false;
 	int x = 0;
 	int y = 0;
-
+	//change the x,y depending on the direction
 	if (t_direction == North)
 	{
 		y = 1;
@@ -94,22 +91,33 @@ bool DungeonGen::createFeat(int t_x, int t_y, Direction t_direction)
 	{
 		x = -1;
 	}
-	if (getTile(t_x + x, t_y + y) != FloorTile 
-		&& getTile(t_x + x, t_y + y) != CorridorTile)
+	//check that the tile is a floor tile or a corridor tile
+	if (getTile(t_x + x, t_y + y) != FloorTile)
 	{
-		return false;
+		return successCreatingRoom;
 	}
-	int randRoomVal = randomInt(100);
-	if (randRoomVal < roomChance)
+	return successCreatingRoom = createRoomtype(t_x, t_y, x, y, t_direction);
+	return successCreatingRoom;
+}
+////---------------------------------------------------------------------------
+////Determine the type of room e.g corridor or if its a large room
+////---------------------------------------------------------------------------
+bool DungeonGen::createRoomtype(int t_x, int t_y, int t_x2, int t_y2, Direction t_direction)
+{
+	//generate a random number from 0 to 100  
+	int randRoomVal = randomInt(0, 100);
+	//check if the number is less than room chance and if so place room
+	if (randRoomVal <= m_roomChance)
 	{
-		if (makeRoom(t_x, t_y, t_direction,false))
+		//create a room thats not the first one
+		if (makeRoom(t_x, t_y, t_direction, false))
 		{
-			if (t_direction == North || t_direction == South){
+			//place two types of door2 for north and south and door1 for east,west
+			if (t_direction == North || t_direction == South) {
 				setTile(t_x, t_y, Door2);
 				return true;
 			}
-			else 
-			{
+			else {
 				setTile(t_x, t_y, Door1);
 				return true;
 			}
@@ -119,8 +127,10 @@ bool DungeonGen::createFeat(int t_x, int t_y, Direction t_direction)
 	{
 		if (makeCorridor(t_x, t_y, t_direction))
 		{
-			if (getTile(t_x + x, t_y + y) == FloorTile)
+			//check if its a floor tile and if not then make it one(prvents door placesd in middle of corridor)
+			if (getTile(t_x + t_x2, t_y + t_y2) == FloorTile)
 			{
+				//place two types of door2 for north and south and door1 for east,west
 				if (t_direction == North || t_direction == South)
 				{
 					setTile(t_x, t_y, Door2);
@@ -133,7 +143,7 @@ bool DungeonGen::createFeat(int t_x, int t_y, Direction t_direction)
 			}
 			else
 			{
-				setTile(t_x, t_y, CorridorTile);
+				setTile(t_x, t_y, FloorTile);
 			}
 			return true;
 		}
@@ -143,13 +153,12 @@ bool DungeonGen::createFeat(int t_x, int t_y, Direction t_direction)
 
 bool DungeonGen::makeRoom(int t_x, int t_y, Direction t_direction, bool t_firstRoom)
 {
-	int roomSizeMin = 5;
-	int roomSizeMax = 9;
-
 	RoomVals room;
-	room.width = randomInt(roomSizeMin, roomSizeMax);
-	room.height = randomInt(roomSizeMin, roomSizeMax);
-
+	//get the width and height of room between the max and min Sizes
+	room.width = randomInt(m_roomSizeMin, m_roomSizeMax);
+	room.height = randomInt(m_roomSizeMin, m_roomSizeMax);
+	int moveByOne = 1;
+	//check the directiona nd change the x,y values depending on the directon
 	if (t_direction == North)
 	{
 		room.x = t_x - room.width / 2;
@@ -158,7 +167,7 @@ bool DungeonGen::makeRoom(int t_x, int t_y, Direction t_direction, bool t_firstR
 	else if (t_direction == South)
 	{
 		room.x = t_x - room.width / 2;
-		room.y = t_y + 1;
+		room.y = t_y + moveByOne;
 	}
 	else if (t_direction == West)
 	{
@@ -167,31 +176,31 @@ bool DungeonGen::makeRoom(int t_x, int t_y, Direction t_direction, bool t_firstR
 	}
 	else if (t_direction == East)
 	{
-		room.x = t_x + 1;
+		room.x = t_x + moveByOne;
 		room.y = t_y - room.height / 2;
 	}
 	if (placeTile(room , FloorTile))
 	{
 		m_rooms.emplace_back(room);
 		//place exit at north Side
-		if (t_direction != South || t_firstRoom)
-		{
-			m_exit.emplace_back(RoomVals{ room.x,room.y - 1,room.width,1 });
-		}
-		//place exit at south Side
-		if (t_direction != North || t_firstRoom)
+		if (t_direction == South || t_firstRoom)
 		{
 			m_exit.emplace_back(RoomVals{ room.x,room.y + room.height ,room.width,1 });
 		}
-		//place exit at west Side
-		if (t_direction != East || t_firstRoom)
+		//place exit at south Side
+		if (t_direction == North || t_firstRoom)
 		{
-			m_exit.emplace_back(RoomVals{ room.x - 1, room.y,1,room.height });
+			m_exit.emplace_back(RoomVals{ room.x,room.y - 1,room.width,1 });
 		}
-		//place exit at east Side
-		if (t_direction != West || t_firstRoom)
+		//place exit at west Side
+		if (t_direction == East || t_firstRoom)
 		{
 			m_exit.emplace_back(RoomVals{ room.x + room.width,room.y,1,room.height });
+		}
+		//place exit at east Side
+		if (t_direction == West || t_firstRoom)
+		{
+			m_exit.emplace_back(RoomVals{ room.x - 1, room.y,1,room.height });
 		}
 		return true;
 	}
@@ -200,35 +209,22 @@ bool DungeonGen::makeRoom(int t_x, int t_y, Direction t_direction, bool t_firstR
 
 bool DungeonGen::makeCorridor(int t_x, int t_y, Direction t_direction)
 {
-	int corridorLengthMin = 5;
-	int corridorLengthMax = 10;
-
 	RoomVals corridor;
 	corridor.x = t_x;
 	corridor.y = t_y;
 
 	if (randomBool())
 	{
-		corridor.width = randomInt(corridorLengthMin, corridorLengthMax);
+		corridor.width = randomInt(m_corridorLengthMin, m_corridorLengthMax);
 		corridor.height =2;
 
 		if (t_direction == North)
 		{
 			corridor.x = t_x - corridor.width + 1;
-			/*corridor.y = t_y - 1;
-			if (randomBool())
-			{
-				corridor.x = t_x - corridor.width + 1;
-			}*/
 		}
 		else if (t_direction == South)
 		{
 			corridor.x = t_x - corridor.width + 1;
-			/*corridor.y = t_y + 1;
-			if (randomBool())
-			{
-				corridor.x = t_x - corridor.width + 1;
-			}*/
 		}
 		else if (t_direction == West)
 		{
@@ -242,7 +238,7 @@ bool DungeonGen::makeCorridor(int t_x, int t_y, Direction t_direction)
 	else
 	{
 		corridor.width = 2;
-		corridor.height = randomInt(corridorLengthMin, corridorLengthMax);
+		corridor.height = randomInt(m_corridorLengthMin, m_corridorLengthMax);
 
 		if (t_direction == North)
 		{
@@ -255,18 +251,10 @@ bool DungeonGen::makeCorridor(int t_x, int t_y, Direction t_direction)
 		else if (t_direction == West)
 		{
 			corridor.x = t_x - 1;
-			if (randomBool())
-			{
-				corridor.y = t_y - corridor.height + 1;
-			}
 		}
 		else if (t_direction == East)
 		{
 			corridor.x = t_x + 1;
-			if (randomBool())
-			{
-				corridor.y = t_y - corridor.height + 1;
-			}
 		}
 	}
 
@@ -296,11 +284,14 @@ bool DungeonGen::makeCorridor(int t_x, int t_y, Direction t_direction)
 }
 bool DungeonGen::placeTile(RoomVals& t_Tile, char t_tile)
 {
-	if (t_Tile.x < 1 || t_Tile.y < 1 || t_Tile.x + t_Tile.width > m_width - 1
-		|| t_Tile.y + t_Tile.height>m_height - 1)
+	int offSetByOne = 1;
+	//if the passed in rooms x,y are outside the rooms square then return false
+	if (t_Tile.x < offSetByOne || t_Tile.y < offSetByOne || t_Tile.x + t_Tile.width > m_width - offSetByOne
+		|| t_Tile.y + t_Tile.height>m_height - offSetByOne)
 	{
 		return false;
 	}
+	//loop through the tiles starting at a passed in tile and check if there all unpassable and return false if so
 	for (int y = t_Tile.y; y < t_Tile.y + t_Tile.height; y++)
 	{
 		for (int x = t_Tile.x; x < t_Tile.x + t_Tile.width; x++)
@@ -311,16 +302,20 @@ bool DungeonGen::placeTile(RoomVals& t_Tile, char t_tile)
 			}
 		}
 	}
+	//loop through each tile in the room
 	for (int y = t_Tile.y - 1; y < t_Tile.y + t_Tile.height + 1; y++)
 	{
 		for (int x = t_Tile.x - 1; x < t_Tile.x + t_Tile.width + 1; x++)
 		{
-			if (x == t_Tile.x - 1 || y == t_Tile.y - 1
+			//if the tiles are the outside tiles then make them a wall
+			if (x == t_Tile.x - 1 
+				|| y == t_Tile.y - 1
 				|| x == t_Tile.x + t_Tile.width
 				|| y == t_Tile.y + t_Tile.height)
 			{
 				setTile(x, y, Wall);
 			}
+			//otherwise there all what ever tile you want
 			else
 			{
 				setTile(x, y, t_tile);
@@ -965,7 +960,6 @@ void DungeonGen::worshipRoom()
 	deleteRoom(m_worshipRoomIndex);
 	
 }
-
 ////---------------------------------------------------------------------------
 ////creates the decorations for the worship room
 ////---------------------------------------------------------------------------
@@ -1090,6 +1084,9 @@ void DungeonGen::createFeastRoom()
 	}
 	DEBUG_MSG("Issue placing starting position tile");
 }
+////---------------------------------------------------------------------------
+////Function to create a library room for the dungeon
+////---------------------------------------------------------------------------
 void DungeonGen::createLibraryRoom()
 {
 	int heightOffset = 3;
@@ -1126,6 +1123,9 @@ void DungeonGen::createLibraryRoom()
 		deleteRoom(roomIndex);
 	}
 }
+////---------------------------------------------------------------------------
+////Function to place the bookshelf decorations
+////---------------------------------------------------------------------------
 void DungeonGen::placeBookShelfDecor(int t_roomIndex)
 {
 	int offSet = 1;
@@ -1156,6 +1156,9 @@ void DungeonGen::placeBookShelfDecor(int t_roomIndex)
 		setDecorTiles(x + 2, y, UnusedTile);
 	}
 }
+////---------------------------------------------------------------------------
+////Function to place the chairs in the library and other decor
+////---------------------------------------------------------------------------
 void DungeonGen::addChairsDecor(int t_roomIndex)
 {
 	int offSet = 1;
@@ -1166,7 +1169,7 @@ void DungeonGen::addChairsDecor(int t_roomIndex)
 	//loop along the x till you get to a certain width 
 	for (int i = 0; i <= maxWidth; i++)
 	{
-		std::cout << "Starting X : " << x << std::endl;
+		//check for any doors and place a chair if no doors around x, y
 		if (checkForDoors(x, y) == false)
 		{
 			setDecorTiles(x, y, ChairF);
@@ -1174,7 +1177,6 @@ void DungeonGen::addChairsDecor(int t_roomIndex)
 		}
 	}
 }
-
 ////---------------------------------------------------------------------------
 ////Function to add traps to the halls ----------------------------------------
 ////---------------------------------------------------------------------------
@@ -1188,16 +1190,18 @@ void DungeonGen::placeTrapsInHalls()
 		for (int i = 0; i < maxHallsWithTraps; i++)
 		{
 			//find a random room and a random x y in that room
-			int r = randomInt(0, m_halls.size());
+			int r = randomInt(0, m_halls.size() - offSet);
 			int x = randomInt(m_halls[r].x, m_halls[r].x + m_halls[r].width - offSet);
 			int y = randomInt(m_halls[r].y, m_halls[r].y + m_halls[r].height - offSet);
-			//check the floor tile adn place spike if its a floor tile
+			//check the floor tile and place spike if its a floor tile
 			if (getDecorTile(x, y) == FloorTile)
 			{
 				if (checkForDoors(x, y) == false) {
 					setDecorTiles(x, y, SpikeTrap);
 				}
 			}
+			
+			
 			
 		}
 	}

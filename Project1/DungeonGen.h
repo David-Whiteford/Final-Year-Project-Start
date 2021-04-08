@@ -167,6 +167,7 @@ public:
 	void createRoomFeatures(Tilemap*& t_tilemap);
 	bool createFeature();
 	bool createFeat(int t_x ,int t_y, Direction t_direction);
+	bool createRoomtype(int t_x, int t_y, int t_x2, int t_y2, Direction t_direction);
 	bool makeRoom(int t_x, int t_y, Direction t_direction,bool t_firstRoom);
 	bool makeCorridor(int t_x, int t_y, Direction t_direction);
 	bool placeTile(RoomVals& t_rect, char t_tile);
@@ -218,6 +219,12 @@ public:
 	void setUnusedTile(int x, int y, char t_tile, char t_secondTile);
 
 private:
+	static const int m_corridorLengthMin = 5;
+	static const int m_corridorLengthMax = 10;
+	static const int m_roomChance = 50;
+	const int m_maxFeatureNum = 1000;
+	static const int m_roomSizeMin = 5;
+	static const int m_roomSizeMax = 9;
 	int m_bossRoomIndex = 1000;
 	int m_worshipRoomIndex = 1000;
 	int m_statueRoomIndex = 1000;
