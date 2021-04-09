@@ -74,8 +74,6 @@ public:
 		TrapDoorTrap = 'TD',
 		WallSpikeTrap = 'WS'
 	};
-	
-
 	enum Direction
 	{
 		North,
@@ -88,27 +86,37 @@ public:
 	DungeonGen(int t_width, int t_height) :
 		m_width(t_width),
 		m_height(t_height),
-		m_tiles(t_width * t_height,UnusedTile),
+		m_tiles(t_width* t_height, UnusedTile),
 		m_decorTiles(t_width* t_height, UnusedTile),
 		m_rooms(),
 		m_exit()
 	{
 	}
-	void generateMap(int t_maxFeatures);
-	void Set2DVec(Tilemap *&t_tilemap)
+	bool placeTileVal(RoomVals& t_room, char t_tile);
+	bool checkTile(RoomVals& t_room)
 	{
-		for (int i = 0; i < m_tiles.size(); i++)
+		bool tileCanBePlaced = false;
+		int offSetByOne = 1;
+		//if the passed in rooms x,y are outside the rooms square then return false
+		if (t_room.x < offSetByOne || t_room.y < offSetByOne
+			|| t_room.x + t_room.width > m_width - offSetByOne
+			|| t_room.y + t_room.height > m_height - offSetByOne)
 		{
-			m_tempTileVec.push_back(m_tiles[i] );
+			return tileCanBePlaced;
 		}
-		for (int row = 0; row < m_height; row++) 
+		//loop through the tiles starting at a passed in tile and check if there all unpassable and return false if so
+		for (int y = t_room.y; y < t_room.y + t_room.height; y++)
 		{
-			for (int col = 0; col < m_width; col++) 
+			for (int x = t_room.x; x < t_room.x + t_room.width; x++)
 			{
-				m_tileArr[row][col] = m_tempTileVec.front();
+				if (getTile(x, y) != UnusedTile)
+				{
+					return tileCanBePlaced;
+				}
 			}
 		}
 	}
+	void generateMap(int t_maxFeatures);
 	void resetTileVecs()
 	{
 		for (int i = 0; i < m_tiles.size(); i++)
@@ -119,13 +127,12 @@ public:
 		{
 			m_decorTiles[i] = UnusedTile;
 		}
-		m_tempTileVec.clear();
 		m_rooms.clear();
 		m_halls.clear();
 	}
 	std::vector<char> &getTileMapVec()
 	{
-		return m_tempTileVec;
+		return m_tiles;
 	}
 	std::vector<char>& getDecorTileVec()
 	{
@@ -166,11 +173,11 @@ public:
 	}
 	void createRoomFeatures(Tilemap*& t_tilemap);
 	bool createFeature();
-	bool createFeat(int t_x ,int t_y, Direction t_direction);
+	bool createRoomOrCor(int t_x ,int t_y, Direction t_direction);
 	bool createRoomtype(int t_x, int t_y, int t_x2, int t_y2, Direction t_direction);
 	bool makeRoom(int t_x, int t_y, Direction t_direction,bool t_firstRoom);
 	bool makeCorridor(int t_x, int t_y, Direction t_direction);
-	bool placeTile(RoomVals& t_rect, char t_tile);
+	bool placeTile(RoomVals& t_room, char t_tile);
 	void placeDecorInRoom();
 	void createUniqueRooms() 
 	{
@@ -230,7 +237,6 @@ private:
 	int m_statueRoomIndex = 1000;
 	bool m_roomFound = false;
 	sf::Vector2f m_startPosition;
-	std::vector<char> m_tempTileVec;
 	int m_objectCount = 0;
 	int m_width;
 	int m_height;

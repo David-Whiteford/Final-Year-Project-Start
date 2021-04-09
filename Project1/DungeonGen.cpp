@@ -1,5 +1,7 @@
 #include "DungeonGen.h"
-
+////---------------------------------------------------------------------------
+////Creates the starting room and then creates all corridors or rooms from that
+////---------------------------------------------------------------------------
 void DungeonGen::generateMap(int t_maxFeatures)
 {
 	//create the first room in the map in the middle of the map
@@ -13,13 +15,18 @@ void DungeonGen::generateMap(int t_maxFeatures)
 		}
 	}
 }
-
+////---------------------------------------------------------------------------
+////This creates the dungeon and then creates the differnt rooms that have different decor
+////Can be called to create a dungeon and decorate it
+////---------------------------------------------------------------------------
 void DungeonGen::createRoomFeatures(Tilemap*& t_tilemap)
 {
 	int numberOfRooms = 2;
 	generateMap(100);
 	FloorDecorTiles();
+	//create a vector to hold the background tiles and decor tiles
 	m_decorTiles = m_tiles;
+	//loop to create 2 of the below rooms
 	for (int i = 0; i < numberOfRooms; i++)
 	{
 		worsipRoomGroundTiles();
@@ -27,21 +34,36 @@ void DungeonGen::createRoomFeatures(Tilemap*& t_tilemap)
 		statueRoomTiles();
 		statueRoom();
 	}
+	//create a boss room ground tiles and the room itself
 	bossRoomGroundTiles();
 	bossRoom();
+	//create unique rooms
 	createUniqueRooms();
+	//example of a trigger that was set up by procedual generation
 	createTrapsInRooms();
+	//place triggers in rooms to exit dungeon
 	playerStartPos();
+	//place decor on the walls,in rooms, halls
 	placeDecorOnWalls();
 	placeDecorInRoom();
 	placeDecorInHalls();
-	std::cout << "Empty Rooms Left " << m_rooms.size() << std::endl;
-	placeDecorInRoom();
+	//if rooms are left call the place decor to fill them
+	if (m_rooms.empty() == false){
+		placeDecorInRoom();
+	}
+	//create a bedroom
 	bedRoom();
-	print();
-	Set2DVec(t_tilemap);
+	//if the debug is active then output the rooms in text
+	if (DEBUG == 1)
+	{
+		std::cout << "Empty Rooms Left " << m_rooms.size() << std::endl;
+		print();
+	}
 }
-
+////---------------------------------------------------------------------------
+////Create the starting x ,y values for the next room or corridor. get these from the exits vector 
+///the exits vector at this point hold values for the first room
+////---------------------------------------------------------------------------
 bool DungeonGen::createFeature()
 {
 	//if there are exits present the continue
@@ -57,7 +79,7 @@ bool DungeonGen::createFeature()
 			//loop through all direction
 			for (int j = 0; j < DirectionNum; j++)
 			{
-				if (createFeat(x, y, static_cast<Direction>(j)))
+				if (createRoomOrCor(x, y, static_cast<Direction>(j)))
 				{
 					//delete the exit once used
 					m_exit.erase(m_exit.begin() + r);
@@ -68,8 +90,10 @@ bool DungeonGen::createFeature()
 	}
 	return false;
 }
-
-bool DungeonGen::createFeat(int t_x, int t_y, Direction t_direction)
+////---------------------------------------------------------------------------
+////Start the setup to create a room or a corridor, change the x ,y depending on the direction
+////---------------------------------------------------------------------------
+bool DungeonGen::createRoomOrCor(int t_x, int t_y, Direction t_direction)
 {
 	bool successCreatingRoom = false;
 	int x = 0;
@@ -150,7 +174,9 @@ bool DungeonGen::createRoomtype(int t_x, int t_y, int t_x2, int t_y2, Direction 
 	}
 	return false;
 }
-
+////---------------------------------------------------------------------------
+////creates a room that has a random value within a range for the size of the room
+////---------------------------------------------------------------------------
 bool DungeonGen::makeRoom(int t_x, int t_y, Direction t_direction, bool t_firstRoom)
 {
 	RoomVals room;
@@ -206,61 +232,75 @@ bool DungeonGen::makeRoom(int t_x, int t_y, Direction t_direction, bool t_firstR
 	}
 	return false;
 }
-
+////---------------------------------------------------------------------------
+////creates a corridor in the horizontal and vertical of a certain width and height
+////---------------------------------------------------------------------------
 bool DungeonGen::makeCorridor(int t_x, int t_y, Direction t_direction)
 {
+	//create a room of type corridor, with x ,y 
 	RoomVals corridor;
 	corridor.x = t_x;
 	corridor.y = t_y;
-
+	//generate a random bool to determine the direction of the corridor
 	if (randomBool())
 	{
+		//create the width to be a random int within a certain range and a height of 2
 		corridor.width = randomInt(m_corridorLengthMin, m_corridorLengthMax);
 		corridor.height =2;
-
+		//minus 1 from passed y to move one up the y e.g north
 		if (t_direction == North)
 		{
-			corridor.x = t_x - corridor.width + 1;
+			corridor.y = t_y - 1;
 		}
-		else if (t_direction == South)
-		{
-			corridor.x = t_x - corridor.width + 1;
-		}
-		else if (t_direction == West)
-		{
-			corridor.x = t_x - corridor.width;
-		}
-		else if (t_direction == East)
-		{
-			corridor.x = t_x + 1;
-		}
-	}
-	else
-	{
-		corridor.width = 2;
-		corridor.height = randomInt(m_corridorLengthMin, m_corridorLengthMax);
-
-		if (t_direction == North)
-		{
-			corridor.y = t_y - corridor.height;
-		}
+		//plus 1 onto passed y to move one down the y e.g south
 		else if (t_direction == South)
 		{
 			corridor.y = t_y + 1;
 		}
+		//move the x back from passed in x minus the width e.g West 
 		else if (t_direction == West)
 		{
-			corridor.x = t_x - 1;
+			corridor.x = t_x - corridor.width;
 		}
+		//if east then move one along the x from passed in x e.g East
 		else if (t_direction == East)
 		{
 			corridor.x = t_x + 1;
 		}
 	}
-
+	//this else is for a vertical corridor
+	else
+	{
+		//create a width of 2 and height thats random between certain range
+		corridor.width = 2;
+		corridor.height = randomInt(m_corridorLengthMin, m_corridorLengthMax);
+		//move the y back from passed in x minus the height if North
+		if (t_direction == North)
+		{
+			corridor.y = t_y - corridor.height;
+		}
+		//plus 1 onto passed y to move one down the y e.g south
+		else if (t_direction == South)
+		{
+			corridor.y = t_y + 1;
+		}
+		//from passed in x move  minus one e.g to the west
+		else if (t_direction == West)
+		{
+			corridor.x = t_x - 1;
+		}
+		//from passed in x move plus one e.g to the East
+		else if (t_direction == East)
+		{
+			corridor.x = t_x + 1;
+		}
+	}
+	//create the room e.g the  corridor
 	if (placeTile(corridor, CorridorTile))
 	{
+		//add the coridor to the m_halls vector
 		m_halls.emplace_back(corridor);
+		//check the direction along the y e.g south or North and that the width is not 1 and create a exit
 		if (t_direction != South && corridor.width != 1)
 		{
 			m_exit.emplace_back(RoomVals{ corridor.x,corridor.y - 1,corridor.width,1 });
@@ -269,6 +309,7 @@ bool DungeonGen::makeCorridor(int t_x, int t_y, Direction t_direction)
 		{
 			m_exit.emplace_back(RoomVals{ corridor.x,corridor.y + corridor.height,corridor.width,1 });
 		}
+		//check the direction along the x e.g east or west and that the height is not 1 and create a exit
 		if (t_direction != East && corridor.height != 1)
 		{
 			m_exit.emplace_back(RoomVals{ corridor.x - 1, corridor.y, 1, corridor.height });
@@ -282,68 +323,73 @@ bool DungeonGen::makeCorridor(int t_x, int t_y, Direction t_direction)
 
 	return false;
 }
-bool DungeonGen::placeTile(RoomVals& t_Tile, char t_tile)
+////---------------------------------------------------------------------------
+////checks the tiles are unusable and so places a tile of a certain type for the rooms and corridors when called
+////---------------------------------------------------------------------------
+bool DungeonGen::placeTile(RoomVals& t_room, char t_tile)
 {
-	int offSetByOne = 1;
-	//if the passed in rooms x,y are outside the rooms square then return false
-	if (t_Tile.x < offSetByOne || t_Tile.y < offSetByOne || t_Tile.x + t_Tile.width > m_width - offSetByOne
-		|| t_Tile.y + t_Tile.height>m_height - offSetByOne)
+	bool tilePlaced = false;
+	if (!checkTile(t_room))
 	{
-		return false;
+		return tilePlaced;
 	}
-	//loop through the tiles starting at a passed in tile and check if there all unpassable and return false if so
-	for (int y = t_Tile.y; y < t_Tile.y + t_Tile.height; y++)
-	{
-		for (int x = t_Tile.x; x < t_Tile.x + t_Tile.width; x++)
-		{
-			if (getTile(x, y) != UnusedTile)
-			{
-				return false;
-			}
-		}
-	}
+	tilePlaced = placeTileVal(t_room, t_tile);
+	return tilePlaced;
+}
+////---------------------------------------------------------------------------
+////Given the rooma and a tile type it then loops throgh and places the tiles in a 
+////room from the room walls to the tiles within the room
+////---------------------------------------------------------------------------
+bool DungeonGen::placeTileVal(RoomVals& t_room, char t_tile)
+{
+	bool tileplaced = false;
 	//loop through each tile in the room
-	for (int y = t_Tile.y - 1; y < t_Tile.y + t_Tile.height + 1; y++)
+	for (int y = t_room.y - 1; y < t_room.y + t_room.height + 1; y++)
 	{
-		for (int x = t_Tile.x - 1; x < t_Tile.x + t_Tile.width + 1; x++)
+		for (int x = t_room.x - 1; x < t_room.x + t_room.width + 1; x++)
 		{
 			//if the tiles are the outside tiles then make them a wall
-			if (x == t_Tile.x - 1 
-				|| y == t_Tile.y - 1
-				|| x == t_Tile.x + t_Tile.width
-				|| y == t_Tile.y + t_Tile.height)
+			if (x == t_room.x - 1
+				|| y == t_room.y - 1
+				|| x == t_room.x + t_room.width
+				|| y == t_room.y + t_room.height)
 			{
 				setTile(x, y, Wall);
+				tileplaced = true;
 			}
 			//otherwise there all what ever tile you want
 			else
 			{
 				setTile(x, y, t_tile);
+				tileplaced = true;
 			}
 		}
 	}
-	return true;
+	return tileplaced;
 }
-
 ////---------------------------------------------------------------------------
 ////Place new floor tiles on the ground and store in background tiles vector
 ////---------------------------------------------------------------------------
 void DungeonGen::FloorDecorTiles()
 {
+	//checks if the room vec is empty 
 	if (m_rooms.empty() == false)
 	{
+		//if not loop through
 		for (int i = 0; i < m_rooms.size(); i++)
 		{
+			// get the starting and the end for the x,y
 			int xStart = m_rooms[i].x;
 			int xEnd = m_rooms[i].x + m_rooms[i].width;
-
 			int yStart = m_rooms[i].y + 1;
 			int yBottom = m_rooms[i].y + m_rooms[i].height - 2;
 
+			//loop till x gets to the end from the starting x pos
 			for (int x = xStart; x < xEnd; x++)
 			{
 				if (x != xEnd)
 				{
+					//check tiles are floor tile and replace them with stone floor tiles
 					if (getTile(x, yStart) == FloorTile || getTile(x, yBottom) == FloorTile)
 					{
 						setTile(x, yStart, StoneFloorTile);
@@ -351,11 +397,14 @@ void DungeonGen::FloorDecorTiles()
 					}
 				}
 			}
+			//change the ending of the x
 			xEnd = m_rooms[i].x + m_rooms[i].width - 1;
+			// loop from the staring y to the ending y 
 			for (int y = yStart; y < yBottom; y++)
 			{
 				if (y != yBottom)
 				{
+					//check if they are floor tiles and replace them with stone floor tiles
 					if (getTile(xStart, y) == FloorTile || getTile(xEnd, y) == FloorTile)
 					{
 						setTile(xStart, y, StoneFloorTile);
@@ -390,21 +439,25 @@ int DungeonGen::GetRoom(int t_roomWidth, int t_roomHeight)
 }
 void DungeonGen::setUnusedTile(int x, int y, char t_tile,char t_secondTile)
 {
+	//set a max size value to 2
 	int maxSize = 2;
+	//set the x and the y values and max x value
 	int xVal = x;
 	int yVal = y;
 	int maxX = xVal + maxSize;
+	//create a nested for looop to loop through the x ,y 
 	for (int i = 0; i < maxSize; i++)
 	{
 		for (int j = 0; j < maxSize; j++)
 		{
+			//check the tiles and set unused and replace tiles under large decor tiles to unused
 			if (getDecorTile(xVal, yVal) == t_tile 
 				|| getDecorTile(xVal, yVal) == t_secondTile)
 			{
 				setDecorTiles(xVal, yVal, UnusedTile);
 			}
+			//loop through the x,y same way as the for loop
 			xVal++;
-			//std::cout << "XVal: " << xVal << "maxX: " << maxX << std::endl;
 			if (xVal == maxX)
 			{
 				yVal++;
@@ -425,19 +478,23 @@ bool DungeonGen::CheckXAndYPos(int x, int y)
 }
 sf::Vector2i DungeonGen::GenXAndYAtTopWall(int t_i, std::vector<RoomVals>& t_tileVec)
 {
+	//get the x ,y at the top wall
 	int x = randomInt(t_tileVec[t_i].x, t_tileVec[t_i].x + t_tileVec[t_i].width - 1);
 	int y = t_tileVec[t_i].y;
 	return sf::Vector2i(x, y);
 }
 sf::Vector2i DungeonGen::GenXAndYAtBottomWall(int t_i, std::vector<RoomVals>& t_tileVec)
 {
+	//get the x ,y at the bottom wall
 	int x = randomInt(t_tileVec[t_i].x, t_tileVec[t_i].x + t_tileVec[t_i].width - 1);
 	int y = t_tileVec[t_i].y + t_tileVec[t_i].height - 1;
 	return sf::Vector2i(x, y);
 }
 void DungeonGen::setSpawnToWall(int t_roomIndex)
 {
+	//get the y at the top wall
 	int y = m_rooms[t_roomIndex].y - 1;
+	//loop from the starting x of the room to the ending x and set all spawns to walls. this loops through all top walls
 	for (int x = m_rooms[t_roomIndex].x; x < m_rooms[t_roomIndex].x + m_rooms[t_roomIndex].width - 1; x++)
 	{
 		if (getDecorTile(x, y) == SpawnPoint)
@@ -462,12 +519,14 @@ bool DungeonGen::checkForDoors(int t_x, int t_y)
 }
 void DungeonGen::setUniqueGroundTiles(char t_newTile, int t_maxRoomSizeWidth, int t_maxRoomSizeHeight, int t_index)
 {
+	//this loops through all ground tiles in nested loop
 	for (int x = m_rooms[t_index].x; x < m_rooms[t_index].x
 		+ m_rooms[t_index].width; x++)
 	{
 		for (int y = m_rooms[t_index].y; y < m_rooms[t_index].y
 			+ m_rooms[t_index].height; y++)
 		{
+			//then replace all stone and normal floor tiles with whatever was passed in
 			if (getTile(x, y) == StoneFloorTile
 				|| getTile(x, y) == FloorTile)
 			{
@@ -479,6 +538,15 @@ void DungeonGen::setUniqueGroundTiles(char t_newTile, int t_maxRoomSizeWidth, in
 }
 
 
+
+
+
+////---------------------------------------------------------------------------
+////Functions that create the decorations in the rooms
+////There are normal rooms with specific decor,
+////Completley changed rooms,
+////Also Unique rooms
+////---------------------------------------------------------------------------
 
 
 ////---------------------------------------------------------------------------
