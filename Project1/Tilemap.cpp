@@ -24,6 +24,7 @@ void Tilemap::init()
 }
 void Tilemap::DungeonTilesSetUp()
 {
+	//Background tiles
 	m_floorTile.setTexture(m_dunTexture);
 	m_floorTile.setTextureRect(sf::IntRect(0, 16, 16, 16));
 	m_stoneFloorTile.setTexture(m_texture);
@@ -100,13 +101,14 @@ sf::Vector2f Tilemap::getPlayerSpawn()
 }
 sf::Vector2f Tilemap::getPlayerCave()
 {
-	//get a random spawn point near a exit in the dungeon
+	//get a random spawn point near a cave in the overworld
 	int randIndex = rand() % m_caves.size();
 	sf::Vector2f pos = m_caves[randIndex];
 	return pos;
 }
 void Tilemap::OverWorldTilesSetUp()
 {
+	//set all the tiles for the overwold
 	m_grassTile.setTexture(m_texture);
 	m_grassTile.setTextureRect(sf::IntRect(0, 0, 16, 16));
 	m_waterTile.setTexture(m_texture);
@@ -130,6 +132,7 @@ void Tilemap::OverWorldTilesSetUp()
 }
 void Tilemap::DrawOverWorld(sf::View t_view)
 {
+	//loop and draw tilemap of the overworld thats store in vector
 	for (int i = 0; i < m_tileVec.size(); ++i)
 	{
 		if (t_view.getCenter().x + t_view.getSize().x / 2 > m_tileVec[i]->getSprite().getPosition().x 
@@ -143,6 +146,7 @@ void Tilemap::DrawOverWorld(sf::View t_view)
 }
 void Tilemap::DrawDungeon(sf::View t_view)
 {
+	//loop and draw tilemap of the dungeon background thats store in vector
 	for (int i = 0; i < m_dunTileVec.size(); ++i)
 	{
 		if (m_col.ViewCheck(t_view, m_dunTileVec[i]->getSprite().getPosition()))
@@ -150,6 +154,7 @@ void Tilemap::DrawDungeon(sf::View t_view)
 			m_dunTileVec[i]->draw();
 		}
 	}
+	//loop and draw tilemap of the dungeon decorations thats store in vector
 	for (int i = 0; i < m_dunDecorTileVec.size(); ++i)
 	{
 		if (m_col.ViewCheck(t_view, m_dunDecorTileVec[i]->getSprite().getPosition()))
@@ -161,15 +166,19 @@ void Tilemap::DrawDungeon(sf::View t_view)
 
 void Tilemap::setMap(sf::RenderWindow& t_window)
 {
+	//set up the overworld tilemap
 	int type = 0;
 	int x = 0;
 	int y = 0;
+	//get each value from vector
 	for (int i = 0; i < m_tileVecValues.size(); i++)
 	{
 		type = m_tileVecValues[i];	
+		//dependig on the value determines the tile type,its size position,ids and stores in tile vec
 		switch (type)
 		{
 			case 1:
+					//eg 1 is a grass tile	
 					m_tileVec.push_back(new Tiles(t_window, sf::Vector2f(m_tileSize, m_tileSize),
 						sf::Vector2f(x * m_tileSize, y * m_tileSize), m_grassTile, "Grass",0));
 				break;
@@ -214,9 +223,11 @@ void Tilemap::setMap(sf::RenderWindow& t_window)
 			default:
 				break;
 		}
+		//increment x till ypu get to the map width
 		x++;
 		if (x == m_mapWidth)
 		{
+			//then reset x and move down y
 			x = 0;
 			y++;
 		}
@@ -225,9 +236,11 @@ void Tilemap::setMap(sf::RenderWindow& t_window)
 }
 std::vector<Tiles*> Tilemap::getDunObstaclesVec()
 {
+	//vec for obstacles
 	std::vector<Tiles*> obstacles;
 	for (int i = 0; i < m_dunTileVec.size(); i++)
 	{
+		//loop through all tiles and any tagged with 1 is stored and returned as obstacle
 		if (m_dunTileVec[i]->getNumTag() == 1)
 		{
 			obstacles.push_back(m_dunTileVec[i]);
@@ -235,6 +248,7 @@ std::vector<Tiles*> Tilemap::getDunObstaclesVec()
 	}
 	for (int i = 0; i < m_dunDecorTileVec.size(); i++)
 	{
+		//loop through all decor tiles and any tagged with 1 is stored and returned as obstacle
 		if (m_dunDecorTileVec[i]->getNumTag() == 1)
 		{
 			obstacles.push_back(m_dunDecorTileVec[i]);
@@ -247,6 +261,7 @@ std::vector<Tiles*> Tilemap::getOverWorldObstaclesVec()
 	std::vector<Tiles*> obstacles;
 	for (int i = 0; i < m_tileVec.size(); i++)
 	{
+		//loop through all tiles and any tagged with Obstacle is stored and returned as obstacle
 		if (m_tileVec[i]->getTag() == "Obstacle")
 		{
 			obstacles.push_back(m_tileVec[i]);
@@ -257,6 +272,7 @@ std::vector<Tiles*> Tilemap::getOverWorldObstaclesVec()
 
 std::vector<Tiles*> Tilemap::getCavesVec()
 {
+	//loop through all tiles and store tiles tagged as Cave in temp vec
 	std::vector<Tiles*> caves;
 	for (int i = 0; i < m_tileVec.size(); i++)
 	{
@@ -265,11 +281,13 @@ std::vector<Tiles*> Tilemap::getCavesVec()
 			caves.push_back(m_tileVec[i]);
 		}
 	}
+	//return caves temp vec
 	return caves;
 }
 
 std::vector<Tiles*> Tilemap::getDunExitsVec()
 {
+	//loop through all tiles and store tiles tagged as num 2 store in temp vec
 	std::vector<Tiles*> exits;
 	for (int i = 0; i < m_dunDecorTileVec.size(); i++)
 	{
@@ -278,21 +296,26 @@ std::vector<Tiles*> Tilemap::getDunExitsVec()
 			exits.push_back(m_dunDecorTileVec[i]);
 		}
 	}
+	//return temp vec
 	return exits;
 }
 
 void Tilemap::Dun(std::vector<char> &t_dunVec, sf::RenderWindow& t_window, int t_mapWidth, int t_mapHeight)
 {
+	//set up dun background tiles
 	int type = 0;
 	int x = 0;
 	int y = 0;	
 	for(int i = 0; i < t_dunVec.size();i++)
 	{
+		//get the type from passed in vec
 		type = t_dunVec[i];
 		char newType = type;
+		//depending on the type set posiotn,size and tag it
 		switch (newType)
 		{
 			case '0':
+				//eg tagged as Obstacle as its a wall
 				m_dunTileVec.push_back(new Tiles(t_window, sf::Vector2f(m_tileSize, m_tileSize),
 					sf::Vector2f(x * m_tileSize, y * m_tileSize), m_wallTile, "Obstacle", 1));
 				break;
@@ -332,10 +355,11 @@ void Tilemap::Dun(std::vector<char> &t_dunVec, sf::RenderWindow& t_window, int t
 			default:
 				break;
 		}
-
+		//increment x till reach map width
 		x++;
 		if (x == t_mapWidth)
 		{
+			//then increment y and set x to 0
 			x = 0;
 			y++;
 		}
@@ -344,16 +368,19 @@ void Tilemap::Dun(std::vector<char> &t_dunVec, sf::RenderWindow& t_window, int t
 }
 void Tilemap::DunDecor(std::vector<char>& t_dunDecorVec, sf::RenderWindow& t_window, int t_mapWidth, int t_mapHeight)
 {
+	//set up dun decor tiles
 	int type = 0;
 	int x = 0;
 	int y = 0;
 	for (int i = 0; i < t_dunDecorVec.size(); i++)
 	{
+		//get the type from passed in vec
 		type = t_dunDecorVec[i];
-
+		//depending on the type set position,size and tag it
 		switch (type)
 		{
 		case '2':
+			//store in vec in this case a plant tile tagged as obstacle with a position and size
 			m_dunDecorTileVec.push_back(new Tiles(t_window, sf::Vector2f(m_tileSize, m_tileSize),
 				sf::Vector2f(x * m_tileSize, y * m_tileSize), m_plantTile, "Obstacle", 1));
 			break;
@@ -458,10 +485,11 @@ void Tilemap::DunDecor(std::vector<char>& t_dunDecorVec, sf::RenderWindow& t_win
 		default:
 			break;
 		}
-
+		//increment x till reach map width
 		x++;
 		if (x == t_mapWidth)
 		{
+			//then increment y and set x to 0
 			x = 0;
 			y++;
 		}

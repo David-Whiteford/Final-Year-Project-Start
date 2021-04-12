@@ -832,7 +832,9 @@ void DungeonGen::createJailRoom()
 		}
 	}
 }
-
+////---------------------------------------------------------------------------
+////Function to place jail cells in the Jail room and place them in a order from one side of room to next
+////---------------------------------------------------------------------------
 bool DungeonGen::createJailCells(int t_roomIndex)
 {
 	//values needed to decorate room
@@ -971,12 +973,14 @@ void DungeonGen::bossRoom()
 		{
 			for (int j = 0; j < maxSize; j++)
 			{
+				//make sure tile is dirt and make unusable
 				if (getDecorTile(xVal, yVal) == DirtTile)
 				{
 					setDecorTiles(xVal, yVal, UnusedTile);
 				}
+				//increment x
 				xVal++;
-				
+				//when at max x reset x and increment y to next col
 				if (xVal == maxX)
 				{
 					yVal++;
@@ -1288,20 +1292,27 @@ void DungeonGen::placeBookShelfDecor(int t_roomIndex)
 	int maxXVal = 3;
 	for (int i = 0; i < maxXVal; i++)
 	{
-		int x2 = x;
-		int y2 = y - 1;
-
-		if (getDecorTile(x2 + i, y2) == Door2)
+		//check for doors at x y and 3 tiles to right on x 
+		if (checkForDoors(x, y) == false)
 		{
-			doorNum = x2 + i;
+			//starting at x and move up 1 on y 
+			int x2 = x;
+			int y2 = y - 1;
+			//allows us to check for doors along wall tiles
+			if (getDecorTile(x2 + i, y2) == Door2)
+			{
+				doorNum = x2 + i;
+			}
 		}
 	}
+	//if there were doors found then place bookshelf after door
 	if (doorNum > 0)
 	{
 		x = doorNum + offSet;
 		setDecorTiles(x, y, BookShelve);
 		setDecorTiles(x + 2, y, UnusedTile);
 	}
+	//if not place at room corner
 	else if (doorNum == 0)
 	{
 		setDecorTiles(x, y, BookShelve);
@@ -1352,9 +1363,6 @@ void DungeonGen::placeTrapsInHalls()
 					setDecorTiles(x, y, SpikeTrap);
 				}
 			}
-			
-			
-			
 		}
 	}
 }
@@ -1364,13 +1372,16 @@ void DungeonGen::placeTrapsInHalls()
 ////---------------------------------------------------------------------------
 void DungeonGen::playerStartPos()
 {
+
 	if (m_rooms.empty() == false)
 	{
+		//loop through all rooms
 		for (int i = 0; i < m_rooms.size(); i++)
 		{
+			//get a random x along the top walls and y at the top walls
 			int x = randomInt(m_rooms[i].x, m_rooms[i].x + m_rooms[i].width -1);
 			int y = m_rooms[i].y - 1;
-
+			//check if its a wall and repalce with exit/spawn
 			if (getDecorTile(x , y) == Wall)
 			{
 				setDecorTiles(x, y, SpawnPoint);
@@ -1386,27 +1397,31 @@ void DungeonGen::placeDecorOnWalls()
 {
 	if (m_rooms.empty() == false)
 	{
+		//loop through rooms
 		for (int i = 0; i < m_rooms.size(); i++)
 		{
+			//set up the values for number of pictures in a room and the decor amount
 			int picNum = 0;
 			int maxDecorInRoom = randomInt(3, 5);
+			//loop till max decor was placed
 			for (int decorType = 0; decorType < maxDecorInRoom;)
 			{
+				//set the x ,y  at the top wall
 				int offSet = 1;
 				int x = randomInt(m_rooms[i].x + offSet, m_rooms[i].x + m_rooms[i].width - offSet);
 				int y = m_rooms[i].y - offSet;
-				
-				if (getDecorTile(x, y) == Wall &&
-					getDecorTile(x, y) != Door1 &&
-					getDecorTile(x, y) != Door2)
+				//check for wall
+				if (getDecorTile(x, y) == Wall)
 				{
-					
+					//if so place chains for decor type 0
 					if (decorType == 0) {
 						setDecorTiles(x, y, Chains);
 					}
+					//if so place torch for decor type 1
 					else if (decorType == 1) {
 						setDecorTiles(x, y, Torch);
 					}
+					//if so place one  picture for decor type 2
 					else if (decorType == 2) {
 						if (picNum == 0)
 						{
@@ -1462,18 +1477,23 @@ void DungeonGen::placeDecorInHalls()
 {
 	if (m_halls.empty() == false)
 	{
+		//loop through halls
 		for (int i = 0; i < m_halls.size(); i++)
 		{
+			//set the amount of decor in halls
 			int mixDcor = 1;
 			int maxDecor = 4;
 			int maxDecorInRoom = randomInt(mixDcor, maxDecor);
+			//loop till max decor reached
 			for (int decorType = 0; decorType < maxDecorInRoom; decorType++)
 			{
+				//each iteration of loop there is new decor
 				if (decorType == 0)
 				{
+					//Create x ,y pos for new tile at left side of room random along y 
 					int x = m_halls[i].x + 1;
 					int y = randomInt(m_halls[i].y +1, m_halls[i].y + m_halls[i].width - 1);
-
+					//this is so place plant if it can
 					if (getDecorTile(x, y) == FloorTile
 						&& checkForDoors(x,y)==false)
 					{
@@ -1482,10 +1502,11 @@ void DungeonGen::placeDecorInHalls()
 				}
 				else if (decorType == 1)
 				{
+					//Create x ,y pos for new tile at left side of room random along y 
 					int offSets = 1;
 					int x = m_halls[i].x + offSets;
 					int y = randomInt(m_halls[i].y + offSets, m_halls[i].y + m_halls[i].width - offSets);
-
+					//this is so place potion if it can
 					if (getDecorTile(x, y) == FloorTile
 						&& checkForDoors(x, y) == false)
 					{
@@ -1495,9 +1516,10 @@ void DungeonGen::placeDecorInHalls()
 				}
 				else if (decorType == 2)
 				{
+					//Create x ,y pos for new tile at right side of room random along y 
 					int x = m_halls[i].x + m_halls[i].width - 1;
 					int y = randomInt(m_halls[i].y, m_halls[i].y + m_halls[i].width - 1);
-
+					//this is so place Money if it can
 					if (getDecorTile(x, y) == FloorTile
 						&& checkForDoors(x, y) == false)
 					{
@@ -1505,6 +1527,7 @@ void DungeonGen::placeDecorInHalls()
 					}
 				}
 			}
+			//delete the hall after its decorated
 			m_halls.erase(m_halls.begin() + i);
 		}
 
