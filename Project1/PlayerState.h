@@ -8,6 +8,7 @@ class Player;
 
 class PlayerState {
 public:
+	//virtual function for base class to handle player input,entering that state,exiting the state and the update 
 	virtual ~PlayerState() {};
 	virtual PlayerState* handleInput(gpp::Events&) = 0;
 	virtual void update(Player&) = 0;

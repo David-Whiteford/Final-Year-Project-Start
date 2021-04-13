@@ -12,6 +12,7 @@ public:
 	virtual ~GameObject() {}
 	void setTag(sf::String t_tag) { m_tag = t_tag; }
 	sf::String getTag() { return m_tag; }
+	//the position of the gameobject
 	sf::Vector2f position;
 	float size;
 	int id;

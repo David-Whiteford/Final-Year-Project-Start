@@ -7,7 +7,7 @@ namespace gpp {
 	public:
 		Events();
 		~Events();
-
+		//enume for the movements
 		enum class Event
 		{
 			NONE,
@@ -20,7 +20,7 @@ namespace gpp {
 		};
 
 	
-
+		//function to set the current animation state
 		void setCurrent(Event);
 		Event getCurrent();
 

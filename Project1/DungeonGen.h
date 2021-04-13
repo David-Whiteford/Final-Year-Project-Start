@@ -124,18 +124,30 @@ public:
 	void generateMap(int t_maxFeatures);
 	void resetTileVecs()
 	{
-		//loop and reset all values in the vector for background and decor tiles
-		for (int i = 0; i < m_tiles.size(); i++)
+		if (m_tiles.empty() == false)
 		{
-			m_tiles[i] = UnusedTile;
+			//loop and reset all values in the vector for background and decor tiles
+			for (int i = 0; i < m_tiles.size(); i++)
+			{
+				m_tiles[i] = UnusedTile;
+			}
 		}
-		for (int i = 0; i < m_decorTiles.size(); i++)
+		if (m_decorTiles.empty() == false)
 		{
-			m_decorTiles[i] = UnusedTile;
+			for (int i = 0; i < m_decorTiles.size(); i++)
+			{
+				m_decorTiles[i] = UnusedTile;
+			}
 		}
-		//clears the vectors for rooms and the halls
-		m_rooms.clear();
-		m_halls.clear();
+		//clears the vectors for rooms and the halls if there not empty
+		if (m_rooms.empty() == false)
+		{
+			m_rooms.clear();
+		}
+		if (m_halls.empty() == false)
+		{
+			m_halls.clear();
+		}
 	}
 	std::vector<char> &getTileMapVec()
 	{

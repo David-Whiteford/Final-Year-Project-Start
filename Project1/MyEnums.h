@@ -1,10 +1,10 @@
 #ifndef MY_ENUMS
 #define MY_ENUMS
 
-// and David Whiteford
+//David Whiteford
 
 /// <summary>
-/// different mode game can be 
+/// different levels in game
 
 /// </summary>
 enum class GameState
