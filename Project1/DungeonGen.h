@@ -77,22 +77,22 @@ public:
 		WallSpikeTrap = 'WS'
 	};
 	//enum for the directions
-	enum Direction
+	enum class Direction
 	{
 		North,
 		South,
 		West,
 		East,
+		NoDirection,
 		DirectionNum
 	};
+	Direction m_direction = Direction::NoDirection;
 	//constructor to set up the dungeon , sets teh size and all decor and background tiles to unused
 	DungeonGen(int t_width, int t_height) :
 		m_width(t_width),
 		m_height(t_height),
 		m_tiles(t_width* t_height, UnusedTile),
-		m_decorTiles(t_width* t_height, UnusedTile),
-		m_rooms(),
-		m_exit()
+		m_decorTiles(t_width* t_height, UnusedTile)
 	{
 	}
 	//funtions for the creation of the dungeon 
@@ -120,8 +120,8 @@ public:
 			}
 		}
 	}
-	//func to generte the map
-	void generateMap(int t_maxFeatures);
+	//func to generte the dungeon
+	void generateDungeon(int t_maxTilesChanged);
 	void resetTileVecs()
 	{
 		if (m_tiles.empty() == false)
@@ -197,8 +197,8 @@ public:
 		m_decorTiles[t_x + t_y * m_width] = t_tile;
 	}
 	//functions to start the creation of rooms and halls in dungeon
-	void createRoomFeatures(Tilemap*& t_tilemap);
-	bool createFeature();
+	void createDunExtras(Tilemap*& t_tilemap);
+	bool dungeonCreationStart();
 	bool createRoomOrCor(int t_x ,int t_y, Direction t_direction);
 	bool createRoomtype(int t_x, int t_y, int t_x2, int t_y2, Direction t_direction);
 	bool makeRoom(int t_x, int t_y, Direction t_direction,bool t_firstRoom);
@@ -206,6 +206,8 @@ public:
 	bool placeTile(RoomVals& t_room, char t_tile);
 	//functions to create decorations rooms
 	void placeDecorInRoom();
+	void placeCorridorExit(RoomVals& t_room, Direction t_direction);
+	void placeRoomExit(RoomVals& t_room, Direction t_direction, bool t_firstRoom);
 	void createUniqueRooms() 
 	{
 		//creates unique rooms in the dungeon
@@ -268,14 +270,18 @@ private:
 	static const int m_corridorLengthMax = 10;
 	static const int m_roomChance = 50;
 	//set the number of times to loop when ceating room and halls
-	const int m_maxFeatureNum = 1000;
+	const int m_maxTilesChanged = 1000;
 	//min and max room sizes
 	static const int m_roomSizeMin = 5;
 	static const int m_roomSizeMax = 9;
+	static const int m_corridorWidth = 2;
+	static const int m_corridorHeight = 2;
 	//set the index of the boss,worship and statue room to unvalid
 	int m_bossRoomIndex = 1000;
 	int m_worshipRoomIndex = 1000;
 	int m_statueRoomIndex = 1000;
+	int m_numberOfDirections = 4;
+
 	//set the width and height of map and staring pos and max decor in rooms
 	bool m_roomFound = false;
 	sf::Vector2f m_startPosition;

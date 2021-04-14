@@ -155,7 +155,7 @@ void Game::setUpDun()
 	sf::Vector2f offSetFromSpawn = Vector2f(0.0f, 20.0f);
 	m_player->setIfInTrigger(false);
 	//generate new dungeon and pass to tilemap
-    m_dungeon->createRoomFeatures(m_tileMap);
+    m_dungeon->createDunExtras(m_tileMap);
 	m_tileMap->Dun(m_dungeon->getTileMapVec(), m_window, m_mapSize, m_mapSize);
 	m_tileMap->DunDecor(m_dungeon->getDecorTileVec(), m_window, m_mapSize, m_mapSize);
 	//set the player to spawn at one of the spawn areas
