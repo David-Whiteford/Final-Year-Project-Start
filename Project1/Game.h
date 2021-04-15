@@ -8,7 +8,7 @@
 #include "Tilemap.h"
 #include "Player.h"
 #include "DungeonGen.h"
-#include "MyEnums.h"
+#include "Globals.h"
 struct CollisionsCheck
 {
 	bool collisionRight{};

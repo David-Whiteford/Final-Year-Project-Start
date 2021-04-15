@@ -66,13 +66,13 @@
     <ClInclude Include="DungeonGen.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="MyEnums.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="RayCast.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Collisions.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Globals.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

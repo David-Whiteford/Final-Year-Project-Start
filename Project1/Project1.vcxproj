@@ -134,7 +134,7 @@
     <ClInclude Include="Game.h" />
     <ClInclude Include="GameObject.h" />
     <ClInclude Include="IdleState.h" />
-    <ClInclude Include="MyEnums.h" />
+    <ClInclude Include="Globals.h" />
     <ClInclude Include="Player.h" />
     <ClInclude Include="PlayerMoveDown.h" />
     <ClInclude Include="PLayerMoveLeft.h" />

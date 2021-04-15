@@ -4,27 +4,9 @@
 #include <vector>
 #include "Tilemap.h"
 #include "Debug.h"
+#include "Globals.h"
 //namespace for random generation
-namespace
-{
-	std::random_device rd;
-	std::mt19937 mt(rd());
-	int randomInt(int t_exclusiveMax)
-	{
-		std::uniform_int_distribution<> dist(0, t_exclusiveMax - 1);
-		return dist(mt);
-	}
-	int randomInt(int t_min, int t_max)
-	{
-		std::uniform_int_distribution<> dist(0, t_max - t_min);
-		return dist(mt) + t_min;
-	}
-	bool randomBool(double t_prob = 0.5)
-	{
-		std::bernoulli_distribution dist(t_prob);
-		return dist(mt);
-	}
-}
+
 class DungeonGen
 {
 public:
@@ -35,57 +17,7 @@ public:
 		int width, height;
 		int decorInRoom = 0;
 	};
-	//enum for all the types of tiles
-	enum DungeonTiles
-	{
-		UnusedTile = 'A',
-		Wall = '0',
-		FloorTile = '1',
-		StoneFloorTile = 'S',
-		CorridorTile = '1',
-		Plant = '2',
-		Door1 = '3',
-		Door2 = '4',
-		PrisonTile = 'V',
-		BookShelve = 'B',
-		CoffinTile = 'J',
-		Potion = '5',
-		Chains = '6',
-		Torch = 'T',
-		Picture = 'P',
-		Money = 'M',
-		NightStand = 'Y',
-		Chest = '7',
-		Skull = '8',
-		SpawnPoint = '9',
-		ChairL = 'Z',
-		ChairR = 'CR',
-		ChairF = 'O',
-		Table = 'U',
-		TilePattern = 'G',
-		Statue = 'I',
-		FlameCauldron = 'R',
-		DirtTile = 'D',
-		HoleTile = 'H',
-		Bed = 'K',
-		DarkTiles = 'Q',
-		Worship = 'W',
-		HealthPos = 'N',
-		Chair = 'TB',
-		SpikeTrap = 'L',
-		TrapDoorTrap = 'TD',
-		WallSpikeTrap = 'WS'
-	};
-	//enum for the directions
-	enum class Direction
-	{
-		North,
-		South,
-		West,
-		East,
-		NoDirection,
-		DirectionNum
-	};
+	
 	Direction m_direction = Direction::NoDirection;
 	//constructor to set up the dungeon , sets teh size and all decor and background tiles to unused
 	DungeonGen(int t_width, int t_height) :
