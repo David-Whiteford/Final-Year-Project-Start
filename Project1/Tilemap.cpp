@@ -11,6 +11,12 @@ Tilemap::~Tilemap()
 
 void Tilemap::init()
 {
+	m_bedSize = sf::Vector2f(16.0f,45.0f); 
+	m_statueSize = sf::Vector2f(32.0f, 45.0f);
+	m_worshipRoomSize = sf::Vector2f(32.0f, 28.0f);
+	m_tableSize = sf::Vector2f(48.0f, 44.0f);
+	m_bookCaseSize = sf::Vector2f(45.0f, 28.0f);
+	m_coffinSize = sf::Vector2f(16.0f, 32.0f);
 	if (!m_texture.loadFromFile("IMAGES//Overworld.png"))
 	{
 		// error...
@@ -140,7 +146,7 @@ void Tilemap::DrawOverWorld(sf::View t_view)
 			&& t_view.getCenter().y + t_view.getSize().y / 2 > m_tileVec[i]->getSprite().getPosition().y
 			&& t_view.getCenter().y - t_view.getSize().y / 2 < m_tileVec[i]->getSprite().getPosition().y)
 		{
-			m_tileVec[i]->draw();
+			m_tileVec[i]->draw(t_view);
 		}
 	}
 }
@@ -151,7 +157,7 @@ void Tilemap::DrawDungeon(sf::View t_view)
 	{
 		if (m_col.ViewCheck(t_view, m_dunTileVec[i]->getSprite().getPosition()))
 		{
-			m_dunTileVec[i]->draw();
+			m_dunTileVec[i]->draw(t_view);
 		}
 	}
 	//loop and draw tilemap of the dungeon decorations thats store in vector
@@ -159,7 +165,7 @@ void Tilemap::DrawDungeon(sf::View t_view)
 	{
 		if (m_col.ViewCheck(t_view, m_dunDecorTileVec[i]->getSprite().getPosition()))
 		{
-			m_dunDecorTileVec[i]->draw();
+			m_dunDecorTileVec[i]->draw(t_view);
 		}
 	}
 }
@@ -435,15 +441,15 @@ void Tilemap::DunDecor(std::vector<char>& t_dunDecorVec, sf::RenderWindow& t_win
 				sf::Vector2f(x * m_tileSize, y * m_tileSize), m_chairTileF, "Obstacle", 1));
 			break;
 		case 'J':
-			m_dunDecorTileVec.push_back(new Tiles(t_window, sf::Vector2f(m_tileSize, m_tileSize),
+			m_dunDecorTileVec.push_back(new Tiles(t_window, m_coffinSize,
 				sf::Vector2f(x * m_tileSize, y * m_tileSize), m_coffinTile, "Coffin", 1));
 			break;
 		case 'U':
-			m_dunDecorTileVec.push_back(new Tiles(t_window, sf::Vector2f(m_tileSize, m_tileSize),
+			m_dunDecorTileVec.push_back(new Tiles(t_window, m_tableSize,
 				sf::Vector2f(x * m_tileSize, y * m_tileSize), m_tableSprite, "Table", 1));
 			break;
 		case 'B':
-			m_dunDecorTileVec.push_back(new Tiles(t_window, sf::Vector2f(m_tileSize, m_tileSize),
+			m_dunDecorTileVec.push_back(new Tiles(t_window, m_bookCaseSize,
 				sf::Vector2f(x * m_tileSize, y * m_tileSize), m_bookCaseTile, "BookCase", 1));
 			break;
 		case 'H':
@@ -459,7 +465,7 @@ void Tilemap::DunDecor(std::vector<char>& t_dunDecorVec, sf::RenderWindow& t_win
 				sf::Vector2f(x * m_tileSize, y * m_tileSize), m_health, "Health", 2));
 			break;
 		case 'W':
-			m_dunDecorTileVec.push_back(new Tiles(t_window, sf::Vector2f(m_tileSize, m_tileSize),
+			m_dunDecorTileVec.push_back(new Tiles(t_window, m_worshipRoomSize,
 				sf::Vector2f(x * m_tileSize, y * m_tileSize), m_worshipStone, "WorshipStone", 1));
 			break;
 		case 'Z':
@@ -467,7 +473,7 @@ void Tilemap::DunDecor(std::vector<char>& t_dunDecorVec, sf::RenderWindow& t_win
 				sf::Vector2f(x * m_tileSize, y * m_tileSize), m_chairTileL, "Obstacle", 1));
 			break;
 		case 'I':
-			m_dunDecorTileVec.push_back(new Tiles(t_window, sf::Vector2f(m_tileSize, m_tileSize),
+			m_dunDecorTileVec.push_back(new Tiles(t_window, m_statueSize,
 				sf::Vector2f(x * m_tileSize, y * m_tileSize), m_statueTile, "Statue", 1));
 			break;
 		case 'R':
@@ -475,7 +481,7 @@ void Tilemap::DunDecor(std::vector<char>& t_dunDecorVec, sf::RenderWindow& t_win
 				sf::Vector2f(x * m_tileSize, y * m_tileSize), m_flameCauldron, "Obstacle", 1));
 			break;
 		case 'K':
-			m_dunDecorTileVec.push_back(new Tiles(t_window, sf::Vector2f(m_tileSize, m_tileSize),
+			m_dunDecorTileVec.push_back(new Tiles(t_window, m_bedSize,
 				sf::Vector2f(x * m_tileSize, y * m_tileSize), m_bedTile, "Bed", 1));
 			break;
 		case 'Y':

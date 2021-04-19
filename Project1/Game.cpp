@@ -91,7 +91,7 @@ void Game::update(double dt)
 		//check for collisions
 		if (DEBUG == 0)
 		{
-			m_player->collisionCheck();
+			m_player->collisionCheck(m_obstaclesVec);
 		}
 		//get the type of trigger player entered
 		m_triggerType = m_player->triggerCheck(m_triggersVec);
@@ -120,7 +120,7 @@ void Game::update(double dt)
 		//check for player collisions
 		if (DEBUG == 0)
 		{
-			m_player->collisionCheck();
+			m_player->collisionCheck(m_obstaclesVec);
 		}
 		//check for triggers
 		m_triggerType = m_player->triggerCheck(m_triggersVec);
@@ -165,9 +165,6 @@ void Game::setUpDun()
 	//setup the triggers and all colliders
 	m_triggersVec = m_tileMap->getDunExitsVec();
 	m_obstaclesVec = m_tileMap->getDunObstaclesVec();
-	//set up all debug rectangles
-	m_player->setDebugRects(m_obstaclesVec);
-	m_player->setDebugRects(m_triggersVec);
 	m_dungeonSetUp = false;
 }
 
@@ -186,9 +183,6 @@ void Game::setUpOverWorld()
 	//setup the triggers and all colliders
 	m_obstaclesVec = m_tileMap->getOverWorldObstaclesVec();
 	m_triggersVec = m_tileMap->getCavesVec();
-	//set up all debug rectangles
-	m_player->setDebugRects(m_obstaclesVec);
-	m_player->setDebugRects(m_triggersVec);
 	m_overWorldSetUp = false;
 }
 

@@ -4,7 +4,7 @@
 #undef DEBUG
 #endif
 //Define DEBUG 1 or 2 for greater level of debug messages
-#define DEBUG 1
+#define DEBUG 0
 //MACRO for streaming DEBUG
 #if defined DEBUG
 #if (DEBUG >= 1)

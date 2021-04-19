@@ -29,7 +29,7 @@ public:
 	void setPlayerState(PlayerState*);
 	float getCircleRadius();
 	//collision and trigger check functions
-	void collisionCheck();
+	void collisionCheck(std::vector<Tiles*>& t_tilesVec);
 	std::string triggerCheck(std::vector<Tiles*>& t_triggerVec);
 	void update();
 	sf::Vector2f getOrigin();

@@ -72,25 +72,29 @@ float Player::getCircleRadius()
 	return 0.0f;
 }
 
-void Player::collisionCheck()
+void Player::collisionCheck(std::vector<Tiles*>& t_tilesVec)
 {
 	//loop through all collision rectangles
-	for (int i = 0; i < m_debugRects.size(); i++)
+	for (int i = 0; i < t_tilesVec.size(); i++)
 	{
 		//check if the ray right has collision and if so set its bool to true
-		if (m_collisions.rayCastToSpriteCol(m_raycastRigth.getEndPoint(), m_debugRects[i].getPosition(), m_debugRects[i].getSize())){
+		if (m_collisions.rayCastToSpriteCol(m_raycastRigth.getEndPoint(), 
+			t_tilesVec[i]->getCollider()->getPosition(),t_tilesVec[i]->getCollider()->getSize())){
 			m_collisionRight = true;
 		}
 		//check if the ray left has collision and if so set its bool to true
-		else if (m_collisions.rayCastToSpriteCol(m_raycastLeft.getEndPoint(), m_debugRects[i].getPosition(), m_debugRects[i].getSize())){
+		else if (m_collisions.rayCastToSpriteCol(m_raycastLeft.getEndPoint(), 
+			t_tilesVec[i]->getCollider()->getPosition(), t_tilesVec[i]->getCollider()->getSize())){
 			m_collisionLeft = true;
 		}
 		//check if the ray up has collision and if so set its bool to true
-		else if (m_collisions.rayCastToSpriteCol(m_raycastUp.getEndPoint(), m_debugRects[i].getPosition(), m_debugRects[i].getSize())){
+		else if (m_collisions.rayCastToSpriteCol(m_raycastUp.getEndPoint(), 
+			t_tilesVec[i]->getCollider()->getPosition(), t_tilesVec[i]->getCollider()->getSize())){
 			m_collisionUp = true;
 		}
 		//check if the ray down has collision and if so set its bool to true
-		else if (m_collisions.rayCastToSpriteCol(m_raycastDown.getEndPoint(), m_debugRects[i].getPosition(), m_debugRects[i].getSize())){
+		else if (m_collisions.rayCastToSpriteCol(m_raycastDown.getEndPoint(), 
+			t_tilesVec[i]->getCollider()->getPosition(), t_tilesVec[i]->getCollider()->getSize())){
 			m_collisionDown = true;
 		}
 	}
@@ -176,48 +180,6 @@ void Player::setDebugRects(std::vector<Tiles*>& t_tilemapObstacles)
 	//set the triggers for exits,death and other types and all colliders
 	setObstacles(t_tilemapObstacles);
 	setOtherTriggers(t_tilemapObstacles);
-	setUniqueObstacles(t_tilemapObstacles);
-}
-
-void Player::setUniqueObstacles(std::vector<Tiles*>& t_tilemapObstacles)
-{
-	//loop through obstacles vector
-	for (int i = 0; i < t_tilemapObstacles.size(); i++)
-	{
-		//create a local rectangle and set up
-		sf::RectangleShape rect;
-		rect.setOutlineColor(sf::Color::White);
-		rect.setOutlineThickness(0.1f);
-		rect.setFillColor(sf::Color::Transparent);
-		rect.setPosition(t_tilemapObstacles[i]->getPosition().x, t_tilemapObstacles[i]->getPosition().y);
-		//check the tag of the collider and if one of the beow tags then set the size to be same size as tile
-		if (t_tilemapObstacles[i]->getTag() == "Bed") 
-		{
-			rect.setSize(sf::Vector2f(16, 45));
-		}
-		else if (t_tilemapObstacles[i]->getTag() == "Statue")	
-		{
-			rect.setSize(sf::Vector2f(32, 45));
-		}
-		else if (t_tilemapObstacles[i]->getTag() == "WorshipStone")
-		{
-			rect.setSize(sf::Vector2f(32, 28));
-		}
-		else if (t_tilemapObstacles[i]->getTag() == "Table")
-		{
-			rect.setSize(sf::Vector2f(48, 44));
-		}
-		else if (t_tilemapObstacles[i]->getTag() == "BookCase")
-		{
-			rect.setSize(sf::Vector2f(45, 28));
-		}
-		else if (t_tilemapObstacles[i]->getTag() == "Coffin")
-		{
-			rect.setSize(sf::Vector2f(16, 32));
-		}
-		//then push these into debug rects
-		m_debugRects.push_back(rect);
-	}
 }
 
 void Player::setObstacles(std::vector<Tiles*>& t_tilemapObstacles)

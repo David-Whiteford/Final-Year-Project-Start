@@ -127,6 +127,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="AnimatedSprite.h" />
+    <ClInclude Include="Collider.h" />
     <ClInclude Include="Collisions.h" />
     <ClInclude Include="Debug.h" />
     <ClInclude Include="DungeonGen.h" />
@@ -147,6 +148,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="AnimatedSprite.cpp" />
+    <ClCompile Include="Collider.cpp" />
     <ClCompile Include="Collisions.cpp" />
     <ClCompile Include="DungeonGen.cpp" />
     <ClCompile Include="Events.cpp" />

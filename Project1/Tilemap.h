@@ -80,6 +80,8 @@ private:
 	//the size of the hole tile and the tile position
 	sf::Vector2f m_holeSize = sf::Vector2f(48,48);
 	sf::Vector2f m_tilePosition = sf::Vector2f(0.0f, 0.0f);
+	//holds the size of the tiles
+	sf::Vector2f m_bedSize, m_statueSize, m_worshipRoomSize, m_tableSize, m_bookCaseSize, m_coffinSize = sf::Vector2f(0.0f, 0.0f);
 	int m_tileSize = 16;
 	//size of map
 	int m_tileMapSize = 30;

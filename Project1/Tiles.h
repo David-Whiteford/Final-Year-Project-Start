@@ -3,6 +3,8 @@
 
 #include <SFML/Graphics.hpp>
 #include <SFML/OpenGL.hpp>
+#include "Collider.h"
+
 
 class Tiles : public GameObject
 {
@@ -16,6 +18,7 @@ public:
 		m_tag = t_tag;
 		m_size = size;
 		m_numTag = t_numTag;
+		m_collider = new Collider(m_sprites.getPosition(), m_tag,m_size);
 	} 
 	virtual ~Tiles() {}
 	//func to ge the tile sprite, set/get position 
@@ -26,7 +29,14 @@ public:
 	std::string getTag(){ return m_tag; }
 	int getNumTag() { return m_numTag; }
 	sf::Vector2f getSize() { return m_size; }
-	void draw() { m_window.draw(m_sprites); }
+	Collider* &getCollider()
+	{
+		return m_collider;
+	}
+	void draw(sf::View t_view) {
+		m_window.draw(m_sprites);
+		m_collider->draw(m_window, t_view);
+	}
 
 	
 
@@ -37,6 +47,6 @@ private:
 	sf::Sprite m_sprites;
 	std::string m_tag;
 	sf::Vector2f m_size;
-	
+	Collider* m_collider;
 	int m_numTag;
 };
