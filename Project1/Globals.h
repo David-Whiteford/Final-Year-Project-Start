@@ -5,7 +5,13 @@
 
 /// <summary>
 /// different levels in game
-
+	// struct to store room values
+struct RoomVals
+{
+	int x, y;
+	int width, height;
+	int decorInRoom = 0;
+};
 /// </summary>
 enum class GameState
 {
@@ -86,6 +92,7 @@ namespace
 		std::bernoulli_distribution dist(t_prob);
 		return dist(mt);
 	}
+
 }
 #endif // !MY_ENUMS
 

@@ -5,20 +5,12 @@
 #include "Tilemap.h"
 #include "Debug.h"
 #include "Globals.h"
+#include "DungeonDecor.h"
 //namespace for random generation
 
 class DungeonGen
 {
 public:
-	// struct to store room values
-	struct RoomVals
-	{
-		int x, y;
-		int width, height;
-		int decorInRoom = 0;
-	};
-	
-	Direction m_direction = Direction::NoDirection;
 	//constructor to set up the dungeon , sets teh size and all decor and background tiles to unused
 	DungeonGen(int t_width, int t_height) :
 		m_width(t_width),
@@ -26,6 +18,7 @@ public:
 		m_tiles(t_width* t_height, UnusedTile),
 		m_decorTiles(t_width* t_height, UnusedTile)
 	{
+		m_dunDecor = new DunDecor(m_width, m_height);
 	}
 	//funtions for the creation of the dungeon 
 	bool placeTileVal(RoomVals& t_room, char t_tile);
@@ -56,6 +49,7 @@ public:
 	void generateDungeon(int t_maxTilesChanged);
 	void resetTileVecs()
 	{
+		m_dunDecor->resetTileVecs();
 		if (m_tiles.empty() == false)
 		{
 			//loop and reset all values in the vector for background and decor tiles
@@ -84,12 +78,12 @@ public:
 	std::vector<char> &getTileMapVec()
 	{
 		//returns background tiles
-		return m_tiles;
+		return m_dunDecor->getTileMapVec();
 	}
 	std::vector<char>& getDecorTileVec()
 	{
 		//returns decoration tiles
-		return m_decorTiles;
+		return m_dunDecor->getDecorTileVec();
 	}
 	void print()
 	{
@@ -98,8 +92,7 @@ public:
 		{
 			for (int col = 0; col < m_width; col++)
 			{
-				std::cout << getDecorTile(col, row);
-				
+				std::cout << m_dunDecor->getDecorTile(col, row);
 			}
 			std::cout << std::endl;
 		}
@@ -129,73 +122,18 @@ public:
 		m_decorTiles[t_x + t_y * m_width] = t_tile;
 	}
 	//functions to start the creation of rooms and halls in dungeon
-	void createDunExtras(Tilemap*& t_tilemap);
+	void createDunExtras();
 	bool dungeonCreationStart();
 	bool createRoomOrCor(int t_x ,int t_y, Direction t_direction);
 	bool createRoomtype(int t_x, int t_y, int t_x2, int t_y2, Direction t_direction);
 	bool makeRoom(int t_x, int t_y, Direction t_direction,bool t_firstRoom);
 	bool makeCorridor(int t_x, int t_y, Direction t_direction);
 	bool placeTile(RoomVals& t_room, char t_tile);
-	//functions to create decorations rooms
-	void placeDecorInRoom();
 	void placeCorridorExit(RoomVals& t_room, Direction t_direction);
 	void placeRoomExit(RoomVals& t_room, Direction t_direction, bool t_firstRoom);
-	void createUniqueRooms() 
-	{
-		//creates unique rooms in the dungeon
-		createFeastRoom();
-		createCoffinRoom();
-		createLibraryRoom();
-		createJailRoom();
-	}
-	//functions to create decorations halls, add more floor tiles,delete rooms / halls and place traps in rooms
-	void placeDecorInHalls();
-	void FloorDecorTiles();
-	void deleteRoom(int i){ m_rooms.erase(m_rooms.begin() + i); }
-	void deleteHalls(int i) { m_rooms.erase(m_rooms.begin() + i); }
-	void placeTrapsInHalls();
-	//functions to create rooms with spawn/exits,a jails
-	void playerStartPos();
-	void createJailRoom();
-	//functions to create wall spawns,add chairs to a room,place the bookshelf for library
-	void setSpawnToWall(int t_roomIndex);
-	void addChairsDecor(int t_roomIndex);
-	void placeBookShelfDecor(int t_roomIndex);
-	//functions to create rooms with differnt ground tiles
-	void setUniqueGroundTiles(char t_newTile, int t_maxRoomSizeWidth, int t_maxRoomSizeHeight,int t_index);
-	void bossRoomGroundTiles();
-	void worsipRoomGroundTiles();
-	void statueRoomTiles();
-	//functions to create bedroom,check the rooms xy for doors,setup the boss room
-	bool checkForDoors(int t_x, int t_y);
-	void bedRoom();
-	void placeBeds(int t_x, int t_y);
-	void bossRoom();
-	void bossRoomSkull();
-	void bossRoomHealth();
-	void bossRoomWalls();
-	//functions to create worship and statue rooms
-	void worshipRoom();
-	void worshipRoomDecor();
-	void statueRoom();
-	void statueRoomDecor();
-	//functions to help create jails in jail room,create a coffin room,feast and library rooms
-	bool createJailCells(int t_roomIndex);
-	void createCoffinRoom();
-	void createFeastRoom();
-	void createLibraryRoom();
-	//functions to create room with decor on walls,check the xy of a room
-	void placeDecorOnWalls();
-	bool CheckXAndYPos(int x, int y);
-	//functions to get a x,y pos at the top and bottom of a room
-	sf::Vector2i GenXAndYAtTopWall(int t_i, std::vector<RoomVals>& t_tileVec);
-	sf::Vector2i GenXAndYAtBottomWall(int t_i, std::vector<RoomVals>& t_tileVec);
-	//functions to create traps in each room,get room and set the xy and with a offsert of a  room to ususable tile
-	void createTrapsInRooms();
-	int GetRoom(int t_roomWidth, int t_roomHeight);
-	void setUnusedTile(int x, int y, char t_tile, char t_secondTile);
 
 private:
+	DunDecor* m_dunDecor;
 	//all variables
 	//the min and max size of the corridors,and a room chance of 50 percent
 	static const int m_corridorLengthMin = 5;
@@ -208,10 +146,6 @@ private:
 	static const int m_roomSizeMax = 9;
 	static const int m_corridorWidth = 2;
 	static const int m_corridorHeight = 2;
-	//set the index of the boss,worship and statue room to unvalid
-	int m_bossRoomIndex = 1000;
-	int m_worshipRoomIndex = 1000;
-	int m_statueRoomIndex = 1000;
 	int m_numberOfDirections = 4;
 
 	//set the width and height of map and staring pos and max decor in rooms
@@ -228,8 +162,5 @@ private:
 	std::vector<RoomVals> m_rooms;
 	std::vector<RoomVals> m_exit;
 	std::vector<int> m_tileNums;
-	//set the number of jails and jail rooms
-	int m_index = 0;
-	int m_numJailRoomsPlaced = 0;
-	int m_maxJailRooms = 3;
+
 };

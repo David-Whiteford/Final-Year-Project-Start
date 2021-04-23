@@ -100,6 +100,7 @@ void Tilemap::DungeonTilesSetUp()
 }
 sf::Vector2f Tilemap::getPlayerSpawn()
 {
+
 	//get a random spawn point near a exit in the dungeon
 	int randIndex = rand() % m_exits.size();
 	sf::Vector2f pos = m_exits[randIndex];
