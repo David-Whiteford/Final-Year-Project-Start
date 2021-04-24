@@ -91,7 +91,7 @@ bool DungeonGen::createRoomOrCor(int t_x, int t_y, Direction t_direction)
 	//check that the tile is a floor tile
 	int newX = t_x + x;
 	int newY = t_y + y;
-	if (getTile(newX, newY) != FloorTile)
+	if (getTile(newX, newY,m_tiles,m_width,m_height) != FloorTile)
 	{
 		return successCreatingRoom;
 	}
@@ -114,11 +114,11 @@ bool DungeonGen::createRoomtype(int t_x, int t_y, int t_x2, int t_y2, Direction 
 		{
 			//place two types of door2 for north and south and door1 for east,west
 			if (t_direction == Direction::North || t_direction == Direction::South) {
-				setTile(t_x, t_y, Door2);
+				setTile(t_x, t_y, Door2, m_tiles, m_width);
 				return true;
 			}
 			else {
-				setTile(t_x, t_y, Door1);
+				setTile(t_x, t_y, Door1,m_tiles,m_width);
 				return true;
 			}
 		}
@@ -128,22 +128,22 @@ bool DungeonGen::createRoomtype(int t_x, int t_y, int t_x2, int t_y2, Direction 
 		if (makeCorridor(t_x, t_y, t_direction))
 		{
 			//check if its a floor tile and if not then make it one(prvents door placesd in middle of corridor)
-			if (getTile(t_x + t_x2, t_y + t_y2) == FloorTile)
+			if (getTile(t_x + t_x2, t_y + t_y2, m_tiles, m_width,m_height) == FloorTile)
 			{
 				//place two types of door2 for north and south and door1 for east,west
 				if (t_direction == Direction::North || t_direction == Direction::South)
 				{
-					setTile(t_x, t_y, Door2);
+					setTile(t_x, t_y, Door2, m_tiles, m_width);
 					return true;
 				}
 				else {
-					setTile(t_x, t_y, Door1);
+					setTile(t_x, t_y, Door1, m_tiles, m_width);
 					return true;
 				}
 			}
 			else
 			{
-				setTile(t_x, t_y, FloorTile);
+				setTile(t_x, t_y, FloorTile, m_tiles, m_width);
 			}
 			return true;
 		}
@@ -345,13 +345,13 @@ bool DungeonGen::placeTileVal(RoomVals& t_room, char t_tile)
 				|| x == t_room.x + t_room.width
 				|| y == t_room.y + t_room.height)
 			{
-				setTile(x, y, Wall);
+				setTile(x, y, Wall, m_tiles, m_width);
 				tileplaced = true;
 			}
 			//otherwise there all what ever tile you want
 			else
 			{
-				setTile(x, y, t_tile);
+				setTile(x, y, t_tile, m_tiles, m_width);
 				tileplaced = true;
 			}
 		}

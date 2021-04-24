@@ -38,7 +38,7 @@ public:
 		{
 			for (int x = t_room.x; x < t_room.x + t_room.width; x++)
 			{
-				if (getTile(x, y) != UnusedTile)
+				if (getTile(x, y,m_tiles,m_width,m_height) != UnusedTile)
 				{
 					return tileCanBePlaced;
 				}
@@ -92,34 +92,10 @@ public:
 		{
 			for (int col = 0; col < m_width; col++)
 			{
-				std::cout << m_dunDecor->getDecorTile(col, row);
+				std::cout << getTile(col, row,m_dunDecor->getDecorTileVec(),m_width,m_height);
 			}
 			std::cout << std::endl;
 		}
-	}
-	char getTile(int t_x, int t_y)
-	{
-		//returns tile at x,y from background tiles
-		if (t_x < 0 || t_y < 0 || t_x >= m_width || t_y >= m_height)
-			return UnusedTile;
-		return m_tiles[t_x + t_y * m_width];
-	}
-	char getDecorTile(int t_x, int t_y)
-	{
-		//gets a decoration tile at a certain x,y
-		if (t_x < 0 || t_y < 0 || t_x >= m_width || t_y >= m_height)
-			return UnusedTile;
-		return m_decorTiles[t_x + t_y * m_width];
-	}
-	void setTile(int t_x, int t_y, char t_tile)
-	{
-		//sets tile at x,y of background tiles
-		m_tiles[t_x + t_y * m_width] = t_tile;
-	}
-	void setDecorTiles(int t_x, int t_y, char t_tile)
-	{
-		//sets tile at x,y of decoration tiles
-		m_decorTiles[t_x + t_y * m_width] = t_tile;
 	}
 	//functions to start the creation of rooms and halls in dungeon
 	void createDunExtras();

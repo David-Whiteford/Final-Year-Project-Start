@@ -63,10 +63,10 @@ void DunDecor::FloorDecorTiles()
 				if (x != xEnd)
 				{
 					//check tiles are floor tile and replace them with stone floor tiles
-					if (getTile(x, yStart) == FloorTile || getTile(x, yBottom) == FloorTile)
+					if (getTile(x, yStart, m_tiles, m_width, m_height) == FloorTile || getTile(x, yBottom,m_tiles,m_width,m_height) == FloorTile)
 					{
-						setTile(x, yStart, StoneFloorTile);
-						setTile(x, yBottom, StoneFloorTile);
+						setTile(x, yStart, StoneFloorTile, m_tiles, m_width);
+						setTile(x, yBottom, StoneFloorTile, m_tiles, m_width);
 					}
 				}
 			}
@@ -78,10 +78,11 @@ void DunDecor::FloorDecorTiles()
 				if (y != yBottom)
 				{
 					//check if they are floor tiles and replace them with stone floor tiles
-					if (getTile(xStart, y) == FloorTile || getTile(xEnd, y) == FloorTile)
+					if (getTile(xStart, y, m_tiles, m_width,m_height) == FloorTile 
+						|| getTile(xEnd, y, m_decorTiles, m_width, m_height) == FloorTile)
 					{
-						setTile(xStart, y, StoneFloorTile);
-						setTile(xEnd, y, StoneFloorTile);
+						setTile(xStart, y, StoneFloorTile, m_tiles, m_width);
+						setTile(xEnd, y, StoneFloorTile, m_tiles, m_width);
 					}
 				}
 			}
@@ -127,10 +128,10 @@ void DunDecor::setUnusedTile(int x, int y, char t_tile, char t_secondTile)
 		for (int j = 0; j < maxSize; j++)
 		{
 			//check the tiles and set unused and replace tiles under large decor tiles to unused
-			if (getDecorTile(xVal, yVal) == t_tile
-				|| getDecorTile(xVal, yVal) == t_secondTile)
+			if (getTile(xVal, yVal, m_decorTiles, m_width, m_height) == t_tile
+				|| getTile(xVal, yVal, m_decorTiles, m_width, m_height) == t_secondTile)
 			{
-				setDecorTiles(xVal, yVal, UnusedTile);
+				setTile(xVal, yVal, UnusedTile, m_decorTiles, m_width);
 			}
 			//loop through the x,y same way as the for loop
 			xVal++;
@@ -173,9 +174,9 @@ void DunDecor::setSpawnToWall(int t_roomIndex)
 	//loop from the starting x of the room to the ending x and set all spawns to walls. this loops through all top walls
 	for (int x = m_rooms[t_roomIndex].x; x < m_rooms[t_roomIndex].x + m_rooms[t_roomIndex].width - 1; x++)
 	{
-		if (getDecorTile(x, y) == SpawnPoint)
+		if (getTile(x, y,m_decorTiles, m_width,m_height) == SpawnPoint)
 		{
-			setDecorTiles(x, y, Wall);
+			setTile(x, y, Wall, m_decorTiles, m_width);
 		}
 	}
 }
@@ -184,9 +185,9 @@ bool DunDecor::checkForDoors(int t_x, int t_y)
 	bool doorDetected = false;
 	int offSet = 1;
 	//check if the tiles one to the north ,south,east,west directions are doors
-	if (getTile(t_x - offSet, t_y) == Door1 || getTile(t_x + offSet, t_y) == Door1
-		|| getTile(t_x, t_y - offSet) == Door2 || getTile(t_x, t_y + offSet) == Door2
-		|| getDecorTile(t_x, t_y - offSet) == SpawnPoint)
+	if (getTile(t_x - offSet, t_y, m_tiles, m_width, m_height) == Door1 || getTile(t_x + offSet, t_y, m_tiles, m_width, m_height) == Door1
+		|| getTile(t_x, t_y - offSet, m_tiles, m_width, m_height) == Door2 || getTile(t_x, t_y + offSet, m_tiles, m_width, m_height) == Door2
+		|| getTile(t_x, t_y - offSet, m_decorTiles, m_width, m_height) == SpawnPoint)
 	{
 		//set bool if door was detected and return
 		doorDetected = true;
@@ -203,11 +204,11 @@ void DunDecor::setUniqueGroundTiles(char t_newTile, int t_maxRoomSizeWidth, int 
 			+ m_rooms[t_index].height; y++)
 		{
 			//then replace all stone and normal floor tiles with whatever was passed in
-			if (getTile(x, y) == StoneFloorTile
-				|| getTile(x, y) == FloorTile)
+			if (getTile(x, y, m_tiles, m_width,m_height) == StoneFloorTile
+				|| getTile(x, y, m_tiles, m_width, m_height) == FloorTile)
 			{
-				setTile(x, y, t_newTile);
-				setDecorTiles(x, y, t_newTile);
+				setTile(x, y, t_newTile, m_tiles,m_width);
+				setTile(x, y, t_newTile,m_decorTiles,m_width);
 			}
 		}
 	}
@@ -255,12 +256,12 @@ void DunDecor::placeBeds(int t_x, int t_y)
 	int x = t_x;
 	int y = t_y;
 	//check the x,y was a wall
-	if (getDecorTile(x, y) == Wall)
+	if (getTile(x, y,m_decorTiles,m_width,m_height) == Wall)
 	{
 		//move down y as the current is at a wall and check now on floor
 		y++;
-		if (getDecorTile(x, y) == FloorTile
-			|| getDecorTile(x, y) == StoneFloorTile)
+		if (getTile(x, y,m_decorTiles,m_width,m_height) == FloorTile
+			|| getTile(x, y, m_decorTiles, m_width, m_height) == StoneFloorTile)
 		{
 			//check all tiles that the bed will occupy havnt got a door or exit next to them
 			if (checkForDoors(x, y) == false)
@@ -275,11 +276,11 @@ void DunDecor::placeBeds(int t_x, int t_y)
 					{
 						//place the bed and make all tile under it unused this is cause the bed taks up 3 tiles along y axis
 						int tempY = y;
-						setDecorTiles(x, y, Bed);
+						setTile(x, y, Bed, m_decorTiles, m_width);
 						tempY++;
-						setDecorTiles(x, tempY, UnusedTile);
+						setTile(x, tempY, UnusedTile, m_decorTiles, m_width);
 						tempY++;
-						setDecorTiles(x, tempY, UnusedTile);
+						setTile(x, tempY, UnusedTile, m_decorTiles, m_width);
 					}
 				}
 				x++;
@@ -295,9 +296,9 @@ void DunDecor::placeBeds(int t_x, int t_y)
 						if (checkForDoors(x, newY) == false)
 						{
 							//also check the x ,y is a Floor and place a NightStand
-							if (getDecorTile(x, y) == StoneFloorTile
-								|| getDecorTile(x, y) == FloorTile) {
-								setDecorTiles(x, y, NightStand);
+							if (getTile(x, y, m_decorTiles, m_width, m_height) == StoneFloorTile
+								|| getTile(x, y, m_decorTiles, m_width, m_height) == FloorTile) {
+								setTile(x, y, NightStand, m_decorTiles, m_width);
 							}
 						}
 					}
@@ -337,14 +338,15 @@ void DunDecor::placeDecorInRoom()
 					x = pos.x;
 					y = pos.y;
 					//check if tiles are flooors
-					if (getDecorTile(x, y) == FloorTile || getDecorTile(x, y) == StoneFloorTile)
+					if (getTile(x, y, m_decorTiles, m_width, m_height) == FloorTile 
+						|| getTile(x, y, m_decorTiles, m_width, m_height) == StoneFloorTile)
 					{
 						//check if theres doors around the tile
 						if (checkForDoors(x, y) == false)
 						{
 							//place decor and change bool to true
 							placedDecor = true;
-							setDecorTiles(x, y, Chest);
+							setTile(x, y, Chest, m_decorTiles, m_width);
 							m_rooms[i].decorInRoom++;
 						}
 					}
@@ -354,15 +356,15 @@ void DunDecor::placeDecorInRoom()
 					x = randomInt(m_rooms[i].x, m_rooms[i].x + m_rooms[i].width - 1);
 					y = randomInt(m_rooms[i].y, m_rooms[i].y + m_rooms[i].height - 1);
 					//check tiles are floors
-					if (getDecorTile(x, y) == FloorTile
-						|| getDecorTile(x, y) == StoneFloorTile)
+					if (getTile(x, y, m_decorTiles, m_width, m_height) == FloorTile
+						|| getTile(x, y, m_decorTiles, m_width, m_height) == StoneFloorTile)
 					{
 						//check doors around tiles
 						if (checkForDoors(x, y) == false)
 						{
 							//place decor and change bool to true and increment decor num in room
 							placedDecor = true;
-							setDecorTiles(x, y, Skull);
+							setTile(x, y, Skull, m_decorTiles, m_width);
 							m_rooms[i].decorInRoom++;
 						}
 					}
@@ -373,21 +375,23 @@ void DunDecor::placeDecorInRoom()
 					x = pos.x;
 					y = pos.y;
 					//check tiles are floors
-					if (getDecorTile(x, y) == FloorTile || getDecorTile(x, y) == StoneFloorTile)
+					if (getTile(x, y, m_decorTiles, m_width, m_height) == FloorTile 
+						|| getTile(x, y, m_decorTiles, m_width, m_height) == StoneFloorTile)
 					{
 						if (checkForDoors(x, y) == false)
 						{
 							placedDecor = true;
 							//place a potion table and move down 1 on the y to then place chair
-							setDecorTiles(x, y, Potion);
+							setTile(x, y, Potion, m_decorTiles, m_width);
 							y += 1;
 							m_rooms[i].decorInRoom++;
-							if (getDecorTile(x, y) == FloorTile || getDecorTile(x, y) == StoneFloorTile)
+							if (getTile(x, y, m_decorTiles, m_width, m_height) == FloorTile 
+								|| getTile(x, y, m_decorTiles, m_width, m_height) == StoneFloorTile)
 							{
 								//check there are no doors or exits around the x,y and then place chair
 								if (checkForDoors(x, y) == false)
 								{
-									setDecorTiles(x, y, ChairF);
+									setTile(x, y, ChairF, m_decorTiles, m_width);
 									m_rooms[i].decorInRoom++;
 								}
 							}
@@ -400,15 +404,15 @@ void DunDecor::placeDecorInRoom()
 					x = pos.x;
 					y = pos.y;
 					//check the x , y are floor tiles
-					if (getDecorTile(x, y) == FloorTile
-						|| getDecorTile(x, y) == StoneFloorTile)
+					if (getTile(x, y, m_decorTiles, m_width, m_height) == FloorTile
+						|| getTile(x, y, m_decorTiles, m_width, m_height) == StoneFloorTile)
 
 					{
 						//check doors around tiles
 						if (checkForDoors(x, y) == false)
 						{
 							placedDecor = true;
-							setDecorTiles(x, y, Plant);
+							setTile(x, y, Plant, m_decorTiles, m_width);
 							m_rooms[i].decorInRoom++;
 						}
 					}
@@ -418,19 +422,20 @@ void DunDecor::placeDecorInRoom()
 					x = pos.x;
 					y = pos.y;
 
-					if (getDecorTile(x, y) == FloorTile || getDecorTile(x, y) == StoneFloorTile)
+					if (getTile(x, y, m_decorTiles, m_width, m_height) == FloorTile 
+						|| getTile(x, y, m_decorTiles, m_width, m_height) == StoneFloorTile)
 					{
 						if (checkForDoors(x, y) == false)
 						{
 							//place the money at bottom wall
 							placedDecor = true;
-							setDecorTiles(x, y, Money);
+							setTile(x, y, Money, m_decorTiles, m_width);
 							y += 1;
 							m_rooms[i].decorInRoom++;
-							if (getDecorTile(x, y) == FloorTile
-								|| getDecorTile(x, y) == StoneFloorTile)
+							if (getTile(x, y, m_decorTiles, m_width, m_height) == FloorTile
+								|| getTile(x, y, m_decorTiles, m_width, m_height) == StoneFloorTile)
 							{
-								setDecorTiles(x, y, ChairF);
+								setTile(x, y, ChairF, m_decorTiles, m_width);
 							}
 						}
 					}
@@ -492,9 +497,10 @@ void DunDecor::createJailRoom()
 			int x = randomInt(m_rooms[roomIndex].x + offSet, m_rooms[roomIndex].x + m_rooms[roomIndex].width - 2);
 			int y = randomInt(m_rooms[roomIndex].y + offSet, m_rooms[roomIndex].y + m_rooms[roomIndex].height - 2);
 			//check tiles are floor and place skull decor
-			if (getDecorTile(x, y) == StoneFloorTile || getDecorTile(x, y) == FloorTile)
+			if (getTile(x, y, m_decorTiles, m_width, m_height) == StoneFloorTile
+				|| getTile(x, y, m_decorTiles, m_width, m_height) == FloorTile)
 			{
-				setDecorTiles(x, y, Skull);
+				setTile(x, y, Skull, m_decorTiles, m_width);
 			}
 		}
 		//delete the room and increment the number of jail rooms/delete that room
@@ -520,10 +526,10 @@ bool DunDecor::createJailCells(int t_roomIndex)
 	for (int index = x; index <= maxWidth; index++)
 	{
 		//check the tiles are Walls
-		if (getDecorTile(index, y) == Wall)
+		if (getTile(index, y, m_decorTiles, m_width, m_height) == Wall)
 		{
 			//replace them starting at index till you get to the end of the room
-			setDecorTiles(index, y, PrisonTile);
+			setTile(index, y, PrisonTile, m_decorTiles, m_width);
 			m_rooms[t_roomIndex].decorInRoom++;
 			roomCompleted = true;
 		}
@@ -537,7 +543,7 @@ bool DunDecor::createJailCells(int t_roomIndex)
 	{
 		//set the background tile to a wall and decor tile to prison
 		//setTile(index, y, Wall);
-		setDecorTiles(index, y, PrisonTile);
+		setTile(index, y, PrisonTile, m_decorTiles, m_width);
 		m_rooms[t_roomIndex].decorInRoom++;
 		//set the room to be completed and return
 		roomCompleted = true;
@@ -577,14 +583,14 @@ void DunDecor::createCoffinRoom()
 		for (int index = x; index <= maxWidth; index += 2)
 		{
 			//check for floors
-			if (getDecorTile(index, y) == FloorTile
-				|| getDecorTile(index, y) == StoneFloorTile)
+			if (getTile(index, y, m_decorTiles, m_width, m_height) == FloorTile
+				|| getTile(index, y, m_decorTiles, m_width, m_height) == StoneFloorTile)
 			{
 				//set the tile to coffins and tiles under coffins to unused
-				setDecorTiles(index, y, CoffinTile);
-				setDecorTiles(index, y + offSet, UnusedTile);
+				setTile(index, y, CoffinTile, m_decorTiles, m_width);
+				setTile(index, y + offSet, UnusedTile, m_decorTiles, m_width);
 				//place a flame caouldron at bottom of coffins
-				setDecorTiles(index, y + offSet * 2, FlameCauldron);
+				setTile(index, y + offSet * 2, FlameCauldron, m_decorTiles, m_width);
 				m_rooms[roomIndex].decorInRoom++;
 			}
 		}
@@ -635,10 +641,10 @@ void DunDecor::bossRoom()
 	int offSetFromCentre = 1;
 	int x = m_rooms[m_bossRoomIndex].x + m_rooms[m_bossRoomIndex].width / 2 - offSetFromCentre;
 	int y = m_rooms[m_bossRoomIndex].y + m_rooms[m_bossRoomIndex].height / 2 - offSetFromCentre;
-	if (getDecorTile(x, y) == DirtTile)
+	if (getTile(x, y, m_decorTiles, m_width, m_height) == DirtTile)
 	{
 		//place big hole of death
-		setDecorTiles(x, y, HoleTile);
+		setTile(x, y, HoleTile, m_decorTiles, m_width);
 		//create a new x ,y to and size
 		int maxSize = 3;
 		int xVal = x;
@@ -650,9 +656,9 @@ void DunDecor::bossRoom()
 			for (int j = 0; j < maxSize; j++)
 			{
 				//make sure tile is dirt and make unusable
-				if (getDecorTile(xVal, yVal) == DirtTile)
+				if (getTile(xVal, yVal, m_decorTiles, m_width, m_height) == DirtTile)
 				{
-					setDecorTiles(xVal, yVal, UnusedTile);
+					setTile(xVal, yVal, UnusedTile, m_decorTiles, m_width);
 				}
 				//increment x
 				xVal++;
@@ -683,16 +689,16 @@ void DunDecor::bossRoomSkull()
 	int moveBy = 3;
 	int x = m_rooms[m_bossRoomIndex].x + offSet;
 	int y = m_rooms[m_bossRoomIndex].y;
-	if (getDecorTile(x, y - 1) != Door2)
+	if (getTile(x, y - 1, m_decorTiles, m_width, m_height) != Door2)
 	{
-		if (getDecorTile(x, y) == DirtTile)
+		if (getTile(x, y, m_decorTiles, m_width, m_height) == DirtTile)
 		{
 			//place the skeleton if the tiles dirt
-			setDecorTiles(x, y, Skull);
+			setTile(x, y, Skull, m_decorTiles, m_width);
 			//move the x and y by a certain amount and place another
 			x = m_rooms[m_bossRoomIndex].x + moveBy;
 			y++;
-			setDecorTiles(x, y, Skull);
+			setTile(x, y, Skull, m_decorTiles, m_width);
 		}
 	}
 	//get a new x,y position of right corner of room and place flame cauldron decor 
@@ -700,14 +706,14 @@ void DunDecor::bossRoomSkull()
 	y = m_rooms[m_bossRoomIndex].y;
 	if (checkForDoors(x, y) == false)
 	{
-		setDecorTiles(x, y, FlameCauldron);
+		setTile(x, y, FlameCauldron, m_decorTiles, m_width);
 	}
 	//get a new x,y position of bottom right corner of room and place flame cauldron decor 
 	x = m_rooms[m_bossRoomIndex].x + m_rooms[m_bossRoomIndex].width - offSet;
 	y = m_rooms[m_bossRoomIndex].y + m_rooms[m_bossRoomIndex].height - offSet;
 	if (checkForDoors(x, y) == false)
 	{
-		setDecorTiles(x, y, FlameCauldron);
+		setTile(x, y, FlameCauldron, m_decorTiles, m_width);
 	}
 }
 ////---------------------------------------------------------------------------
@@ -720,15 +726,15 @@ void DunDecor::bossRoomHealth()
 	int x = randomInt(m_rooms[m_bossRoomIndex].x + offSet, m_rooms[m_bossRoomIndex].x + m_rooms[m_bossRoomIndex].width - (offSet * 2));
 	int y = m_rooms[m_bossRoomIndex].y + m_rooms[m_bossRoomIndex].height - offSet * 2;
 	//check if tile is nor dirt and if so move to the right and place health
-	if (getDecorTile(x, y) != DirtTile)
+	if (getTile(x, y, m_decorTiles, m_width, m_height) != DirtTile)
 	{
 		x++;
-		setDecorTiles(x, y, HealthPos);
+		setTile(x, y, HealthPos, m_decorTiles, m_width);
 	}
 	else
 	{
 		//place health
-		setDecorTiles(x, y, HealthPos);
+		setTile(x, y, HealthPos, m_decorTiles, m_width);
 	}
 }
 ////---------------------------------------------------------------------------
@@ -741,17 +747,17 @@ void DunDecor::bossRoomWalls()
 	int x = m_rooms[m_bossRoomIndex].x;
 	int y = m_rooms[m_bossRoomIndex].y - offSet;
 	//chack they are walls
-	if (getDecorTile(x, y) == Wall)
+	if (getTile(x, y, m_decorTiles, m_width, m_height) == Wall)
 	{
 		//chack x is not near the right side of the room
 		if (x < m_rooms[m_bossRoomIndex].x + m_rooms[m_bossRoomIndex].width - offSet)
 		{
 			//place torch,chains and move by 2 along x each time
-			setDecorTiles(x, y, Torch);
+			setTile(x, y, Torch, m_decorTiles, m_width);
 			x += 2;
-			setDecorTiles(x, y, Chains);
+			setTile(x, y, Chains, m_decorTiles, m_width);
 			x += 2;
-			setDecorTiles(x, y, Torch);
+			setTile(x, y, Torch, m_decorTiles, m_width);
 		}
 	}
 
@@ -765,9 +771,9 @@ void DunDecor::worshipRoom()
 	int x = m_rooms[m_worshipRoomIndex].x + m_rooms[m_worshipRoomIndex].width / 2;
 	int y = m_rooms[m_worshipRoomIndex].y + m_rooms[m_worshipRoomIndex].height / 2;
 	//check tiles and place worship tile
-	if (getDecorTile(x, y) == DarkTiles)
+	if (getTile(x, y, m_decorTiles, m_width, m_height) == DarkTiles)
 	{
-		setDecorTiles(x, y, Worship);
+		setTile(x, y, Worship, m_decorTiles, m_width);
 		setUnusedTile(x, y, DarkTiles, FloorTile);
 	}
 	worshipRoomDecor();
@@ -790,7 +796,7 @@ void DunDecor::worshipRoomDecor()
 	{
 		if (checkForDoors(x, y) == false)
 		{
-			setDecorTiles(x, y, ChairL);
+			setTile(x, y, ChairL, m_decorTiles, m_width);
 			y++;
 		}
 	}
@@ -800,9 +806,9 @@ void DunDecor::worshipRoomDecor()
 	//place plant at top left and bottom left corners
 	if (checkForDoors(x, y) == false)
 	{
-		setDecorTiles(x, y, Plant);
+		setTile(x, y, Plant, m_decorTiles, m_width);
 		y = m_rooms[m_worshipRoomIndex].y + m_rooms[m_worshipRoomIndex].height - offSet;
-		setDecorTiles(x, y, Plant);
+		setTile(x, y, Plant, m_decorTiles, m_width);
 	}
 }
 ////---------------------------------------------------------------------------
@@ -816,9 +822,9 @@ void DunDecor::statueRoom()
 	int x = m_rooms[m_statueRoomIndex].x + m_rooms[m_statueRoomIndex].width / 2 - offSetFromCentre;
 	int y = m_rooms[m_statueRoomIndex].y + m_rooms[m_statueRoomIndex].height / 2 - offSetFromCentre;
 	//set the statue at that x,y
-	if (getDecorTile(x, y) == TilePattern)
+	if (getTile(x, y, m_decorTiles, m_width, m_height) == TilePattern)
 	{
-		setDecorTiles(x, y, Statue);
+		setTile(x, y, Statue, m_decorTiles, m_width);
 		setUnusedTile(x, y, TilePattern, FloorTile);
 	}
 	//delete room and call decorate room func
@@ -837,24 +843,24 @@ void DunDecor::statueRoomDecor()
 	//place a flaming cauldron in all 4 corners of the room
 	if (checkForDoors(x, y) == false)
 	{
-		setDecorTiles(x, y, FlameCauldron);
+		setTile(x, y, FlameCauldron, m_decorTiles, m_width);
 		x = m_rooms[m_statueRoomIndex].x + m_rooms[m_statueRoomIndex].width - offSet;
 		y = m_rooms[m_statueRoomIndex].y + m_rooms[m_statueRoomIndex].height - offSet;
 	}
 	if (checkForDoors(x, y) == false)
 	{
-		setDecorTiles(x, y, FlameCauldron);
+		setTile(x, y, FlameCauldron, m_decorTiles, m_width);
 		x = m_rooms[m_statueRoomIndex].x;
 		y = m_rooms[m_statueRoomIndex].y + m_rooms[m_statueRoomIndex].height - offSet;
 	}
 	if (checkForDoors(x, y) == false)
 	{
-		setDecorTiles(x, y, FlameCauldron);
+		setTile(x, y, FlameCauldron, m_decorTiles, m_width);
 		x = m_rooms[m_statueRoomIndex].x + m_rooms[m_statueRoomIndex].width - offSet;
 		y = m_rooms[m_statueRoomIndex].y;
 	}
 	if (checkForDoors(x, y) == false) {
-		setDecorTiles(x, y, FlameCauldron);
+		setTile(x, y, FlameCauldron, m_decorTiles, m_width);
 	}
 
 }
@@ -886,11 +892,11 @@ void DunDecor::createFeastRoom()
 			x -= offsetFromCentre;
 			y -= offsetFromCentre;
 			//check the tile at the x and y val and set if its a floor 
-			if (getDecorTile(x, y) == StoneFloorTile
-				|| getDecorTile(x, y) == FloorTile)
+			if (getTile(x, y, m_decorTiles, m_width, m_height) == StoneFloorTile
+				|| getTile(x, y, m_decorTiles, m_width, m_height) == FloorTile)
 			{
 				m_rooms[roomIndex].decorInRoom++;
-				setDecorTiles(x, y, Table);
+				setTile(x, y, Table, m_decorTiles, m_width);
 				setUnusedTile(x, y, FloorTile, StoneFloorTile);
 			}
 			int newY = 4;
@@ -898,13 +904,13 @@ void DunDecor::createFeastRoom()
 			x += 1;
 			y -= 1;
 			// add another decoration
-			if (getDecorTile(x, y) == StoneFloorTile
-				|| getDecorTile(x, y) == FloorTile)
+			if (getTile(x, y, m_decorTiles, m_width, m_height) == StoneFloorTile
+				|| getTile(x, y, m_decorTiles, m_width, m_height) == FloorTile)
 			{
 				m_rooms[roomIndex].decorInRoom++;
-				setDecorTiles(x, y, Plant);
+				setTile(x, y, Plant, m_decorTiles, m_width);
 				y += newY;
-				setDecorTiles(x, y, Plant);
+				setTile(x, y, Plant, m_decorTiles, m_width);
 			}
 			deleteRoom(roomIndex);
 		}
@@ -945,11 +951,11 @@ void DunDecor::createLibraryRoom()
 		int x = m_rooms[roomIndex].x + m_rooms[roomIndex].width - xOffSet;
 		int y = m_rooms[roomIndex].y + m_rooms[roomIndex].height - offSet;
 		//place plant tiles at top right and bottom
-		if (getDecorTile(x, y) == StoneFloorTile || getDecorTile(x, y) == FloorTile)
+		if (getTile(x, y, m_decorTiles, m_width, m_height) == StoneFloorTile || getTile(x, y, m_decorTiles, m_width, m_height) == FloorTile)
 		{
-			setDecorTiles(x, y, Plant);
+			setTile(x, y, Plant, m_decorTiles, m_width);
 			y = m_rooms[roomIndex].y;
-			setDecorTiles(x, y, Plant);
+			setTile(x, y, Plant, m_decorTiles, m_width);
 		}
 		//delete this room
 		deleteRoom(roomIndex);
@@ -975,7 +981,7 @@ void DunDecor::placeBookShelfDecor(int t_roomIndex)
 			int x2 = x;
 			int y2 = y - 1;
 			//allows us to check for doors along wall tiles
-			if (getDecorTile(x2 + i, y2) == Door2)
+			if (getTile(x2 + i, y2, m_decorTiles, m_width, m_height) == Door2)
 			{
 				doorNum = x2 + i;
 			}
@@ -985,14 +991,14 @@ void DunDecor::placeBookShelfDecor(int t_roomIndex)
 	if (doorNum > 0)
 	{
 		x = doorNum + offSet;
-		setDecorTiles(x, y, BookShelve);
-		setDecorTiles(x + 2, y, UnusedTile);
+		setTile(x, y, BookShelve, m_decorTiles, m_width);
+		setTile(x + 2, y, UnusedTile, m_decorTiles, m_width);
 	}
 	//if not place at room corner
 	else if (doorNum == 0)
 	{
-		setDecorTiles(x, y, BookShelve);
-		setDecorTiles(x + 2, y, UnusedTile);
+		setTile(x, y, BookShelve, m_decorTiles, m_width);
+		setTile(x + 2, y, UnusedTile, m_decorTiles, m_width);
 	}
 }
 ////---------------------------------------------------------------------------
@@ -1011,7 +1017,7 @@ void DunDecor::addChairsDecor(int t_roomIndex)
 		//check for any doors and place a chair if no doors around x, y
 		if (checkForDoors(x, y) == false)
 		{
-			setDecorTiles(x, y, ChairF);
+			setTile(x, y, ChairF, m_decorTiles, m_width);
 			x++;
 		}
 	}
@@ -1033,10 +1039,10 @@ void DunDecor::placeTrapsInHalls()
 			int x = randomInt(m_halls[r].x, m_halls[r].x + m_halls[r].width - offSet);
 			int y = randomInt(m_halls[r].y, m_halls[r].y + m_halls[r].height - offSet);
 			//check the floor tile and place spike if its a floor tile
-			if (getDecorTile(x, y) == FloorTile)
+			if (getTile(x, y, m_decorTiles, m_width, m_height) == FloorTile)
 			{
 				if (checkForDoors(x, y) == false) {
-					setDecorTiles(x, y, SpikeTrap);
+					setTile(x, y, SpikeTrap, m_decorTiles, m_width);
 				}
 			}
 		}
@@ -1058,9 +1064,9 @@ void DunDecor::playerStartPos()
 			int x = randomInt(m_rooms[i].x, m_rooms[i].x + m_rooms[i].width - 1);
 			int y = m_rooms[i].y - 1;
 			//check if its a wall and repalce with exit/spawn
-			if (getDecorTile(x, y) == Wall)
+			if (getTile(x, y, m_decorTiles, m_width, m_height) == Wall)
 			{
-				setDecorTiles(x, y, SpawnPoint);
+				setTile(x, y, SpawnPoint, m_decorTiles, m_width);
 			}
 		}
 	}
@@ -1087,22 +1093,22 @@ void DunDecor::placeDecorOnWalls()
 				int x = randomInt(m_rooms[i].x + offSet, m_rooms[i].x + m_rooms[i].width - offSet);
 				int y = m_rooms[i].y - offSet;
 				//check for wall
-				if (getDecorTile(x, y) == Wall)
+				if (getTile(x, y, m_decorTiles, m_width, m_height) == Wall)
 				{
 					//if so place chains for decor type 0
 					if (decorType == 0) {
-						setDecorTiles(x, y, Chains);
+						setTile(x, y, Chains, m_decorTiles, m_width);
 					}
 					//if so place torch for decor type 1
 					else if (decorType == 1) {
-						setDecorTiles(x, y, Torch);
+						setTile(x, y, Torch, m_decorTiles, m_width);
 					}
 					//if so place one  picture for decor type 2
 					else if (decorType == 2) {
 						if (picNum == 0)
 						{
 							picNum++;
-							setDecorTiles(x, y, Picture);
+							setTile(x, y, Picture, m_decorTiles, m_width);
 						}
 					}
 
@@ -1132,11 +1138,11 @@ void DunDecor::createTrapsInRooms()
 				int x = randomInt(m_rooms[i].x, m_rooms[i].x + m_rooms[i].width - offSet);
 				int y = randomInt(m_rooms[i].y, m_rooms[i].y + m_rooms[i].height - offSet);
 				//check if the tile at x,y is a floor tile and set a spike if so
-				if (getDecorTile(x, y) == FloorTile
-					|| getDecorTile(x, y) == StoneFloorTile)
+				if (getTile(x, y, m_decorTiles, m_width, m_height) == FloorTile
+					|| getTile(x, y, m_decorTiles, m_width, m_height) == StoneFloorTile)
 				{
 					if (checkForDoors(x, y) == false) {
-						setDecorTiles(x, y, SpikeTrap);
+						setTile(x, y, SpikeTrap, m_decorTiles, m_width);
 					}
 				}
 			}
@@ -1170,10 +1176,10 @@ void DunDecor::placeDecorInHalls()
 					int x = m_halls[i].x + 1;
 					int y = randomInt(m_halls[i].y + 1, m_halls[i].y + m_halls[i].width - 1);
 					//this is so place plant if it can
-					if (getDecorTile(x, y) == FloorTile
+					if (getTile(x, y, m_decorTiles, m_width, m_height) == FloorTile
 						&& checkForDoors(x, y) == false)
 					{
-						setDecorTiles(x, y, Plant);
+						setTile(x, y, Plant, m_decorTiles, m_width);
 					}
 				}
 				else if (decorType == 1)
@@ -1183,10 +1189,10 @@ void DunDecor::placeDecorInHalls()
 					int x = m_halls[i].x + offSets;
 					int y = randomInt(m_halls[i].y + offSets, m_halls[i].y + m_halls[i].width - offSets);
 					//this is so place potion if it can
-					if (getDecorTile(x, y) == FloorTile
+					if (getTile(x, y, m_decorTiles, m_width, m_height) == FloorTile
 						&& checkForDoors(x, y) == false)
 					{
-						setDecorTiles(x, y, Potion);
+						setTile(x, y, Potion, m_decorTiles, m_width);
 					}
 
 				}
@@ -1196,10 +1202,10 @@ void DunDecor::placeDecorInHalls()
 					int x = m_halls[i].x + m_halls[i].width - 1;
 					int y = randomInt(m_halls[i].y, m_halls[i].y + m_halls[i].width - 1);
 					//this is so place Money if it can
-					if (getDecorTile(x, y) == FloorTile
+					if (getTile(x, y, m_decorTiles, m_width, m_height) == FloorTile
 						&& checkForDoors(x, y) == false)
 					{
-						setDecorTiles(x, y, Money);
+						setTile(x, y, Money, m_decorTiles, m_width);
 					}
 				}
 			}

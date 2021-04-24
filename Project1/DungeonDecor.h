@@ -37,26 +37,7 @@ public:
 	void setExits(std::vector<RoomVals>& t_exits) {
 		m_exit = t_exits;
 	}
-	char getTile(int t_x, int t_y){
-		//returns tile at x,y from background tiles
-		if (t_x < 0 || t_y < 0 || t_x >= m_width || t_y >= m_height)
-			return UnusedTile;
-		return m_tiles[t_x + t_y * m_width];
-	}
-	char getDecorTile(int t_x, int t_y){
-		//gets a decoration tile at a certain x,y
-		if (t_x < 0 || t_y < 0 || t_x >= m_width || t_y >= m_height)
-			return UnusedTile;
-		return m_decorTiles[t_x + t_y * m_width];
-	}
-	void setTile(int t_x, int t_y, char t_tile){
-		//sets tile at x,y of background tiles
-		m_tiles[t_x + t_y * m_width] = t_tile;
-	}
-	void setDecorTiles(int t_x, int t_y, char t_tile){
-		//sets tile at x,y of decoration tiles
-		m_decorTiles[t_x + t_y * m_width] = t_tile;
-	}
+
 	void resetTileVecs() {
 		if (m_tiles.empty() == false)
 		{

@@ -92,7 +92,18 @@ namespace
 		std::bernoulli_distribution dist(t_prob);
 		return dist(mt);
 	}
+	char getTile(int t_x, int t_y, std::vector<char>& t_tiles, int t_width, int t_height) {
+		//gets a decoration tile at a certain x,y
+		if (t_x < 0 || t_y < 0 || t_x >= t_width || t_y >= t_height)
+			return UnusedTile;
+		return t_tiles[t_x + t_y * t_width];
+	}
+	void setTile(int t_x, int t_y, char t_tile, std::vector<char>& t_tiles, int t_width) {
+		//sets tile at x,y of background tiles
+		t_tiles[t_x + t_y * t_width] = t_tile;
+	}
 
 }
+
 #endif // !MY_ENUMS
 

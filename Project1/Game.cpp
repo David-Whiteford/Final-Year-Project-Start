@@ -121,9 +121,10 @@ void Game::update(double dt)
 		if (DEBUG == 0)
 		{
 			m_player->collisionCheck(m_obstaclesVec);
+			//check for triggers
+			m_triggerType = m_player->triggerCheck(m_triggersVec);
 		}
-		//check for triggers
-		m_triggerType = m_player->triggerCheck(m_triggersVec);
+	
 		//check the trigger type not health
 		if (m_player->getIfInTrigger()
 			&& m_triggerType != "Health")
