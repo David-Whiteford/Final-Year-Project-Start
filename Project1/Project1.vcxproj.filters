@@ -81,6 +81,9 @@
     <ClInclude Include="DungeonDecor.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="DunSpecialRooms.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Game.cpp">
@@ -129,6 +132,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="DungeonDecor.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="DunSpecialRooms.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

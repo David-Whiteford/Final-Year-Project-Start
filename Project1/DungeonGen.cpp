@@ -21,10 +21,11 @@ void DungeonGen::generateDungeon(int t_maxTilesChanged)
 ////---------------------------------------------------------------------------
 void DungeonGen::createDunExtras()
 {
-	
 	generateDungeon(100);
-	m_dunDecor->setVecs(m_tiles, m_rooms, m_exit, m_halls);
-	m_dunDecor->createDunExtras();
+	FloorDecorTiles();
+	m_decorTiles = m_tiles;
+	m_dunSpecialDecor->createDunSpecialRooms(m_tiles, m_decorTiles, m_rooms, m_exit, m_halls);
+	m_dunDecor->createDunExtras(m_tiles,m_decorTiles,m_rooms,m_exit,m_halls);
 	//if the debug is active then output the rooms in text
 	if (DEBUG == 1)
 	{
@@ -357,4 +358,53 @@ bool DungeonGen::placeTileVal(RoomVals& t_room, char t_tile)
 		}
 	}
 	return tileplaced;
+}
+////---------------------------------------------------------------------------
+////Function to add stone to the floor tiles
+////---------------------------------------------------------------------------
+void DungeonGen::FloorDecorTiles()
+{
+	//checks if the room vec is empty 
+	if (m_rooms.empty() == false)
+	{
+		//if not loop through
+		for (int i = 0; i < m_rooms.size(); i++)
+		{
+			// get the starting and the end for the x,y
+			int xStart = m_rooms[i].x;
+			int xEnd = m_rooms[i].x + m_rooms[i].width;
+			int yStart = m_rooms[i].y + 1;
+			int yBottom = m_rooms[i].y + m_rooms[i].height - 2;
+
+			//loop till x gets to the end from the starting x pos
+			for (int x = xStart; x < xEnd; x++)
+			{
+				if (x != xEnd)
+				{
+					//check tiles are floor tile and replace them with stone floor tiles
+					if (getTile(x, yStart, m_tiles, m_width, m_height) == FloorTile || getTile(x, yBottom,m_tiles,m_width,m_height) == FloorTile)
+					{
+						setTile(x, yStart, StoneFloorTile, m_tiles, m_width);
+						setTile(x, yBottom, StoneFloorTile, m_tiles, m_width);
+					}
+				}
+			}
+			//change the ending of the x
+			xEnd = m_rooms[i].x + m_rooms[i].width - 1;
+			// loop from the staring y to the ending y 
+			for (int y = yStart; y < yBottom; y++)
+			{
+				if (y != yBottom)
+				{
+					//check if they are floor tiles and replace them with stone floor tiles
+					if (getTile(xStart, y, m_tiles, m_width,m_height) == FloorTile 
+						|| getTile(xEnd, y, m_decorTiles, m_width, m_height) == FloorTile)
+					{
+						setTile(xStart, y, StoneFloorTile, m_tiles, m_width);
+						setTile(xEnd, y, StoneFloorTile, m_tiles, m_width);
+					}
+				}
+			}
+		}
+	}
 }

@@ -6,6 +6,7 @@
 #include "Debug.h"
 #include "Globals.h"
 #include "DungeonDecor.h"
+#include "DunSpecialRooms.h"
 //namespace for random generation
 
 class DungeonGen
@@ -19,6 +20,7 @@ public:
 		m_decorTiles(t_width* t_height, UnusedTile)
 	{
 		m_dunDecor = new DunDecor(m_width, m_height);
+		m_dunSpecialDecor = new DunSpecialRooms(m_width, m_height);
 	}
 	//funtions for the creation of the dungeon 
 	bool placeTileVal(RoomVals& t_room, char t_tile);
@@ -47,9 +49,9 @@ public:
 	}
 	//func to generte the dungeon
 	void generateDungeon(int t_maxTilesChanged);
+	void FloorDecorTiles();
 	void resetTileVecs()
 	{
-		m_dunDecor->resetTileVecs();
 		if (m_tiles.empty() == false)
 		{
 			//loop and reset all values in the vector for background and decor tiles
@@ -78,12 +80,12 @@ public:
 	std::vector<char> &getTileMapVec()
 	{
 		//returns background tiles
-		return m_dunDecor->getTileMapVec();
+		return m_tiles;
 	}
-	std::vector<char>& getDecorTileVec()
+	std::vector<char> &getDecorTileVec()
 	{
 		//returns decoration tiles
-		return m_dunDecor->getDecorTileVec();
+		return m_decorTiles;
 	}
 	void print()
 	{
@@ -92,7 +94,7 @@ public:
 		{
 			for (int col = 0; col < m_width; col++)
 			{
-				std::cout << getTile(col, row,m_dunDecor->getDecorTileVec(),m_width,m_height);
+				std::cout << getTile(col, row,m_decorTiles,m_width,m_height);
 			}
 			std::cout << std::endl;
 		}
@@ -110,6 +112,7 @@ public:
 
 private:
 	DunDecor* m_dunDecor;
+	DunSpecialRooms* m_dunSpecialDecor;
 	//all variables
 	//the min and max size of the corridors,and a room chance of 50 percent
 	static const int m_corridorLengthMin = 5;

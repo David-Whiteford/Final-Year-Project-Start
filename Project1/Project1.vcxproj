@@ -132,6 +132,7 @@
     <ClInclude Include="Debug.h" />
     <ClInclude Include="DungeonDecor.h" />
     <ClInclude Include="DungeonGen.h" />
+    <ClInclude Include="DunSpecialRooms.h" />
     <ClInclude Include="Events.h" />
     <ClInclude Include="Game.h" />
     <ClInclude Include="GameObject.h" />
@@ -153,6 +154,7 @@
     <ClCompile Include="Collisions.cpp" />
     <ClCompile Include="DungeonDecor.cpp" />
     <ClCompile Include="DungeonGen.cpp" />
+    <ClCompile Include="DunSpecialRooms.cpp" />
     <ClCompile Include="Events.cpp" />
     <ClCompile Include="Game.cpp" />
     <ClCompile Include="IdleState.cpp" />
