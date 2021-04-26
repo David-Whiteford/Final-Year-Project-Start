@@ -22,6 +22,12 @@ public:
 		m_dunDecor = new DunDecor(m_width, m_height);
 		m_dunSpecialDecor = new DunSpecialRooms(m_width, m_height);
 	}
+	~DungeonGen()
+	{
+		resetTileVecs();
+		m_dunDecor->~DunDecor();
+		m_dunSpecialDecor->~DunSpecialRooms();
+	}
 	//funtions for the creation of the dungeon 
 	bool placeTileVal(RoomVals& t_room, char t_tile);
 	bool checkTile(RoomVals& t_room)
