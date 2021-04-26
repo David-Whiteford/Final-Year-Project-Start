@@ -60,7 +60,7 @@ void Game::init()
 	view2.zoom(3.0f);
 	//create the tilemap and dungeon gen
 	m_tileMap = new Tilemap();
-	m_dungeon = new DungeonGen(m_mapSize, m_mapSize);
+	
 }
 
 void Game::processEvents()
@@ -122,9 +122,9 @@ void Game::update(double dt)
 		{
 			m_player->collisionCheck(m_obstaclesVec);
 			//check for triggers
-			m_triggerType = m_player->triggerCheck(m_triggersVec);
+			
 		}
-	
+		m_triggerType = m_player->triggerCheck(m_triggersVec);
 		//check the trigger type not health
 		if (m_player->getIfInTrigger()
 			&& m_triggerType != "Health")
@@ -141,17 +141,11 @@ void Game::update(double dt)
 	default:
 		break;
 	}
-	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Space) && m_transitionStart == false)
-	{
-		clearVecs();
-		m_transitionStart = true;
-		m_dungeonSetUp = true;
-		m_currentGameState = GameState::Dungeon;
-	}
 }
 
 void Game::setUpDun()
 {
+	m_dungeon = new DungeonGen(m_mapSize, m_mapSize);
 	//set the spawn and set that the playes not in trigger
 	sf::Vector2f offSetFromSpawn = Vector2f(0.0f, 20.0f);
 	m_player->setIfInTrigger(false);
@@ -171,12 +165,12 @@ void Game::setUpDun()
 
 void Game::setUpOverWorld()
 {
+	delete m_dungeon;
 	//set the spawn and set that the playes not in trigger
 	sf::Vector2f offSetFromSpawn = Vector2f(0.0f, 20.0f);
 	m_player->setIfInTrigger(false);
 	//clear dundeon vectors
 	m_tileMap->clearDunVecs();
-	m_dungeon->resetTileVecs();
 	//set the player to spawn near cave
 	sf::Vector2f playerCavePos = sf::Vector2f(0.0f, 0.0f);
 	playerCavePos = m_tileMap->getPlayerCave();

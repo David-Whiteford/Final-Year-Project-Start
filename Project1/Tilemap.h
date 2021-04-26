@@ -45,21 +45,29 @@ public:
 	//function to clear dungeon vectors
 	void clearDunVecs()
 	{
+		for (auto dunTiles : m_dunTileVec)
+		{
+			delete dunTiles;
+		}
 	    m_dunTileVec.clear();
+		for (auto dunTilesDecor : m_dunDecorTileVec)
+		{
+			delete dunTilesDecor;
+		}
 		m_dunDecorTileVec.clear();
 		m_exits.clear();
+		m_enemySpawn.clear();
 	}
 private:
 	Collisions m_col;
 	//vector to store caves,tiles for overworld and dungeon tiles
-	std::vector<Tiles*> m_cavesVec;
+	std::vector<sf::Vector2f> m_caves;
 	std::vector<Tiles*> m_tileVec;
 	std::vector<Tiles*> m_dunTileVec;
 	std::vector<Tiles*> m_dunDecorTileVec;
 	//vector to store enemy spawn(when needed) ,exits , caves
 	std::vector<sf::Vector2f> m_enemySpawn;
 	std::vector<sf::Vector2f> m_exits;
-	std::vector<sf::Vector2f> m_caves;
 	sf::Texture m_texture;
 	sf::Texture m_dunTexture;
 	//width and height of map

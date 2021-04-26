@@ -35,18 +35,11 @@ public:
 	void statueRoomDecor(std::vector<char>& t_decorTiles, std::vector<RoomVals>& t_rooms);
 
 private:
-	std::vector<char> m_tiles;
-	std::vector<char> m_decorTiles;
-	std::vector<RoomVals> m_halls;
-	std::vector<RoomVals> m_rooms;
-	std::vector<RoomVals> m_exit;
 	int m_width;
 	int m_height;
 	int m_bossRoomIndex = 1000;
 	int m_worshipRoomIndex = 1000;
 	int m_statueRoomIndex = 1000;
-
-
 	int m_index = 0;
 	int m_numJailRoomsPlaced = 0;
 	int m_maxJailRooms = 3;

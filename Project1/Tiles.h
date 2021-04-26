@@ -20,7 +20,10 @@ public:
 		m_numTag = t_numTag;
 		m_collider = new Collider(m_sprites.getPosition(), m_tag,m_size);
 	} 
-	virtual ~Tiles() {}
+	virtual ~Tiles()
+	{
+		delete m_collider;
+	}
 	//func to ge the tile sprite, set/get position 
 	sf::Sprite getSprite() { return m_sprites; }
 	void setPosition(sf::Vector2f(t_pos)) { m_sprites.setPosition(t_pos); }

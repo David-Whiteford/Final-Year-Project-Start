@@ -238,8 +238,9 @@ void Tilemap::setMap(sf::RenderWindow& t_window)
 			x = 0;
 			y++;
 		}
-		
+	
 	}	
+	m_tileVecValues.clear();
 }
 std::vector<Tiles*> Tilemap::getDunObstaclesVec()
 {

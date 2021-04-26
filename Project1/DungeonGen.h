@@ -19,14 +19,16 @@ public:
 		m_tiles(t_width* t_height, UnusedTile),
 		m_decorTiles(t_width* t_height, UnusedTile)
 	{
+		DEBUG_MSG("Construct Dungeon");
 		m_dunDecor = new DunDecor(m_width, m_height);
 		m_dunSpecialDecor = new DunSpecialRooms(m_width, m_height);
 	}
 	~DungeonGen()
 	{
+		DEBUG_MSG("De-Construct Dungeon");
 		resetTileVecs();
-		m_dunDecor->~DunDecor();
-		m_dunSpecialDecor->~DunSpecialRooms();
+		delete m_dunDecor;
+		delete m_dunSpecialDecor;
 	}
 	//funtions for the creation of the dungeon 
 	bool placeTileVal(RoomVals& t_room, char t_tile);
@@ -58,22 +60,15 @@ public:
 	void FloorDecorTiles();
 	void resetTileVecs()
 	{
+		//clears the vectors for rooms and the halls if there not empty
 		if (m_tiles.empty() == false)
 		{
-			//loop and reset all values in the vector for background and decor tiles
-			for (int i = 0; i < m_tiles.size(); i++)
-			{
-				m_tiles[i] = UnusedTile;
-			}
+			m_tiles.clear();
 		}
 		if (m_decorTiles.empty() == false)
 		{
-			for (int i = 0; i < m_decorTiles.size(); i++)
-			{
-				m_decorTiles[i] = UnusedTile;
-			}
+			m_decorTiles.clear();
 		}
-		//clears the vectors for rooms and the halls if there not empty
 		if (m_rooms.empty() == false)
 		{
 			m_rooms.clear();
