@@ -26,7 +26,9 @@ void DunSpecialRooms::createDunSpecialRooms(std::vector<char>& t_tiles, std::vec
 
 
 }
-
+////---------------------------------------------------------------------------
+////Function change the ground tiles of a room to be of the passed in tile type
+////---------------------------------------------------------------------------
 void DunSpecialRooms::setUniqueGroundTiles(char t_newTile, int t_maxRoomSizeWidth, int t_maxRoomSizeHeight, int t_index,
 	std::vector<char>& t_tiles, std::vector<char>& t_decorTiles, std::vector<RoomVals>& t_rooms)
 {
@@ -220,7 +222,7 @@ void DunSpecialRooms::worshipRoom(std::vector<char>& t_decorTiles, std::vector<R
 	if (getTile(x, y, t_decorTiles, m_width, m_height) == DarkTiles)
 	{
 		setTile(x, y, Worship, t_decorTiles, m_width);
-		setUnusedTile(x, y, DarkTiles, FloorTile, t_tiles, m_width, m_height);
+		setUnusedTile(x, y, DarkTiles, FloorTile, t_decorTiles, m_width, m_height);
 	}
 	worshipRoomDecor(t_decorTiles,t_rooms);
 
@@ -271,7 +273,7 @@ void DunSpecialRooms::statueRoom(std::vector<char>& t_decorTiles, std::vector<Ro
 	if (getTile(x, y, t_decorTiles, m_width, m_height) == TilePattern)
 	{
 		setTile(x, y, Statue, t_decorTiles, m_width);
-		setUnusedTile(x, y, TilePattern, FloorTile, t_tiles, m_width, m_height);
+		setUnusedTile(x, y, TilePattern, FloorTile, t_decorTiles, m_width, m_height);
 	}
 	//delete room and call decorate room func
 	statueRoomDecor(t_decorTiles,t_rooms);

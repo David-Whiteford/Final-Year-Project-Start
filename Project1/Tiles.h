@@ -41,8 +41,6 @@ public:
 		m_collider->draw(m_window, t_view);
 	}
 
-	
-
 private:
 	//reference to render window
 	sf::RenderWindow& m_window;

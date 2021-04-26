@@ -36,8 +36,7 @@ public:
 	void setSpawnToWall(int t_roomIndex, std::vector<char>& t_decorTiles, std::vector<RoomVals>& t_rooms);
 	void addChairsDecor(int t_roomIndex, std::vector<char>& t_decorTiles, std::vector<RoomVals>& t_rooms);
 	void placeBookShelfDecor(int t_roomIndex, std::vector<char>& t_decorTiles, std::vector<RoomVals>& t_rooms);
-
-
+	//creates and places bedrooms and bedroom tiles
 	void bedRoom(std::vector<char>& t_decorTiles, std::vector<RoomVals>& t_rooms);
 	void placeBeds(int t_x, int t_y,std::vector<char>& t_decorTiles);
 	//functions to help create jails in jail room,create a coffin room,feast and library rooms
@@ -56,8 +55,10 @@ public:
 	
 	
 private:
+	//variables needed for special rooms
 	int m_width;
 	int m_height;
+	//all rooms give 1000 index as the 0 value is a index within the vector and 1000 means a invalid index
 	int m_bossRoomIndex = 1000;
 	int m_worshipRoomIndex = 1000;
 	int m_statueRoomIndex = 1000;

@@ -61,6 +61,7 @@ public:
 	void resetTileVecs()
 	{
 		//clears the vectors for rooms and the halls if there not empty
+		//clears the vectors for the tiles and decoration tiles
 		if (m_tiles.empty() == false)
 		{
 			m_tiles.clear();

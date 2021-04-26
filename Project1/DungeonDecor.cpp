@@ -486,7 +486,7 @@ void DunDecor::createFeastRoom(std::vector<char>& t_decorTiles, std::vector<Room
 			{
 				t_rooms[roomIndex].decorInRoom++;
 				setTile(x, y, Table, t_decorTiles, m_width);
-				setUnusedTile(x, y, FloorTile, StoneFloorTile, t_tiles,m_width,m_height);
+				setUnusedTile(x, y, FloorTile, StoneFloorTile, t_decorTiles,m_width,m_height);
 			}
 			int newY = 4;
 			//set the x y to be half way in the tile

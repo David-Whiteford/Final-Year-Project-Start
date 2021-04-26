@@ -3,9 +3,9 @@
 
 //David Whiteford
 
-/// <summary>
+/// Global functions that are needed by different classses
 /// different levels in game
-	// struct to store room values
+// struct to store room values
 struct RoomVals
 {
 	int x, y;
@@ -87,10 +87,14 @@ namespace
 		std::uniform_int_distribution<> dist(0, t_max - t_min);
 		return dist(mt) + t_min;
 	}
-	bool randomBool(double t_prob = 0.5)
+	bool randomBool()
 	{
-		std::bernoulli_distribution dist(t_prob);
-		return dist(mt);
+		int random = rand() % 2;
+		if (random == 1) {
+			return true;
+		}
+		return false;
+		
 	}
 	////---------------------------------------------------------------------------
 	//// Functions to set unused tiles under larger tiles,set the tiles,get the tiles,check for doors
