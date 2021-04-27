@@ -8,7 +8,7 @@ void DungeonGen::generateDungeon(int t_maxTilesChanged)
 	makeRoom(m_width / 2, m_height / 2, static_cast<Direction>(randomInt(4)), true);
 	for (int i = 1; i < t_maxTilesChanged; i++)
 	{
-		if (dungeonCreationStart() ==false)
+		if (dungeonCreationStart() == false)
 		{
 			DEBUG_MSG("Cant place more features");
 			break;
