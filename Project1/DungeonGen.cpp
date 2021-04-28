@@ -2,11 +2,11 @@
 ////---------------------------------------------------------------------------
 ////Creates the starting room and then creates all corridors or rooms from that
 ////---------------------------------------------------------------------------
-void DungeonGen::generateDungeon(int t_maxTilesChanged)
+void DungeonGen::generateDungeon(int t_maxRoomsCreated)
 {
 	//create the first room in the map in the middle of the map
-	makeRoom(m_width / 2, m_height / 2, static_cast<Direction>(randomInt(4)), true);
-	for (int i = 1; i < t_maxTilesChanged; i++)
+	makeRoom(m_mapHalfPoint.x, m_mapHalfPoint.y, static_cast<Direction>(randomInt(4)), true);
+	for (int i = 1; i < t_maxRoomsCreated; i++)
 	{
 		if (dungeonCreationStart() == false)
 		{
@@ -21,7 +21,7 @@ void DungeonGen::generateDungeon(int t_maxTilesChanged)
 ////---------------------------------------------------------------------------
 void DungeonGen::createDunExtras()
 {
-	generateDungeon(100);
+	generateDungeon(m_maxRoomsCreated);
 	FloorDecorTiles();
 	m_decorTiles = m_tiles;
 	m_dunSpecialDecor->createDunSpecialRooms(m_tiles, m_decorTiles, m_rooms, m_exit, m_halls);
@@ -71,23 +71,28 @@ bool DungeonGen::createRoomOrCor(int t_x, int t_y, Direction t_direction)
 	bool successCreatingRoom = false;
 	int x = 0;
 	int y = 0;
-	int directionVal = 1;
 	//change the x,y depending on the direction
-	if (t_direction == Direction::North)
+	int directionVal = 1;
+	switch (t_direction)
 	{
+	case Direction::North:
 		y = directionVal;
-	}
-	else if (t_direction == Direction::South)
-	{
+		break;
+	case Direction::South:
 		y = -directionVal;
-	}
-	else if (t_direction == Direction::West)
-	{
+		break;
+	case Direction::West:
 		x = directionVal;
-	}
-	else if (t_direction == Direction::East)
-	{
+		break;
+	case Direction::East:
 		x = -directionVal;
+		break;
+	case Direction::NoDirection:
+		x = 0;
+		y = 0;
+		break;
+	default:
+		break;
 	}
 	//check that the tile is a floor tile
 	int newX = t_x + x;
@@ -124,7 +129,7 @@ bool DungeonGen::createRoomtype(int t_x, int t_y, int t_x2, int t_y2, Direction 
 			}
 		}
 	}
-	else
+	else if(randRoomVal > m_roomChance)
 	{
 		if (makeCorridor(t_x, t_y, t_direction))
 		{
@@ -162,29 +167,30 @@ bool DungeonGen::makeRoom(int t_x, int t_y, Direction t_direction, bool t_firstR
 	room.height = randomInt(m_roomSizeMin, m_roomSizeMax);
 	int moveByOne = 1;
 	//check the directiona nd change the x,y values depending on the directon
-	if (t_direction == Direction::North)
+	switch (t_direction)
 	{
+	case Direction::North:
 		room.x = t_x - room.width / 2;
 		room.y = t_y - room.height;
-	}
-	else if (t_direction == Direction::South)
-	{
+		break;
+	case Direction::South:
 		room.x = t_x - room.width / 2;
 		room.y = t_y + moveByOne;
-	}
-	else if (t_direction == Direction::West)
-	{
+		break;
+	case Direction::West:
 		room.x = t_x - room.width;
 		room.y = t_y - room.height / 2;
-	}
-	else if (t_direction == Direction::East)
-	{
+		break;
+	case Direction::East:
 		room.x = t_x + moveByOne;
 		room.y = t_y - room.height / 2;
+		break;
+	default:
+		break;
 	}
 	if (placeTile(room , FloorTile))
 	{
-		m_rooms.emplace_back(room);
+		m_rooms.push_back(room);
 		placeRoomExit(room, t_direction, t_firstRoom);
 		return true;
 	}
@@ -198,22 +204,22 @@ void DungeonGen::placeRoomExit(RoomVals& t_room, Direction t_direction ,bool t_f
 	//place exit at north Side
 	if (t_direction == Direction::South || t_firstRoom)
 	{
-		m_exit.emplace_back(RoomVals{ t_room.x,t_room.y + t_room.height ,t_room.width,1 });
+		m_exit.push_back(RoomVals{ t_room.x,t_room.y + t_room.height ,t_room.width,1 });
 	}
 	//place exit at south Side
 	if (t_direction == Direction::North || t_firstRoom)
 	{
-		m_exit.emplace_back(RoomVals{ t_room.x,t_room.y - 1,t_room.width,1 });
+		m_exit.push_back(RoomVals{ t_room.x,t_room.y - 1,t_room.width,1 });
 	}
 	//place exit at west Side
 	if (t_direction == Direction::East || t_firstRoom)
 	{
-		m_exit.emplace_back(RoomVals{ t_room.x + t_room.width,t_room.y,1,t_room.height });
+		m_exit.push_back(RoomVals{ t_room.x + t_room.width,t_room.y,1,t_room.height });
 	}
 	//place exit at east Side
 	if (t_direction == Direction::West || t_firstRoom)
 	{
-		m_exit.emplace_back(RoomVals{ t_room.x - 1, t_room.y,1,t_room.height });
+		m_exit.push_back(RoomVals{ t_room.x - 1, t_room.y,1,t_room.height });
 	}
 }
 ////---------------------------------------------------------------------------
@@ -232,24 +238,22 @@ bool DungeonGen::makeCorridor(int t_x, int t_y, Direction t_direction)
 		corridor.width = randomInt(m_corridorLengthMin, m_corridorLengthMax);
 		corridor.height = m_corridorHeight;
 		//minus 1 from passed y to move one up the y e.g north
-		if (t_direction == Direction::North)
+		switch (t_direction)
 		{
+		case Direction::North:
 			corridor.y = t_y - 1;
-		}
-		//plus 1 onto passed y to move one down the y e.g south
-		else if (t_direction == Direction::South)
-		{
+			break;
+		case Direction::South:
 			corridor.y = t_y + 1;
-		}
-		//move the x back from passed in x minus the width e.g West 
-		else if (t_direction == Direction::West)
-		{
+			break;
+		case Direction::West:
 			corridor.x = t_x - corridor.width;
-		}
-		//if east then move one along the x from passed in x e.g East
-		else if (t_direction == Direction::East)
-		{
+			break;
+		case Direction::East:
 			corridor.x = t_x + 1;
+			break;
+		default:
+			break;
 		}
 	}
 	//this else is for a vertical corridor
@@ -259,31 +263,29 @@ bool DungeonGen::makeCorridor(int t_x, int t_y, Direction t_direction)
 		corridor.width = m_corridorWidth;
 		corridor.height = randomInt(m_corridorLengthMin, m_corridorLengthMax);
 		//move the y back from passed in x minus the height if North
-		if (t_direction == Direction::North)
+		switch (t_direction)
 		{
+		case Direction::North:
 			corridor.y = t_y - corridor.height;
-		}
-		//plus 1 onto passed y to move one down the y e.g south
-		else if (t_direction == Direction::South)
-		{
+			break;
+		case Direction::South:
 			corridor.y = t_y + 1;
-		}
-		//from passed in x move  minus one e.g to the west
-		else if (t_direction == Direction::West)
-		{
+			break;
+		case Direction::West:
 			corridor.x = t_x - 1;
-		}
-		//from passed in x move plus one e.g to the East
-		else if (t_direction == Direction::East)
-		{
+			break;
+		case Direction::East:
 			corridor.x = t_x + 1;
+			break;
+		default:
+			break;
 		}
 	}
 	//create the room e.g the  corridor
 	if (placeTile(corridor, FloorTile))
 	{
 		//add the coridor to the m_halls vector
-		m_halls.emplace_back(corridor);
+		m_halls.push_back(corridor);
 		//check the direction along the y e.g south or North and that the width is not 1 and create a exit
 		placeCorridorExit(corridor,t_direction);
 		return true;
@@ -297,20 +299,20 @@ void DungeonGen::placeCorridorExit(RoomVals& t_room,Direction t_direction)
 {
 	if (t_direction != Direction::South && t_room.width != 1)
 	{
-		m_exit.emplace_back(RoomVals{ t_room.x,t_room.y - 1,t_room.width,1 });
+		m_exit.push_back(RoomVals{ t_room.x,t_room.y - 1,t_room.width,1 });
 	}
 	if (t_direction != Direction::North && t_room.width != 1)
 	{
-		m_exit.emplace_back(RoomVals{ t_room.x,t_room.y + t_room.height,t_room.width,1 });
+		m_exit.push_back(RoomVals{ t_room.x,t_room.y + t_room.height,t_room.width,1 });
 	}
 	//check the direction along the x e.g east or west and that the height is not 1 and create a exit
 	if (t_direction != Direction::East && t_room.height != 1)
 	{
-		m_exit.emplace_back(RoomVals{ t_room.x - 1, t_room.y, 1, t_room.height });
+		m_exit.push_back(RoomVals{ t_room.x - 1, t_room.y, 1, t_room.height });
 	}
 	if (t_direction != Direction::West && t_room.height != 1)
 	{
-		m_exit.emplace_back(RoomVals{ t_room.x + t_room.width, t_room.y, 1, t_room.height });
+		m_exit.push_back(RoomVals{ t_room.x + t_room.width, t_room.y, 1, t_room.height });
 	}
 }
 ////---------------------------------------------------------------------------

@@ -121,7 +121,10 @@ private:
 	static const int m_corridorLengthMax = 10;
 	static const int m_roomChance = 50;
 	//set the number of times to loop when ceating room and halls
-	const int m_maxTilesChanged = 1000;
+	const int m_maxTilesChanged = 2500;
+	int m_maxRoomsCreated = 100;
+	int m_corridorNum = 0;
+	int m_roomNum = 0;
 	//min and max room sizes
 	static const int m_roomSizeMin = 5;
 	static const int m_roomSizeMax = 9;
@@ -135,6 +138,7 @@ private:
 	int m_objectCount = 0;
 	int m_width;
 	int m_height;
+	sf::Vector2i m_mapHalfPoint = sf::Vector2i(m_width / 2,m_height/2);
 	int m_roomMaxDecor = 10;
 	//vectors to staore the layout and the rooms etc
 	std::vector<char> m_tiles;
