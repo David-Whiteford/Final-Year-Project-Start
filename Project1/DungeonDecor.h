@@ -58,10 +58,7 @@ private:
 	//variables needed for special rooms
 	int m_width;
 	int m_height;
-	//all rooms give 1000 index as the 0 value is a index within the vector and 1000 means a invalid index
-	int m_bossRoomIndex = 1000;
-	int m_worshipRoomIndex = 1000;
-	int m_statueRoomIndex = 1000;
+
 	int m_index = 0;
 	int m_numJailRoomsPlaced = 0;
 	int m_maxJailRooms = 3;

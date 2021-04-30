@@ -38,13 +38,6 @@ public:
 	float getSpeed();
 	//health and debug rectangles
 	void setHealthCost(int t_healthCost, bool t_takeDamage);
-	void setDebugRects(std::vector<Tiles*>& t_tilemapObstacles);
-	void setUniqueObstacles(std::vector<Tiles*>& t_tilemapObstacles);
-	void setObstacles(std::vector<Tiles*>& t_tilemapObstacles);
-	void setOtherTriggers(std::vector<Tiles*>& t_tilemapObstacles);
-	//clear the obstacles and the triggers
-	void clearObstacleVec() { m_debugRects.clear(); }
-	void clearTriggerVec() { m_triggerRects.clear(); }
 	//get all collision bools
 	bool getColUp() { return m_collisionUp; }
 	bool getColDown() { return m_collisionDown; }
@@ -78,8 +71,6 @@ private:
 	int m_playerHealth = 100; 
 	//vector to store rays,debug collsions,and triggers
 	std::vector<sf::Vector2f> m_rays;
-	std::vector<sf::RectangleShape> m_debugRects;
-	std::vector<sf::RectangleShape> m_triggerRects;
 	//all rays needed
 	bool m_collisionRight, m_collisionLeft, m_collisionUp, m_collisionDown;
 	//bools to determine if player in trigger,death trigger

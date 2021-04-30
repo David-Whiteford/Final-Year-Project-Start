@@ -37,8 +37,6 @@ private:
 	{
 		m_obstaclesVec.clear();
 		m_triggersVec.clear();
-		m_player->clearObstacleVec();
-		m_player->clearTriggerVec();
 	}
 
 	void render();
@@ -55,12 +53,10 @@ private:
 	//sets up the event and inputs
 	sf::Event event;
 	gpp::Events input;
-	sf::Vector2f m_textOffset = sf::Vector2f(500.0f, 0.0f);
 	sf::Vector2f m_playerOrigin;
 	//bool to determine wheather to setup overwold or dungeon
 	bool m_overWorldSetUp = false;
 	bool m_dungeonSetUp = false;
-	bool m_transitionStart = false;
 	sf::RenderWindow m_window; // main SFML window
 	sf::Vector2f m_spawnPos = Vector2f(0.0f,0.0f);
 	sf::View view2;

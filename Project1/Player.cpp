@@ -46,21 +46,7 @@ void Player::render(sf::RenderWindow& t_window, sf::View t_view)
 	t_window.draw(m_raycastLeft.drawArray());
 	t_window.draw(m_raycastRigth.drawArray());
 	//loop and draw all collision rectangles within player view stored in collisions vector
-	for (int i = 0; i < m_debugRects.size(); i++)
-	{
-		if (m_collisions.ViewCheck(t_view, m_debugRects[i].getPosition()) && DEBUG >= 1)
-		{
-			t_window.draw(m_debugRects[i]);
-		}
-	}
-	//loop and draw all trigger rectangles within player view stored in m_triggerRects vector
-	for (int i = 0; i < m_triggerRects.size(); i++)
-	{
-		if (m_collisions.ViewCheck(t_view, m_triggerRects[i].getPosition()) && DEBUG >= 1)
-		{
-			t_window.draw(m_triggerRects[i]);
-		}
-	}
+	
 }
 sf::Vector2f Player::getPosition()
 {
@@ -175,73 +161,6 @@ void Player::setHealthCost(int t_healthCost, bool t_takeDamage)
 	
 }
 
-void Player::setDebugRects(std::vector<Tiles*>& t_tilemapObstacles)
-{
-	//set the triggers for exits,death and other types and all colliders
-	setObstacles(t_tilemapObstacles);
-	setOtherTriggers(t_tilemapObstacles);
-}
-
-void Player::setObstacles(std::vector<Tiles*>& t_tilemapObstacles)
-{
-	//loop through obstacles vector
-	for (int i = 0; i < t_tilemapObstacles.size(); i++)
-	{
-		//create a local rectangle and set up
-		sf::RectangleShape rect;
-		if (t_tilemapObstacles[i]->getTag() == "Obstacle") {
-			//if the type is obstacle then set beow values for size , position and others
-			sf::RectangleShape rect;
-			rect.setSize(sf::Vector2f(16, 16));
-			rect.setOutlineColor(sf::Color::White);
-			rect.setOutlineThickness(0.1f);
-			rect.setFillColor(sf::Color::Transparent);
-			rect.setPosition(t_tilemapObstacles[i]->getPosition().x, t_tilemapObstacles[i]->getPosition().y);
-			m_debugRects.push_back(rect);
-		}
-		else if (t_tilemapObstacles[i]->getTag() == "Cave"
-			|| t_tilemapObstacles[i]->getTag() == "Exits")
-		{
-			//if the type is cave or exit then set beow values for size , position and others
-			sf::RectangleShape rect;
-			rect.setSize(sf::Vector2f(16, 16));
-			rect.setOutlineColor(sf::Color::Green);
-			rect.setOutlineThickness(0.1f);
-			rect.setFillColor(sf::Color::Transparent);
-			rect.setPosition(t_tilemapObstacles[i]->getPosition().x, t_tilemapObstacles[i]->getPosition().y);
-			m_triggerRects.push_back(rect);
-		}
-	}
-}
-
-void Player::setOtherTriggers(std::vector<Tiles*>& t_tilemapObstacles)
-{
-	//loop through obstacles vector
-	for (int i = 0; i < t_tilemapObstacles.size(); i++)
-	{
-		//create a local rectangle and set size,color,position etc
-		sf::RectangleShape rect;
-		rect.setOutlineColor(sf::Color::Green);
-		rect.setOutlineThickness(0.1f);
-		rect.setFillColor(sf::Color::Transparent);
-		rect.setPosition(t_tilemapObstacles[i]->getPosition().x, t_tilemapObstacles[i]->getPosition().y);
-		//check the tag of the trigger and if one of the below tags then set the size to be same size as tile
-		if (t_tilemapObstacles[i]->getTag() == "FallToDeath")
-		{
-			rect.setSize(sf::Vector2f(48, 48));
-		}
-		else if (t_tilemapObstacles[i]->getTag() == "Spike")
-		{
-			rect.setSize(sf::Vector2f(16, 16));
-		}
-		else if (t_tilemapObstacles[i]->getTag() == "Health")
-		{
-			rect.setSize(sf::Vector2f(16, 16));
-		}
-		//then push these into trigger vector
-		m_triggerRects.push_back(rect);
-	}
-}
 
 void Player::resetCollisions()
 {

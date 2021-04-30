@@ -42,7 +42,5 @@ private:
 	//variables for the generation of the dungeon special rooms
 	int m_width;
 	int m_height;
-	int m_index = 0;
-	int m_numJailRoomsPlaced = 0;
-	int m_maxJailRooms = 3;
+
 };
