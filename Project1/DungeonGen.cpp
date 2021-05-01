@@ -4,13 +4,15 @@
 ////---------------------------------------------------------------------------
 void DungeonGen::generateDungeon(int t_maxRoomsCreated)
 {
+	bool dungeonCreationStarted = false;
 	//create the first room in the map in the middle of the map
 	makeRoom(m_mapHalfPoint.x, m_mapHalfPoint.y, static_cast<Direction>(randomInt(4)), true);
 	for (int i = 1; i < t_maxRoomsCreated; i++)
 	{
-		if (dungeonCreationStart() == false)
+		dungeonCreationStarted = dungeonCreationStart();
+		if (dungeonCreationStarted == false)
 		{
-			DEBUG_MSG("Cant place more features");
+			DEBUG_MSG("Cant place more rooms or corridors");
 			break;
 		}
 	}
@@ -165,36 +167,39 @@ bool DungeonGen::makeRoom(int t_x, int t_y, Direction t_direction, bool t_firstR
 	//get the width and height of room between the max and min Sizes
 	room.width = randomInt(m_roomSizeMin, m_roomSizeMax);
 	room.height = randomInt(m_roomSizeMin, m_roomSizeMax);
+	int half = 2;
 	int moveByOne = 1;
 	//check the directiona nd change the x,y values depending on the directon
 	switch (t_direction)
 	{
 	case Direction::North:
-		room.x = t_x - room.width / 2;
+		room.x = t_x - room.width / half;
 		room.y = t_y - room.height;
 		break;
 	case Direction::South:
-		room.x = t_x - room.width / 2;
+		room.x = t_x - room.width / half;
 		room.y = t_y + moveByOne;
 		break;
 	case Direction::West:
 		room.x = t_x - room.width;
-		room.y = t_y - room.height / 2;
+		room.y = t_y - room.height / half;
 		break;
 	case Direction::East:
 		room.x = t_x + moveByOne;
-		room.y = t_y - room.height / 2;
+		room.y = t_y - room.height / half;
 		break;
 	default:
 		break;
 	}
-	if (placeTile(room , FloorTile))
+	bool tilePlaced = false;
+	tilePlaced = placeTile(room, FloorTile);
+	if(tilePlaced == true)
 	{
 		m_rooms.push_back(room);
 		placeRoomExit(room, t_direction, t_firstRoom);
-		return true;
+		return tilePlaced;
 	}
-	return false;
+	return tilePlaced;
 }
 ////---------------------------------------------------------------------------
 ////checks the direction and places a exit in the direction passed
@@ -231,8 +236,10 @@ bool DungeonGen::makeCorridor(int t_x, int t_y, Direction t_direction)
 	RoomVals corridor;
 	corridor.x = t_x;
 	corridor.y = t_y;
-	//generate a random bool to determine the direction of the corridor
-	if (randomBool())
+	bool tilePlaced = false;
+	//generate a random bool to determine if corridor along the x or y axis
+	bool corridorVal = randomBool();
+	if (corridorVal == true)
 	{
 		//create the width to be a random int within a certain range and a height of 2
 		corridor.width = randomInt(m_corridorLengthMin, m_corridorLengthMax);
@@ -257,7 +264,7 @@ bool DungeonGen::makeCorridor(int t_x, int t_y, Direction t_direction)
 		}
 	}
 	//this else is for a vertical corridor
-	else
+	else if(corridorVal == false)
 	{
 		//create a width of 2 and height thats random between certain range
 		corridor.width = m_corridorWidth;
@@ -282,15 +289,16 @@ bool DungeonGen::makeCorridor(int t_x, int t_y, Direction t_direction)
 		}
 	}
 	//create the room e.g the  corridor
-	if (placeTile(corridor, FloorTile))
+	tilePlaced = placeTile(corridor, FloorTile);
+	if (tilePlaced == true)
 	{
 		//add the coridor to the m_halls vector
 		m_halls.push_back(corridor);
 		//check the direction along the y e.g south or North and that the width is not 1 and create a exit
 		placeCorridorExit(corridor,t_direction);
-		return true;
+		return tilePlaced;
 	}
-	return false;
+	return tilePlaced;
 }
 ////---------------------------------------------------------------------------
 ////checks the direction and places a exit on all exept the passed in direction
