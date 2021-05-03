@@ -11,7 +11,7 @@ public:
 	Collider(sf::Vector2f t_pos, std::string t_tag,sf::Vector2f t_size);
 	~Collider();
 	void setUpBoxCollider();
-	void draw(sf::RenderWindow& t_window, sf::View t_view);
+	void draw(sf::RenderWindow& t_window, sf::View &t_view);
 	sf::Vector2f getPosition()
 	{
 		//return collider position

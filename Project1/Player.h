@@ -33,7 +33,7 @@ public:
 	std::string triggerCheck(std::vector<Tiles*>& t_triggerVec);
 	void update();
 	sf::Vector2f getOrigin();
-	void render(sf::RenderWindow& t_window,sf::View t_view);
+	void render(sf::RenderWindow& t_window,sf::View &t_view);
 	void handleKeyInput(gpp::Events input);
 	float getSpeed();
 	//health and debug rectangles

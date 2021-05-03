@@ -38,7 +38,7 @@ void Player::playerRays()
 	m_rays.push_back(m_raycastLeft.getEndPoint());
 	m_rays.push_back(m_raycastRigth.getEndPoint());
 }
-void Player::render(sf::RenderWindow& t_window, sf::View t_view)
+void Player::render(sf::RenderWindow& t_window, sf::View &t_view)
 {
 	//draw all rays that the player needs
 	t_window.draw(m_raycastUp.drawArray());

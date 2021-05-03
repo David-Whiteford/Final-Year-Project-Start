@@ -22,7 +22,7 @@ void Collider::setUpBoxCollider()
 	m_boxCollider.setSize(m_size);
 }
 
-void Collider::draw(sf::RenderWindow& t_window, sf::View t_view)
+void Collider::draw(sf::RenderWindow& t_window, sf::View& t_view)
 {
 	//if (m_collisions.ViewCheck(t_view, m_boxCollider.getPosition()))
 	//{

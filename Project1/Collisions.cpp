@@ -40,7 +40,7 @@ bool Collisions::rayCastToSpriteCol(sf::Vector2f t_rayEnd, sf::Vector2f t_sprite
 	}
 	return false;
 }
-bool Collisions::ViewCheck(sf::View t_view, sf::Vector2f t_pos)
+bool Collisions::ViewCheck(sf::View& t_view, sf::Vector2f t_pos)
 {
 	//check if the position pass in is within the players view and return true if so and false if not
 	t_view.getViewport().left;
