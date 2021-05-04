@@ -24,9 +24,9 @@ void Collider::setUpBoxCollider()
 
 void Collider::draw(sf::RenderWindow& t_window, sf::View& t_view)
 {
-	//if (m_collisions.ViewCheck(t_view, m_boxCollider.getPosition()))
-	//{
-	//	t_window.draw(m_boxCollider);
-	//}
+	/*if (m_collisions.ViewCheck(t_view, m_boxCollider.getPosition()))
+	{
+		t_window.draw(m_boxCollider);
+	}*/
 }
 
