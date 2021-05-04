@@ -10,21 +10,22 @@ void DunDecor::createDunExtras(std::vector<char>& t_tiles, std::vector<char>& t_
 	std::vector<RoomVals>& t_exits, std::vector<RoomVals>& t_halls)
 {
 	//create unique rooms
-	createUniqueRooms(t_decorTiles,t_rooms,t_tiles);
+	createUniqueRooms(t_decorTiles, t_rooms, t_tiles);
 	//example of a trigger that was set up by procedual generation
-	createTrapsInRooms(t_decorTiles, t_rooms,t_halls);
+	createTrapsInRooms(t_decorTiles, t_rooms, t_halls);
 	//place triggers in rooms to exit dungeon
 	playerStartPos(t_decorTiles, t_rooms);
 	//place decor on the walls,in rooms, halls
 	placeDecorOnWalls(t_decorTiles, t_rooms);
 	placeDecorInRoom(t_decorTiles, t_rooms);
-	placeDecorInHalls(t_decorTiles,t_halls);
+	placeDecorInHalls(t_decorTiles, t_halls);
 	//if rooms are left call the place decor to fill them
 	if (t_rooms.empty() == false) {
 		placeDecorInRoom(t_decorTiles, t_rooms);
 	}
 	//create a bedroom
 	bedRoom(t_decorTiles, t_rooms);
+	
 }
 
 
@@ -416,8 +417,11 @@ void DunDecor::createCoffinRoom(std::vector<char>& t_decorTiles, std::vector<Roo
 	int maxRoomSizeHeight = 4;
 	bool roomFound = false;
 	int noIndexFoundVal = 1000;
-	//try get a room and call get room and store its index
-	roomIndex = getRoom(maxRoomSizeWidth, maxRoomSizeHeight, t_rooms);
+	if (t_rooms.empty() == false)
+	{
+		//try get a room and call get room and store its index
+		roomIndex = getRoom(maxRoomSizeWidth, maxRoomSizeHeight, t_rooms);
+	}
 	//check index is not 1000/invalid and set room found to true
 	if (roomIndex != noIndexFoundVal)
 	{

@@ -54,30 +54,37 @@ void DunSpecialRooms::setUniqueGroundTiles(char t_newTile, int t_maxRoomSizeWidt
 ////---------------------------------------------------------------------------
 void DunSpecialRooms::bossRoomGroundTiles(std::vector<char>& t_tiles, std::vector<char>& t_decorTiles, std::vector<RoomVals>& t_rooms)
 {
-	//from these width and height get a room index for boss room and change all the floor tiles to dirt
-	int maxRoomSizeWidth = 6;
-	int maxRoomSizeHeight = 6;
-	m_bossRoomIndex = getRoom(maxRoomSizeWidth, maxRoomSizeHeight, t_rooms);
-	setUniqueGroundTiles(DirtTile, maxRoomSizeWidth, maxRoomSizeHeight, m_bossRoomIndex, t_tiles, t_decorTiles, t_rooms);
+	if (t_rooms.empty() == false) {
+		//from these width and height get a room index for boss room and change all the floor tiles to dirt
+		int maxRoomSizeWidth = 6;
+		int maxRoomSizeHeight = 6;
+		m_bossRoomIndex = getRoom(maxRoomSizeWidth, maxRoomSizeHeight, t_rooms);
+		setUniqueGroundTiles(DirtTile, maxRoomSizeWidth, maxRoomSizeHeight, m_bossRoomIndex, t_tiles, t_decorTiles, t_rooms);
+	}
 }
 ////---------------------------------------------------------------------------
 ////Function to create a worship room thats different From the others
 ////---------------------------------------------------------------------------
 void DunSpecialRooms::worsipRoomGroundTiles(std::vector<char>& t_tiles, std::vector<char>& t_decorTiles, std::vector<RoomVals>& t_rooms)
 {
-	//from these width and height get a room index for worship room and change all the floor tiles to dark
-	int maxRoomSizeWidth = 5;
-	int maxRoomSizeHeight = 5;
-	m_worshipRoomIndex = getRoom(maxRoomSizeWidth, maxRoomSizeHeight, t_rooms);
-	setUniqueGroundTiles(DarkTiles, maxRoomSizeWidth, maxRoomSizeHeight, m_worshipRoomIndex,t_tiles,t_decorTiles,t_rooms);
+	if (t_rooms.empty() == false) {
+		//from these width and height get a room index for worship room and change all the floor tiles to dark
+		int maxRoomSizeWidth = 5;
+		int maxRoomSizeHeight = 5;
+		m_worshipRoomIndex = getRoom(maxRoomSizeWidth, maxRoomSizeHeight, t_rooms);
+		setUniqueGroundTiles(DarkTiles, maxRoomSizeWidth, maxRoomSizeHeight, m_worshipRoomIndex, t_tiles, t_decorTiles, t_rooms);
+
+	}
 }
 void DunSpecialRooms::statueRoomTiles(std::vector<char>& t_tiles, std::vector<char>& t_decorTiles, std::vector<RoomVals>& t_rooms)
 {
-	//from these width and height get a room index for statue room and change all the floor tiles to tiles
-	int maxRoomSizeWidth = 6;
-	int maxRoomSizeHeight = 6;
-	m_statueRoomIndex = getRoom(maxRoomSizeWidth, maxRoomSizeHeight,t_rooms);
-	setUniqueGroundTiles(TilePattern, maxRoomSizeWidth, maxRoomSizeHeight, m_statueRoomIndex,t_tiles, t_decorTiles, t_rooms);
+	if (t_rooms.empty() == false) {
+		//from these width and height get a room index for statue room and change all the floor tiles to tiles
+		int maxRoomSizeWidth = 6;
+		int maxRoomSizeHeight = 6;
+		m_statueRoomIndex = getRoom(maxRoomSizeWidth, maxRoomSizeHeight, t_rooms);
+		setUniqueGroundTiles(TilePattern, maxRoomSizeWidth, maxRoomSizeHeight, m_statueRoomIndex, t_tiles, t_decorTiles, t_rooms);
+	}
 }
 ////---------------------------------------------------------------------------
 ////Creates a room with a pit that tthe boss will appear from
