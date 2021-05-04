@@ -77,6 +77,15 @@ namespace
 {
 	std::random_device rd;
 	std::mt19937 mt(rd());
+
+/***************************************************************************************
+*    Title: C++ Example of Dungeon-Building Algorithm
+*    Author: MindControlDx
+*    Date: 31 July 2015
+*    Code version: Version 3
+*    Availability: http://www.roguebasin.com/index.php?title=C%2B%2B_Example_of_Dungeon-Building_Algorithm
+*
+***************************************************************************************/
 	int randomInt(int t_exclusiveMax)
 	{
 		std::uniform_int_distribution<> dist(0, t_exclusiveMax - 1);
@@ -99,12 +108,28 @@ namespace
 	////---------------------------------------------------------------------------
 	//// Functions to set unused tiles under larger tiles,set the tiles,get the tiles,check for doors
 	////---------------------------------------------------------------------------
+/***************************************************************************************
+*    Title: C++ Example of Dungeon-Building Algorithm
+*    Author: MindControlDx
+*    Date: 31 July 2015
+*    Code version: Version 3
+*    Availability: http://www.roguebasin.com/index.php?title=C%2B%2B_Example_of_Dungeon-Building_Algorithm
+*
+***************************************************************************************/
 	char getTile(int t_x, int t_y, std::vector<char>& t_tiles, int t_width, int t_height) {
 		//gets a decoration tile at a certain x,y
 		if (t_x < 0 || t_y < 0 || t_x >= t_width || t_y >= t_height)
 			return UnusedTile;
 		return t_tiles[t_x + t_y * t_width];
 	}
+/***************************************************************************************
+*    Title: C++ Example of Dungeon-Building Algorithm
+*    Author: MindControlDx
+*    Date: 31 July 2015
+*    Code version: Version 3
+*    Availability: http://www.roguebasin.com/index.php?title=C%2B%2B_Example_of_Dungeon-Building_Algorithm
+*
+***************************************************************************************/
 	void setTile(int t_x, int t_y, char t_tile, std::vector<char>& t_tiles, int t_width) {
 		//sets tile at x,y of background tiles
 		t_tiles[t_x + t_y * t_width] = t_tile;

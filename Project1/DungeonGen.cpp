@@ -206,6 +206,14 @@ bool DungeonGen::makeRoom(int t_x, int t_y, Direction t_direction, bool t_firstR
 ////---------------------------------------------------------------------------
 void DungeonGen::placeRoomExit(RoomVals& t_room, Direction t_direction ,bool t_firstRoom)
 {
+/***************************************************************************************
+*    Title: C++ Example of Dungeon-Building Algorithm
+*    Author: MindControlDx
+*    Date: 31 July 2015
+*    Code version: Version 3
+*    Availability: http://www.roguebasin.com/index.php?title=C%2B%2B_Example_of_Dungeon-Building_Algorithm
+*
+***************************************************************************************/
 	//place exit at north Side
 	if (t_direction == Direction::South || t_firstRoom)
 	{
@@ -305,6 +313,14 @@ bool DungeonGen::makeCorridor(int t_x, int t_y, Direction t_direction)
 ////---------------------------------------------------------------------------
 void DungeonGen::placeCorridorExit(RoomVals& t_room,Direction t_direction)
 {
+/***************************************************************************************
+*    Title: C++ Example of Dungeon-Building Algorithm
+*    Author: MindControlDx
+*    Date: 31 July 2015
+*    Code version: Version 3
+*    Availability: http://www.roguebasin.com/index.php?title=C%2B%2B_Example_of_Dungeon-Building_Algorithm
+*
+***************************************************************************************/
 	if (t_direction != Direction::South && t_room.width != 1)
 	{
 		m_exit.push_back(RoomVals{ t_room.x,t_room.y - 1,t_room.width,1 });
