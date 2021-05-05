@@ -14,8 +14,15 @@ Collider::~Collider()
 
 void Collider::setUpBoxCollider()
 {
-	//rectangle and set up size,color etc
-	m_boxCollider.setOutlineColor(sf::Color::White);
+	if (m_tag == "Exits")
+	{
+		m_boxCollider.setOutlineColor(sf::Color::Green);
+	}
+	else
+	{
+		//rectangle and set up size,color etc
+		m_boxCollider.setOutlineColor(sf::Color::White);
+	}
 	m_boxCollider.setOutlineThickness(0.1f);
 	m_boxCollider.setFillColor(sf::Color::Transparent);
 	m_boxCollider.setPosition(m_pos);
